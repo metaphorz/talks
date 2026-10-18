@@ -1003,12 +1003,14 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
     label.setAttribute('x',pt.x.toFixed(1)); label.setAttribute('y',(pt.y-16).toFixed(1)); label.setAttribute('opacity',lo.toFixed(2));
   }
   if(reduce){ render(CYCLE*.6); return; }
-  var t0=null;
-  (function frame(ts){
-    if(t0===null) t0=ts;
-    if(slide.classList.contains('on')) render((ts-t0)/1000);
-    requestAnimationFrame(frame);
-  })(performance.now());
+  // animate only while the title slide is showing
+  var t0=null, raf=0;
+  function frame(ts){ if(t0===null) t0=ts; render((ts-t0)/1000); raf=requestAnimationFrame(frame); }
+  function sync(){ var on=slide.classList.contains('on');
+    if(on&&!raf) raf=requestAnimationFrame(frame);
+    if(!on&&raf){ cancelAnimationFrame(raf); raf=0; } }
+  new MutationObserver(sync).observe(slide,{attributes:true,attributeFilter:['class']});
+  render(0); sync();
 })();
 
 // Rung 2: the spiral an orbiting electron would follow if classical physics held
