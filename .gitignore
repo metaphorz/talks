@@ -7,3 +7,5 @@ source/
 *.pdf
 *.webloc
 .DS_Store
+# working folder for the AI talks (outline, original video); the published deck is ai1/
+AI/

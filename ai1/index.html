@@ -1,0 +1,1001 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Elements — AI, Part 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Noto+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck.css">
+<style>
+/* ===== shared pieces ===== */
+:root{--mono:"Noto Sans Mono",ui-monospace,Menlo,monospace;--night:#151B21;--night-2:#1E262E}
+.tile{position:relative;background:var(--card);border-radius:18px;padding:18px 18px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.tile.wash{background:var(--teal-wash)}
+.tile .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--amber)}
+.tile h3{margin:9px 0 0;font-size:20px;line-height:1.2;font-weight:700;color:var(--ink)}
+.tile p{margin:10px 0 0;font-size:15.5px;line-height:1.34;color:var(--ink)}
+.grid{position:absolute;left:55px;width:849px;display:grid;gap:21px}
+.line{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:16.5px;font-weight:700;color:var(--teal)}
+.box{position:absolute;background:var(--teal-wash);border-radius:18px;box-shadow:0 5px 10px rgba(40,30,10,.25)}
+.statement{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:21px;line-height:1.32;font-weight:700;color:var(--ink)}
+.btn{font:600 13.5px var(--sans);color:var(--ink);background:#fff;border:1.5px solid var(--rule);border-radius:999px;
+  padding:7px 14px;cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.btn:hover{border-color:var(--teal)}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.go{background:var(--amber);border-color:var(--amber);color:#fff}
+.btn.go:hover{box-shadow:0 0 0 3px rgba(201,133,47,.25)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row .lbl{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey);margin-right:4px}
+.ai-note{position:absolute;left:57px;top:652px;width:849px;font-size:9.5px;color:var(--grey)}
+.mono{font-family:var(--mono)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes blink{50%{opacity:0}}
+@keyframes flow{to{stroke-dashoffset:-24}}
+
+/* ===== 1 · title ===== */
+.s-title .page{background:radial-gradient(ellipse at 70% 45%,#22303A 0%,var(--night) 62%,#0E1216 100%)}
+.s-title canvas{position:absolute;left:0;top:0;width:960px;height:720px}
+.s-title .veil{position:absolute;left:0;top:0;width:520px;height:720px;
+  background:linear-gradient(90deg,rgba(14,18,22,.92) 0%,rgba(14,18,22,.75) 60%,rgba(14,18,22,0) 100%)}
+.s-title .bar{position:absolute;left:65px;top:150px;width:9px;height:228px;background:var(--amber);box-shadow:2px 3px 6px rgba(0,0,0,.5)}
+.s-title .eyebrow{position:absolute;left:99px;top:166px;font-size:12.5px;font-weight:700;color:#7FC4C0;letter-spacing:.08em}
+.s-title h1{position:absolute;left:97px;top:196px;margin:0;font-size:60px;line-height:1.08;font-weight:700;letter-spacing:-.01em;color:#F7F3EA}
+.s-title h1 span{color:var(--amber)}
+.s-title .sub{position:absolute;left:99px;top:290px;width:390px;margin:0;font-size:18.5px;line-height:1.3;color:#B9C2C8}
+.s-title .five{position:absolute;left:99px;top:410px;width:400px;display:flex;flex-wrap:wrap;gap:8px}
+.s-title .five span{padding:5px 12px;border-radius:999px;border:1.5px solid #3C5560;color:#DCEBE8;font-size:13.5px;font-weight:600;
+  background:rgba(29,110,115,.18)}
+.s-title .five span b{color:var(--amber);margin-right:5px}
+.s-title .by{position:absolute;left:99px;top:500px;font-size:15px;font-weight:700;color:#F7F3EA}
+.s-title .music{position:absolute;left:97px;top:556px;display:flex;align-items:center;gap:10px;padding:7px 14px 7px 10px;
+  border-radius:999px;border:1.5px solid #3C5560;background:rgba(14,18,22,.6);color:#DCEBE8;font:600 13px var(--sans);cursor:pointer}
+.s-title .music:hover{border-color:var(--amber)}
+.s-title .eq{display:flex;gap:2px;align-items:flex-end;height:14px;width:18px}
+.s-title .eq i{display:block;width:3px;height:4px;background:var(--amber);border-radius:1px}
+.s-title .music.playing .eq i{animation:eq 1s ease-in-out infinite}
+.s-title .music.playing .eq i:nth-child(2){animation-delay:-.3s}
+.s-title .music.playing .eq i:nth-child(3){animation-delay:-.6s}
+.s-title .music.playing .eq i:nth-child(4){animation-delay:-.15s}
+@keyframes eq{0%,100%{height:3px}50%{height:14px}}
+.s-title .music .state{color:#7F8A93;font-weight:400}
+.s-title .credit{position:absolute;left:99px;top:600px;font-size:10.5px;color:#7F8A93}
+.s-title .foot{color:#5E6A73}
+.slide.on.s-title .bar.anim{transform-origin:top;animation:growbar .8s var(--ease) both}
+.slide.on.s-title .eyebrow.anim{animation:rise .6s var(--ease) .2s both}
+.slide.on.s-title h1.anim{animation:rise .8s var(--ease) .35s both}
+.slide.on.s-title .sub.anim{animation:rise .8s var(--ease) .6s both}
+.slide.on.s-title .by.anim{animation:rise .8s var(--ease) .8s both}
+
+/* ===== 2 · openness ===== */
+.s-open .orbit{position:absolute;left:55px;top:122px;width:440px;height:480px}
+.s-open .orbit svg{position:absolute;inset:0;width:440px;height:480px;overflow:visible}
+.s-open .spoke{stroke:var(--spoke);stroke-width:2;transition:stroke .3s,stroke-width .3s}
+.s-open .spoke.on{stroke:var(--amber);stroke-width:3.5;stroke-dasharray:6 6;animation:flow .8s linear infinite}
+.s-open .ring{fill:none;stroke:var(--rule);stroke-width:1.5;stroke-dasharray:3 6}
+.s-open .you{position:absolute;left:220px;top:240px;width:116px;height:116px;margin:-58px 0 0 -58px;border-radius:50%;
+  background:var(--amber);color:#fff;display:grid;place-items:center;font-size:21px;font-weight:700;box-shadow:2px 5px 10px rgba(0,0,0,.3)}
+.s-open .role{position:absolute;width:104px;height:104px;margin:-52px 0 0 -52px;border-radius:50%;border:2px solid var(--rule);
+  background:#fff;font:700 15px var(--sans);color:var(--ink);cursor:pointer;box-shadow:0 4px 9px rgba(40,30,10,.22);
+  transition:transform .3s var(--ease),border-color .3s,background .3s}
+.s-open .role .g{display:block;font-size:22px;line-height:1;margin-bottom:5px;color:var(--teal)}
+.s-open .role:hover{transform:scale(1.06)}
+.s-open .role.on{border-color:var(--amber);background:#FBF4E8;transform:scale(1.1)}
+.s-open .panel{position:absolute;left:520px;top:132px;width:384px;height:440px;padding:24px 26px}
+.s-open .panel h3{font-size:30px;margin-top:6px}
+.s-open .panel h4{margin:20px 0 6px;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-open .panel h4.yours{color:var(--amber)}
+.s-open .panel ul{margin:0;padding-left:18px;font-size:15.5px;line-height:1.42}
+.s-open .panel .fade{transition:opacity .3s}
+.s-open .line{top:606px}
+
+/* ===== 3 · attention ===== */
+.s-attn .sit{position:absolute;left:55px;top:122px;width:400px;height:490px;padding:22px;text-align:center}
+.s-attn .sit .tag{display:block;text-align:left}
+.s-attn .orb{position:relative;width:250px;height:250px;margin:24px auto 0}
+.s-attn .orb i{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 40% 35%,#5FA9A6,var(--teal) 70%);
+  transform:scale(.45);box-shadow:0 0 0 0 rgba(29,110,115,.25)}
+.s-attn.on .orb i{animation:breathe 10s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.45);box-shadow:0 0 0 0 rgba(29,110,115,.25)}50%{transform:scale(1);box-shadow:0 0 0 22px rgba(29,110,115,.08)}}
+.s-attn .orb span{position:absolute;inset:0;display:grid;place-items:center;color:#fff;font-weight:700;font-size:16px;letter-spacing:.04em}
+.s-attn .clock{margin-top:18px;font-size:40px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--ink)}
+.s-attn .sit p{margin:6px 0 12px;font-size:14.5px;line-height:1.35;color:var(--ink-2)}
+.s-attn .right{position:absolute;left:480px;top:122px;width:424px}
+.s-attn .big{margin:0 0 16px;font-size:24px;line-height:1.25;font-weight:700}
+.s-attn .big span{color:var(--teal)}
+.s-attn .pr{display:flex;gap:12px;align-items:flex-start;margin-bottom:11px;padding:12px 15px}
+.s-attn .pr .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--amber);color:#fff;display:grid;place-items:center;font-size:13px;font-weight:700}
+.s-attn .pr p{margin:0;font-size:15px;line-height:1.33}
+.s-attn .pr b{display:block;font-size:15.5px}
+
+/* ===== 4 · history ===== */
+.s-hist .axis{position:absolute;left:75px;top:212px;width:810px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--sand),var(--teal))}
+.s-hist .era{position:absolute;top:150px;width:110px;margin-left:-55px;text-align:center;border:0;background:none;padding:0;cursor:pointer;font-family:var(--sans)}
+.s-hist .era .yr{display:block;font-size:13px;font-weight:700;color:var(--grey)}
+.s-hist .era .dot{display:block;width:26px;height:26px;margin:22px auto 0;border-radius:50%;background:#fff;border:5px solid var(--teal);
+  box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .3s,background .3s}
+.s-hist .era .nm{display:block;margin-top:12px;font-size:14px;font-weight:700;line-height:1.2;color:var(--ink)}
+.s-hist .era.sym .dot{border-color:var(--sand-ink)}
+.s-hist .era:hover .dot,.s-hist .era.pick .dot{transform:scale(1.25);background:var(--amber)}
+.s-hist .winter{position:absolute;top:184px;margin-left:-40px;width:80px;text-align:center;font-size:10.5px;font-weight:700;font-style:italic;color:#6E8FA8}
+.s-hist .cards{position:absolute;left:55px;top:318px;width:849px;height:262px}
+.s-hist .ecard{position:absolute;inset:0;padding:22px 26px;display:grid;grid-template-columns:1fr 300px;gap:26px;transition:opacity .4s}
+.s-hist .ecard[data-b]{transform:none}
+.s-hist .cards .ecard:has(~ .ecard.shown){opacity:0}
+.s-hist .cards.picked .ecard{opacity:0!important}
+.s-hist .cards.picked .ecard.pick{opacity:1!important}
+.s-hist .ecard h3{margin-top:6px;font-size:23px}
+.s-hist .ecard p{font-size:15.5px}
+.s-hist .ecard .idea{margin-top:14px;font-weight:700;color:var(--teal)}
+.s-hist .ecard ul{margin:4px 0 0;padding:0;list-style:none;font-size:14px;line-height:1.35}
+.s-hist .ecard li{display:grid;grid-template-columns:46px 1fr;padding:7px 0;border-bottom:1px solid var(--rule)}
+.s-hist .ecard li b{color:var(--amber)}
+.s-hist .line{top:600px}
+.s-hist .line span{color:var(--sand-ink)}
+
+/* ===== 5 · rules vs weights ===== */
+.s-two .side{position:absolute;top:122px;width:414px;height:470px;padding:18px 20px}
+.s-two .side.l{left:55px}.s-two .side.r{left:490px}
+.s-two .side h3{margin-top:4px;font-size:19px}
+.s-two .facts{margin-top:12px;gap:6px}
+.s-two .facts .btn{padding:6px 11px;font-size:12.5px}
+.s-two .rules{margin:14px 0 0;padding:0;list-style:none;font-size:13.5px;font-family:var(--mono);line-height:1.3}
+.s-two .rules li{padding:7px 10px;margin-bottom:6px;border-radius:8px;background:#F4EFE5;border:1.5px solid transparent;transition:background .3s,border-color .3s}
+.s-two .rules li.fire{background:var(--teal-wash);border-color:#8FC0BA}
+.s-two .rules li b{color:var(--amber)}
+.s-two .concl{margin-top:12px;padding:12px 14px;border-radius:12px;background:var(--ink);color:#fff;font-size:16px;font-weight:700;min-height:64px}
+.s-two .concl small{display:block;margin-top:3px;font-size:12px;font-weight:400;color:#B9C2C8}
+.s-two svg{display:block;width:374px;height:250px;margin-top:6px}
+.s-two .wrow{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
+.s-two .w{text-align:center;font-size:12px;color:var(--grey)}
+.s-two .w .ctl{display:flex;justify-content:center;align-items:center;gap:6px;margin-top:3px}
+.s-two .w .ctl button{width:26px;height:26px;padding:0;border-radius:50%}
+.s-two .w .ctl span{width:38px;font:600 14px var(--mono);color:var(--ink)}
+.s-two .out{margin-top:10px;font-size:14px;color:var(--ink-2);text-align:center}
+.s-two .line{top:604px}
+
+/* ===== 6 · deep learning ===== */
+.s-deep .net{position:absolute;left:55px;top:122px;width:500px;height:400px;padding:12px}
+.s-deep .net svg{width:476px;height:330px;display:block}
+.s-deep .net .ctl{display:flex;align-items:center;gap:14px;margin:4px 6px 0}
+.s-deep .stat{font-size:13px;color:var(--grey)}
+.s-deep .stat b{font:700 17px var(--mono);color:var(--ink);margin-left:4px}
+.s-deep .chart{position:absolute;left:575px;top:122px;width:329px;height:220px;padding:14px 16px}
+.s-deep .chart svg{width:297px;height:160px;display:block;margin-top:6px}
+.s-deep .pts{position:absolute;left:575px;top:360px;width:329px}
+.s-deep .pts p{margin:0 0 12px;font-size:15px;line-height:1.33;padding-left:14px;border-left:3px solid var(--amber)}
+.s-deep .line{top:552px;width:500px;text-align:left;font-size:15.5px}
+
+/* ===== 7 · next token ===== */
+.s-next .sent{position:absolute;left:55px;top:128px;width:849px;min-height:92px;padding:22px 28px;font-size:30px;line-height:1.3;font-weight:600}
+.s-next .sent .new{color:var(--teal);animation:rise .4s var(--ease) both}
+.s-next .sent .caret{display:inline-block;width:3px;height:30px;margin-left:4px;vertical-align:-4px;background:var(--amber);animation:blink 1s steps(1) infinite}
+.s-next .bars{position:absolute;left:55px;top:248px;width:520px}
+.s-next .bars h4,.s-next .knobs h4{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey)}
+.s-next .cand{display:grid;grid-template-columns:120px 1fr 52px;align-items:center;gap:10px;width:100%;margin-bottom:7px;padding:3px 0;
+  background:none;border:0;cursor:pointer;font-family:var(--sans);text-align:left}
+.s-next .cand .w{font-size:17px;font-weight:600;color:var(--ink)}
+.s-next .cand .b{height:22px;border-radius:5px;background:var(--rule);overflow:hidden}
+.s-next .cand .b i{display:block;height:100%;background:var(--teal);border-radius:5px;transition:width .4s var(--ease)}
+.s-next .cand .p{font:600 13.5px var(--mono);color:var(--grey);text-align:right}
+.s-next .cand:hover .w{color:var(--amber)}
+.s-next .cand.pick .b i{background:var(--amber)}
+.s-next .knobs{position:absolute;left:610px;top:248px;width:294px;padding:18px 20px}
+.s-next .knobs .row{margin-bottom:14px}
+.s-next .knobs .row .lbl{flex-basis:100%;margin-bottom:-2px}
+.s-next .knobs p{margin:8px 0 0;font-size:14px;line-height:1.35;color:var(--ink-2)}
+.s-next .line{top:600px}
+
+/* ===== 8 · models ===== */
+.s-models .grid{top:126px;grid-template-columns:repeat(3,1fr)}
+.s-models .tile{height:378px;padding:20px 22px}
+.s-models .tile h3{font-size:26px;margin-top:4px}
+.s-models .when{margin-top:4px;font-size:13px;color:var(--grey)}
+.s-models dl{margin:14px 0 0;font-size:14px;line-height:1.3}
+.s-models dt{margin-top:10px;font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-models dd{margin:2px 0 0}
+.s-models .strip{left:55px;top:528px;width:849px;height:74px;display:flex;align-items:center;justify-content:space-around;padding:0 20px}
+.s-models .strip div{text-align:center;font-size:13px;color:var(--grey)}
+.s-models .strip b{display:block;font-size:19px;color:var(--ink)}
+.s-models .ai-note{top:620px}
+
+/* ===== 9 · openrouter ===== */
+.s-router .hub{position:absolute;left:55px;top:122px;width:470px;height:470px;padding:0;overflow:hidden;background:var(--night);border-radius:18px}
+.s-router .hub svg{width:470px;height:470px;display:block}
+.s-router .prov{cursor:pointer}
+.s-router .prov rect{fill:#24313A;stroke:#3C5560;stroke-width:1.5;transition:fill .3s,stroke .3s}
+.s-router .prov.on rect{fill:#3B2E1B;stroke:var(--amber)}
+.s-router .prov text{fill:#DCEBE8;font:600 13px var(--sans)}
+.s-router .facts{position:absolute;left:548px;top:122px;width:356px;display:flex;flex-direction:column;gap:10px}
+.s-router .facts .tile{padding:12px 16px}
+.s-router .facts h3{margin:0;font-size:16.5px}
+.s-router .facts p{margin-top:4px;font-size:14px;line-height:1.3}
+.s-router .facts .tile.wash h3{color:var(--teal)}
+
+/* ===== 10 · five elements ===== */
+.s-five .grid{top:150px;grid-template-columns:repeat(5,1fr);gap:16px}
+.s-five .tile{height:270px;padding:20px 16px;text-align:center}
+.s-five .code{width:62px;height:62px;margin:6px auto 0;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:20px;font-weight:700;
+  box-shadow:1px 4px 7px rgba(0,0,0,.3)}
+.s-five .tile:nth-child(odd) .code{background:var(--teal)}
+.s-five .tile h3{margin-top:18px;font-size:19px}
+.s-five .tile p{font-size:14.5px}
+.s-five .tile .ex{margin-top:16px;font-size:12.5px;font-style:italic;color:var(--grey)}
+.s-five .line{top:460px}
+
+/* ===== 11 · specificity ===== */
+.s-spec .steps{position:absolute;left:55px;top:124px;width:849px}
+.s-spec .pbox{position:absolute;left:55px;top:172px;width:849px;height:104px;padding:14px 20px;background:var(--ink);color:#E9EEF0;border-radius:14px;
+  font:15px/1.45 var(--mono);box-shadow:0 5px 10px rgba(0,0,0,.25)}
+.s-spec .pbox .you{display:block;font:700 11px var(--sans);letter-spacing:.05em;text-transform:uppercase;color:#7FC4C0;margin-bottom:5px}
+.s-spec .rbox{position:absolute;left:55px;top:290px;width:600px;height:300px;padding:18px 22px}
+.s-spec .rbox .tag{color:var(--teal)}
+.s-spec .rbox .txt{margin-top:10px;font-size:17px;line-height:1.5;white-space:pre-line}
+.s-spec .meters{position:absolute;left:678px;top:290px;width:226px;height:300px;padding:18px 20px}
+.s-spec .meter{margin-bottom:22px}
+.s-spec .meter .k{font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey)}
+.s-spec .meter .bar{margin-top:7px;height:16px;border-radius:8px;background:var(--rule);overflow:hidden}
+.s-spec .meter .bar i{display:block;height:100%;border-radius:8px;transition:width .6s var(--ease)}
+.s-spec .meter.work i{background:var(--amber)}.s-spec .meter.fit i{background:var(--teal)}
+.s-spec .meters p{margin:0;font-size:14px;line-height:1.35;color:var(--ink-2)}
+.s-spec .line{top:604px}
+
+/* ===== 12 · anatomy ===== */
+.s-anat .prompt{position:absolute;left:55px;top:128px;width:849px;padding:24px 28px;font-size:21px;line-height:1.6}
+.s-anat .prompt span{border-radius:6px;padding:1px 3px;transition:background .25s,box-shadow .25s}
+.s-anat .legend{position:absolute;left:55px;top:350px;width:849px;display:flex;flex-wrap:wrap;gap:9px;justify-content:center}
+.s-anat .legend span{padding:7px 14px;border-radius:999px;font-size:14px;font-weight:700;color:var(--ink);border:1.5px solid transparent;cursor:default}
+.s-anat [data-lens].hot{box-shadow:0 0 0 2.5px var(--ink)}
+.s-anat .c1{background:#F3DEC0}.s-anat .c2{background:#CFE6E2}.s-anat .c3{background:#E3E0F2}.s-anat .c4{background:#F6D6D0}
+.s-anat .c5{background:#DCE8C8}.s-anat .c6{background:#E9DDC7}.s-anat .c7{background:#D5E3F0}
+.s-anat .iter{left:55px;top:410px;width:849px;height:168px;padding:16px 24px}
+.s-anat .iter h4{margin:0;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-anat .iter .row{margin-top:12px}
+.s-anat .iter .say{padding:6px 13px;font-size:14px!important;border-radius:14px 14px 14px 4px;background:#fff;font-size:15px;box-shadow:0 2px 4px rgba(0,0,0,.08)}
+.s-anat .iter p{margin:10px 0 0;font-size:15px;color:var(--ink-2)}
+.s-anat .line{top:600px}
+
+/* ===== 13 · level ===== */
+.s-level .pick{position:absolute;left:55px;top:124px;width:849px;display:flex;flex-direction:column;gap:8px}
+.s-level .pline{position:absolute;left:55px;top:212px;width:849px;padding:10px 18px;border-radius:12px;background:var(--ink);color:#E9EEF0;font:15px var(--mono)}
+.s-level .pline b{color:var(--amber);font-weight:600}
+.s-level .out{position:absolute;left:55px;top:262px;width:849px;height:330px;padding:18px 24px;overflow:hidden}
+.s-level .out .meta{display:flex;gap:18px;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-level .out .meta span:last-child{color:var(--grey)}
+.s-level .out .body{margin-top:10px;font-size:16.5px;line-height:1.5;transition:opacity .25s}
+.s-level .out .body.sm{font-size:15px;line-height:1.45}
+.s-level .out .body ol{margin:6px 0 0;padding-left:22px;columns:2;column-gap:36px}
+.s-level .out .body li{margin-bottom:6px;break-inside:avoid}
+.s-level .out .body .doc{display:inline-block;font-weight:700;margin-bottom:4px}
+.s-level .line{top:606px}
+
+/* ===== 14 · NWP ===== */
+.s-nwp .quote{position:absolute;left:55px;top:124px;width:849px;margin:0;padding:18px 28px;text-align:center;font-size:21px;font-weight:700;line-height:1.3}
+.s-nwp .quote cite{display:block;margin-top:6px;font-size:13px;font-style:normal;font-weight:400;color:var(--grey)}
+.s-nwp .grid{top:236px;grid-template-columns:repeat(3,1fr)}
+.s-nwp .grid .tile{height:186px}
+.s-nwp .wo{left:55px;top:444px;width:849px;height:150px;padding:20px 26px;display:grid;grid-template-columns:200px 1fr;gap:24px;align-items:center}
+.s-nwp .wo .badge{text-align:center}
+.s-nwp .wo .badge b{display:block;font-size:30px;line-height:1.05;color:var(--teal)}
+.s-nwp .wo .badge span{font-size:13px;font-weight:700;color:var(--amber)}
+.s-nwp .wo p{margin:0;font-size:15.5px;line-height:1.38}
+
+/* ===== 15 · write where we stand ===== */
+.s-stand .path{position:absolute;left:55px;top:128px;width:849px;display:grid;grid-template-columns:repeat(5,1fr);gap:14px}
+.s-stand .st{position:relative;text-align:center}
+.s-stand .st .c{width:74px;height:74px;margin:0 auto;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;
+  font-size:15px;font-weight:700;box-shadow:1px 4px 8px rgba(0,0,0,.28)}
+.s-stand .st:nth-child(4) .c,.s-stand .st:nth-child(5) .c{background:var(--amber)}
+.s-stand .st:not(:last-child)::after{content:"";position:absolute;left:calc(50% + 46px);right:calc(-50% + 32px);top:36px;height:3px;background:var(--spoke)}
+.s-stand .st h3{margin:12px 0 0;font-size:17px}
+.s-stand .st p{margin:5px 0 0;font-size:13.5px;line-height:1.3;color:var(--ink-2)}
+.s-stand .senses{position:absolute;left:55px;top:330px;width:500px;height:258px;padding:18px 20px}
+.s-stand .senses .row{margin-top:12px}
+.s-stand .senses .q{margin-top:14px;min-height:64px;font-size:19px;line-height:1.35;font-style:italic;font-weight:600;color:var(--ink);transition:opacity .25s}
+.s-stand .senses .eg{font-size:13px;color:var(--grey)}
+.s-stand .ai{left:575px;top:330px;width:329px;height:258px;padding:20px 22px}
+.s-stand .ai h3{margin:0;font-size:18px;color:var(--teal)}
+.s-stand .ai p{margin:10px 0 0;font-size:15px;line-height:1.38}
+
+/* ===== 16 · poem ===== */
+.s-poem2 .notes-card{position:absolute;left:55px;top:122px;width:350px;height:472px;padding:20px 22px;
+  background:#FFFDF6 repeating-linear-gradient(#FFFDF6 0 27px,#E4ECEE 27px 28px);background-position:0 10px}
+.s-poem2 .notes-card .tag{color:var(--teal)}
+.s-poem2 .notes-card ul{margin:10px 0 0;padding:0 0 0 2px;list-style:none;font-size:15.5px;line-height:28px;font-style:italic;color:var(--ink-2)}
+.s-poem2 .notes-card ul li::before{content:"– ";color:var(--amber)}
+.s-poem2 .ask{margin-top:14px;padding:10px 12px;border-radius:10px;background:var(--ink);color:#E9EEF0;font:12.5px/1.45 var(--mono)}
+.s-poem2 .poem{position:absolute;left:428px;top:122px;width:476px;height:472px;padding:20px 26px}
+.s-poem2 .poem .row{justify-content:space-between}
+.s-poem2 .verse{margin-top:14px;transition:opacity .3s}
+.s-poem2 .verse .ln{display:grid;grid-template-columns:1fr 34px;align-items:baseline;font-size:15.5px;line-height:1.47;color:var(--ink)}
+.s-poem2 .verse.haiku{margin-top:70px}
+.s-poem2 .verse.haiku .ln{font-size:23px;line-height:1.7;font-weight:600}
+.s-poem2 .verse .k{font:600 12px var(--mono);color:var(--amber);text-align:right}
+.s-poem2 .verse .gap{height:5px}
+.s-poem2 .form{margin-top:8px;font-size:12.5px;color:var(--grey)}
+.s-poem2 .verse.haiku + .form{margin-top:60px}
+
+/* ===== 17 · kinds of maps ===== */
+.s-kinds .grid{top:124px;grid-template-columns:1fr 1fr;grid-auto-rows:228px;gap:18px 21px}
+.s-kinds .tile{display:grid;grid-template-columns:150px 1fr;gap:16px;padding:16px 18px}
+.s-kinds .tile svg{width:150px;height:150px;align-self:center}
+.s-kinds .tile h3{margin-top:4px;font-size:19px}
+.s-kinds .tile .who{margin-top:3px;font-size:12.5px;font-style:italic;font-weight:700;color:var(--teal)}
+.s-kinds .tile p{font-size:14.5px;line-height:1.33}
+
+/* ===== 18 · honeybee graph ===== */
+.s-graph .views{position:absolute;left:55px;top:122px;width:849px;justify-content:space-between;flex-wrap:nowrap}
+.s-graph .board{position:absolute;left:55px;top:166px;width:849px;height:400px;padding:0;overflow:hidden}
+.s-graph .board svg{width:849px;height:400px;display:block}
+.s-graph .nd{cursor:pointer}
+.s-graph .nd rect{fill:#fff;stroke:var(--teal);stroke-width:1.6;transition:fill .25s,stroke .25s}
+.s-graph .nd text{font:600 13px var(--sans);fill:var(--ink);text-anchor:middle;dominant-baseline:central;pointer-events:none}
+.s-graph .nd.root rect{fill:var(--amber);stroke:var(--amber)}.s-graph .nd.root text{fill:#fff;font-weight:700}
+.s-graph .nd.cat rect{fill:var(--ink);stroke:var(--ink)}.s-graph .nd.cat text{fill:#fff}
+.s-graph .nd.hl rect{fill:#FBF0DD;stroke:var(--amber);stroke-width:2.4}
+.s-graph .nd.dim{opacity:.35}
+.s-graph .ed line,.s-graph .ed path{stroke:#9FB8B5;stroke-width:1.6;fill:none}
+.s-graph .ed text{font:italic 600 11px var(--sans);fill:var(--teal);text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:4px}
+.s-graph .ed.hl line,.s-graph .ed.hl path{stroke:var(--amber);stroke-width:2.6}
+.s-graph .ed.dim{opacity:.25}
+.s-graph .info{position:absolute;left:55px;top:578px;width:849px;margin:0;font-size:14.5px;color:var(--ink-2);text-align:center}
+.s-graph .info b{color:var(--teal)}
+.s-graph .info .mono{font-size:13px}
+
+/* ===== 19 · roleplay ===== */
+.s-role .who{position:absolute;left:55px;top:122px;width:849px}
+.s-role .chat{position:absolute;left:55px;top:166px;width:849px;height:430px;padding:0;overflow:hidden;display:flex;flex-direction:column}
+.s-role .sys{padding:12px 20px;background:var(--ink);color:#DCE3E6;font:13px/1.45 var(--mono)}
+.s-role .sys b{color:#7FC4C0;font-family:var(--sans);font-size:11px;letter-spacing:.05em;text-transform:uppercase;margin-right:8px}
+.s-role .msgs{flex:1;padding:14px 20px;overflow:hidden;display:flex;flex-direction:column;gap:9px}
+.s-role .m{max-width:78%;padding:9px 14px;border-radius:16px;font-size:15px;line-height:1.38;animation:rise .35s var(--ease) both}
+.s-role .m.u{align-self:flex-end;background:var(--teal);color:#fff;border-bottom-right-radius:4px}
+.s-role .m.a{align-self:flex-start;background:#F1ECE1;color:var(--ink);border-bottom-left-radius:4px}
+.s-role .m.a i.ooc{display:block;margin-top:6px;font-size:13px;color:var(--sand-ink)}
+.s-role .m.typing::after{content:"▍";color:var(--amber);animation:blink 1s steps(1) infinite}
+.s-role .line{top:608px;font-size:15.5px}
+
+/* ===== 20 · guidelines ===== */
+.s-guide .grid{top:124px;grid-template-columns:repeat(3,1fr)}
+.s-guide .grid .tile{height:210px}
+.s-guide .grid .tile h3{font-size:21px}
+.s-guide .grid .tile p{font-size:14.5px}
+.s-guide .build{left:55px;top:356px;width:849px;height:236px;padding:18px 24px}
+.s-guide .build h4{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-guide .build .row{margin-bottom:8px}
+.s-guide .stmt{margin-top:12px;padding:14px 18px;border-radius:12px;background:#fff;font-size:17px;line-height:1.4;font-style:italic;min-height:58px;
+  box-shadow:inset 0 0 0 1.5px var(--rule)}
+
+/* ===== 21 · again ===== */
+.s-again .say{position:absolute;left:250px;top:150px;width:654px;text-align:left;font-size:44px;font-weight:700;line-height:1.2}
+.s-again .say .role{color:var(--amber)}
+.s-again .say .caret{display:inline-block;width:4px;height:42px;background:var(--teal);vertical-align:-6px;animation:blink 1s steps(1) infinite}
+.s-again .grid{top:270px;grid-template-columns:1fr 1fr}
+.s-again .tile{height:220px;padding:24px 26px}
+.s-again .tile h3{font-size:22px;margin-top:6px}
+.s-again .tile p{font-size:16px}
+.s-again .dotline{position:absolute;right:24px;bottom:22px;width:60px;height:60px}
+.s-again .dotline i{position:absolute;inset:0;border-radius:50%;background:var(--teal);transform:scale(.4)}
+.s-again.on .dotline i{animation:breathe 10s ease-in-out infinite}
+.s-again .next{left:55px;top:520px;width:849px;height:76px;display:flex;align-items:center;justify-content:center;gap:16px;font-size:18px;font-weight:700;color:var(--ink)}
+.s-again .next span{color:var(--teal)}
+
+/* ===== 22 · resources ===== */
+.s-res .grid{top:124px;grid-template-columns:1fr 1fr;gap:14px 21px}
+.s-res .tile{padding:14px 18px}
+.s-res .tile h3{margin:2px 0 0;font-size:16.5px}
+.s-res .tile p{margin-top:4px;font-size:13.5px;line-height:1.32}
+.s-res a{color:var(--teal);font-weight:600;text-decoration:none}
+.s-res a:hover{text-decoration:underline}
+</style>
+</head>
+<body data-footer="AI · Part 1 · Elements">
+<div id="viewport"><div id="stage">
+
+<!-- ============================================================ 1 · title -->
+<section class="slide s-title" data-nonum>
+  <div class="page">
+    <canvas id="nn" width="1920" height="1440" aria-hidden="true"></canvas>
+    <div class="veil"></div>
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">AI · PART 1 OF 2</div>
+    <h1 class="anim">Elements<span>.</span></h1>
+    <p class="sub anim">Five ways to work with a language model — and two habits of mind to bring with you.</p>
+    <div class="five" data-b="1">
+      <span><b>A</b>Prompt</span><span><b>B</b>Level</span><span><b>C</b>Writing</span><span><b>D</b>Knowledge Graph</span><span><b>E</b>Roleplay</span>
+    </div>
+    <div class="by anim">Paul Fishwick</div>
+    <button class="music" id="music-btn" type="button" title="Play or pause the music (M)">
+      <span class="eq"><i></i><i></i><i></i><i></i></span><span>Celestial Drift</span><span class="state">click to play</span>
+    </button>
+    <div class="credit">Music © Paul Fishwick · “Celestial Drift” · made with Google Flow Music</div>
+  </div>
+  <aside class="notes">
+    <p>Click the music button (or press M) before you start; the music fades out when you move to slide 2.</p>
+    <p>The animation is a small neural network: signals flow left to right, and the five outputs are today's five elements.</p>
+    <p>[build] The five elements: Prompt, Level, Writing, Knowledge Graph, Roleplay.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 · openness -->
+<section class="slide s-open">
+  <div class="page">
+    <header class="hd"><h2>Be Open to What You Can Be</h2><div class="kicker">Psychology · Openness</div></header>
+    <div class="orbit">
+      <svg viewBox="0 0 440 480" aria-hidden="true">
+        <circle class="ring" cx="220" cy="240" r="168"/>
+        <line class="spoke" data-i="0" x1="220" y1="240" x2="220" y2="72"/>
+        <line class="spoke" data-i="1" x1="220" y1="240" x2="380" y2="188"/>
+        <line class="spoke" data-i="2" x1="220" y1="240" x2="319" y2="376"/>
+        <line class="spoke" data-i="3" x1="220" y1="240" x2="121" y2="376"/>
+        <line class="spoke" data-i="4" x1="220" y1="240" x2="60" y2="188"/>
+      </svg>
+      <div class="you">You</div>
+      <button class="role" data-i="0" style="left:220px;top:72px"><span class="g">✎</span>Writer</button>
+      <button class="role" data-i="1" style="left:380px;top:188px"><span class="g">♪</span>Musician</button>
+      <button class="role" data-i="2" style="left:319px;top:376px"><span class="g">◐</span>Artist</button>
+      <button class="role" data-i="3" style="left:121px;top:376px"><span class="g">▦</span>Designer</button>
+      <button class="role" data-i="4" style="left:60px;top:188px"><span class="g">▶</span>Director</button>
+    </div>
+    <article class="tile panel">
+      <div class="fade">
+        <div class="tag">A role you can try</div>
+        <h3 id="role-name">Writer</h3>
+        <h4>AI can help you</h4>
+        <ul id="role-ai"></ul>
+        <h4 class="yours">What stays yours</h4>
+        <ul id="role-you"></ul>
+      </div>
+    </article>
+    <p class="line" data-b="1">Openness: try on a role you never thought was yours. The tools lower the cost of a first attempt.</p>
+  </div>
+  <aside class="notes">
+    <p>The roles cycle on their own; click one to stop and talk about it.</p>
+    <p>Point: these tools lower the cost of trying. You don't need years of training to make a first song or storyboard — but taste and judgment are still yours.</p>
+    <p>The title music is an example: made with Google Flow Music.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 · attention -->
+<section class="slide s-attn">
+  <div class="page">
+    <header class="hd"><h2>Exercise the Attention Muscle</h2><div class="kicker">Psychology · Attention</div></header>
+    <div class="tile wash sit">
+      <span class="tag">One minute, together</span>
+      <div class="orb"><i></i><span id="breath">breathe in</span></div>
+      <div class="clock" id="sit-clock">1:00</div>
+      <p>Pick one thing in the room. Look only at it. Find three things you hadn't noticed.</p>
+      <button class="btn go" id="sit-go" type="button">Start the minute</button>
+    </div>
+    <div class="right">
+      <p class="big">Answers are now cheap.<br><span>Attention is not.</span></p>
+      <div class="tile pr" data-b="1"><span class="n">1</span><p><b>Look before you prompt</b>Spend time with the thing itself before asking a machine about it.</p></div>
+      <div class="tile pr" data-b="2"><span class="n">2</span><p><b>Read the answer slowly</b>What is vague? What is wrong? What is missing?</p></div>
+      <div class="tile pr" data-b="3"><span class="n">3</span><p><b>One thing at a time</b>Twenty minutes, one task, no tabs. Attention gets stronger with use.</p></div>
+      <div class="tile pr" data-b="4"><span class="n">4</span><p><b>Go back to the source</b>The world is richer than any summary of it.</p></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Try the minute with the room: press Start. The circle breathes on a 10-second cycle.</p>
+    <p>[builds] Four practices. AI makes text abundant; what becomes scarce is our ability to look carefully and judge.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 · history -->
+<section class="slide s-hist">
+  <div class="page">
+    <header class="hd"><h2>A Short History of AI</h2><div class="kicker">From rules people write to patterns machines learn · click a point to revisit it</div></header>
+    <div class="axis"></div>
+    <button class="era sym" data-b="1" data-k="0" style="left:95px"><span class="yr">1956</span><span class="dot"></span><span class="nm">Symbolic AI</span></button>
+    <button class="era sym" data-b="2" data-k="1" style="left:220px"><span class="yr">1960s–70s</span><span class="dot"></span><span class="nm">Logic</span></button>
+    <div class="winter" data-b="3" style="left:283px">❄ winter</div>
+    <button class="era sym" data-b="3" data-k="2" style="left:345px"><span class="yr">1970s–80s</span><span class="dot"></span><span class="nm">Expert Systems</span></button>
+    <div class="winter" data-b="4" style="left:408px">❄ winter</div>
+    <button class="era" data-b="4" data-k="3" style="left:470px"><span class="yr">1943–1986</span><span class="dot"></span><span class="nm">Neural Networks</span></button>
+    <button class="era" data-b="5" data-k="4" style="left:595px"><span class="yr">2012</span><span class="dot"></span><span class="nm">Deep Learning</span></button>
+    <button class="era" data-b="6" data-k="5" style="left:720px"><span class="yr">2017</span><span class="dot"></span><span class="nm">Transformers</span></button>
+    <button class="era" data-b="7" data-k="6" style="left:845px"><span class="yr">2022–</span><span class="dot"></span><span class="nm">Foundation Models</span></button>
+    <div class="cards">
+      <article class="tile ecard" data-b="1"><div><div class="tag">Symbolic AI</div><h3>Thinking as symbol manipulation</h3>
+        <p>The 1956 Dartmouth workshop (McCarthy, Minsky, Shannon, Rochester) named the field. Newell and Simon's Logic Theorist proved theorems from <i>Principia Mathematica</i>.</p>
+        <p class="idea">Idea: intelligence = rules applied to symbols.</p></div>
+        <ul><li><b>1950</b>Turing asks “Can machines think?”</li><li><b>1956</b>“Artificial intelligence” is named</li><li><b>1958</b>McCarthy creates LISP</li></ul></article>
+      <article class="tile ecard" data-b="2"><div><div class="tag">Logic</div><h3>Knowledge as statements, reasoning as proof</h3>
+        <p>Write facts and rules in formal logic; let the machine deduce what follows. Robinson's resolution principle made automated proof practical; Prolog made logic a programming language.</p>
+        <p class="idea">Idea: if it's true, it can be proved.</p></div>
+        <ul><li><b>1965</b>Resolution (Robinson)</li><li><b>1972</b>Prolog (Colmerauer, Kowalski)</li><li><b>1974</b>Funding dries up: the first “AI winter”</li></ul></article>
+      <article class="tile ecard" data-b="3"><div><div class="tag">Expert Systems</div><h3>Bottling an expert's know-how</h3>
+        <p>Knowledge engineers interviewed experts and wrote hundreds of IF–THEN rules. MYCIN recommended antibiotics; XCON configured DEC computers and saved millions. But rules were brittle and costly to maintain.</p>
+        <p class="idea">Idea: expertise = many specific rules.</p></div>
+        <ul><li><b>1970s</b>MYCIN (Stanford)</li><li><b>1980</b>XCON at Digital Equipment</li><li><b>1987</b>The market collapses: a second winter</li></ul></article>
+      <article class="tile ecard" data-b="4"><div><div class="tag">Neural Networks</div><h3>Learning from examples, not rules</h3>
+        <p>Artificial neurons add up weighted inputs. Instead of writing rules, you adjust weights until the network gets the examples right. Backpropagation (Rumelhart, Hinton, Williams) showed how to train many layers.</p>
+        <p class="idea">Idea: knowledge lives in connection strengths.</p></div>
+        <ul><li><b>1943</b>McCulloch–Pitts neuron</li><li><b>1958</b>Rosenblatt's perceptron</li><li><b>1986</b>Backpropagation popularized</li></ul></article>
+      <article class="tile ecard" data-b="5"><div><div class="tag">Deep Learning</div><h3>Many layers, much data, fast chips</h3>
+        <p>AlexNet won the 2012 ImageNet contest by a wide margin, trained on graphics processors (GPUs). Deep networks soon led in vision, speech and games.</p>
+        <p class="idea">Idea: depth + data + compute.</p></div>
+        <ul><li><b>2012</b>AlexNet</li><li><b>2016</b>AlphaGo beats Lee Sedol</li><li><b>2018</b>Turing Award: Bengio, Hinton, LeCun</li></ul></article>
+      <article class="tile ecard" data-b="6"><div><div class="tag">Transformers</div><h3>Attention is all you need</h3>
+        <p>A Google team introduced the transformer, which lets every word “attend” to every other word. It scales beautifully — and became the engine of language models.</p>
+        <p class="idea">Idea: predict the next word, at enormous scale.</p></div>
+        <ul><li><b>2017</b>“Attention Is All You Need”</li><li><b>2018</b>GPT and BERT</li><li><b>2020</b>GPT-3: 175 billion parameters</li></ul></article>
+      <article class="tile ecard" data-b="7"><div><div class="tag">Foundation Models</div><h3>One model, many tasks</h3>
+        <p>Trained once on vast text, images and code, then adapted to almost anything: chat, writing, coding, analysis, images, music and video. Today's models reason step by step and use tools.</p>
+        <p class="idea">Idea: a general-purpose collaborator.</p></div>
+        <ul><li><b>2022</b>ChatGPT launches</li><li><b>2024</b>Nobel Prizes for Hinton and Hassabis</li><li><b>2026</b>GPT-6 Astra, Claude Opus 5.5, Gemini 4 Argon</li></ul></article>
+    </div>
+    <p class="line" data-b="7"><span>Symbolic: people write the rules.</span> &nbsp;→&nbsp; Neural: machines learn the patterns.</p>
+  </div>
+  <aside class="notes">
+    <p>Seven builds, one per era. Brown dots are the symbolic tradition; teal dots are the neural one. Click any dot to go back to it.</p>
+    <p>Note the two winters: hype, then disappointment. Worth remembering today.</p>
+    <p>2024 Nobels: Hinton (Physics, with Hopfield) and Hassabis (Chemistry, with Jumper and Baker).</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 5 · rules vs weights -->
+<section class="slide s-two">
+  <div class="page">
+    <header class="hd"><h2>Two Ways to Make a Machine Think</h2><div class="kicker">Try both · click the facts and the weights</div></header>
+    <article class="tile side l">
+      <div class="tag">Symbolic · an expert system</div>
+      <h3>Rules a person wrote</h3>
+      <div class="row facts" id="facts">
+        <button class="btn on" data-f="feathers">has feathers</button>
+        <button class="btn" data-f="flies">flies</button>
+        <button class="btn" data-f="swims">swims</button>
+        <button class="btn on" data-f="legs">long legs</button>
+        <button class="btn" data-f="sings">sings</button>
+      </div>
+      <ul class="rules" id="rules">
+        <li data-r="1"><b>R1</b> IF feathers THEN bird</li>
+        <li data-r="2"><b>R2</b> IF bird AND long legs THEN wading bird</li>
+        <li data-r="3"><b>R3</b> IF bird AND swims AND NOT flies THEN penguin</li>
+        <li data-r="4"><b>R4</b> IF bird AND flies AND sings THEN songbird</li>
+      </ul>
+      <div class="concl" id="concl"></div>
+    </article>
+    <article class="tile side r">
+      <div class="tag">Neural · one artificial neuron</div>
+      <h3>Weights it learned</h3>
+      <svg id="neuron" viewBox="0 0 374 250" aria-label="A neuron with three inputs"></svg>
+      <div class="wrow" id="weights"></div>
+      <div class="out" id="nout"></div>
+    </article>
+    <p class="line" data-b="1">Rules can explain themselves but break on surprises. Weights adapt to examples but are hard to read.</p>
+  </div>
+  <aside class="notes">
+    <p>Left: toggle facts and watch rules fire — the system can say <i>why</i> (the chain of rules). This is how MYCIN worked, with ~600 rules.</p>
+    <p>Right: the same kind of decision as a weighted sum. Click a circle to switch an input on or off; use − and + to change weights. Nobody wrote a rule; training would set these numbers.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 6 · deep learning -->
+<section class="slide s-deep">
+  <div class="page">
+    <header class="hd"><h2>Deep Learning: Layers That Learn</h2><div class="kicker">Press Train and watch the connections change</div></header>
+    <article class="tile net">
+      <svg id="deepnet" viewBox="0 0 476 330" aria-label="A layered neural network"></svg>
+      <div class="ctl">
+        <button class="btn go" id="train" type="button">Train</button>
+        <span class="stat">examples seen<b id="ep">0</b></span>
+        <span class="stat">accuracy<b id="acc">33%</b></span>
+      </div>
+    </article>
+    <article class="tile chart">
+      <div class="tag">Error goes down as it learns</div>
+      <svg id="loss" viewBox="0 0 297 160"></svg>
+    </article>
+    <div class="pts">
+      <p data-b="1">Each layer builds on the last: pixels → edges → shapes → parts → “cat.”</p>
+      <p data-b="2">Training nudges millions (now trillions) of weights to reduce error on examples.</p>
+      <p data-b="3">A language model is the same idea, trained to predict the next word of text.</p>
+    </div>
+    <p class="line" data-b="3">Nobody programs the features. They are learned.</p>
+  </div>
+  <aside class="notes">
+    <p>Press Train. Line thickness = weight strength; teal positive, amber negative. Error falls, accuracy rises. Press again to reset.</p>
+    <p>This is a cartoon, but the shape of the error curve is real.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7 · next token -->
+<section class="slide s-next">
+  <div class="page">
+    <header class="hd"><h2>How a Language Model Writes</h2><div class="kicker">One next word at a time</div></header>
+    <div class="tile sent" id="sent"></div>
+    <div class="bars">
+      <h4>What might come next · click one, or let it choose</h4>
+      <div id="cands"></div>
+    </div>
+    <article class="tile wash knobs">
+      <h4>Controls</h4>
+      <div class="row"><button class="btn go" id="nx" type="button">Next word</button><button class="btn" id="nr" type="button">Start over</button></div>
+      <div class="row" id="temps"><span class="lbl">Temperature</span>
+        <button class="btn" data-t="0.2">Low</button><button class="btn on" data-t="1">Medium</button><button class="btn" data-t="2">High</button></div>
+      <p><b>Low:</b> safe, predictable choices. <b>High:</b> surprising ones — sometimes brilliant, sometimes nonsense.</p>
+      <p>Real models work in <b>tokens</b> (word pieces, about ¾ of a word) and weigh tens of thousands of options each step.</p>
+    </article>
+    <p class="line" data-b="1">Fluent is not the same as true: the model predicts what sounds likely.</p>
+  </div>
+  <aside class="notes">
+    <p>Ask the room to guess the next word before pressing. Then switch temperature to High and run it again.</p>
+    <p>The probabilities here are illustrative, not from a real model.</p>
+    <p>[build] The key caution: likely-sounding is not the same as correct.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 8 · models -->
+<section class="slide s-models">
+  <div class="page">
+    <header class="hd"><h2>Today's Foundation Models</h2><div class="kicker">The three frontier families · October 2026</div></header>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">OpenAI</div><h3>GPT-6 Astra</h3><div class="when">Released September 3, 2026</div>
+        <dl><dt>Known for</dt><dd>Coding, computer use, browsing, professional work</dd>
+          <dt>Context</dt><dd>About 1 million tokens in; up to 128K out</dd>
+          <dt>Where</dt><dd>ChatGPT (Plus, Pro, Business), API, AWS</dd>
+          <dt>API price</dt><dd>$10 in / $50 out per million tokens</dd></dl></article>
+      <article class="tile" data-b="2"><div class="tag">Anthropic</div><h3>Claude Opus 5.5</h3><div class="when">Released September 22, 2026</div>
+        <dl><dt>Known for</dt><dd>Long tasks, coding, research and analysis across many documents</dd>
+          <dt>Context</dt><dd>1 million tokens in; up to 128K out</dd>
+          <dt>Where</dt><dd>Claude apps (Pro, Max, Team), API, cloud platforms</dd>
+          <dt>API price</dt><dd>$4 in / $20 out per million tokens</dd></dl></article>
+      <article class="tile" data-b="3"><div class="tag">Google</div><h3>Gemini 4 Argon</h3><div class="when">Released October 13, 2026</div>
+        <dl><dt>Known for</dt><dd>Long reasoning on hard problems: coding, math, science</dd>
+          <dt>Context</dt><dd>About 1 million tokens, shared by input, thinking and output</dd>
+          <dt>Where</dt><dd>Gemini app, AI Studio, Gemini API, Google Cloud</dd>
+          <dt>API price</dt><dd>$2 in / $10 out per million tokens (introductory)</dd></dl></article>
+    </div>
+    <div class="box strip" data-b="4">
+      <div><b>1 token</b>≈ ¾ of a word</div>
+      <div><b>1 million tokens</b>≈ 750,000 words ≈ 8 novels</div>
+      <div><b>Chat apps</b>free tier + monthly plans</div>
+      <div><b>API</b>pay per token used</div>
+    </div>
+    <p class="ai-note">Details from each company's announcement and public pricing pages, October 2026. They change often — check before quoting.</p>
+  </div>
+  <aside class="notes">
+    <p>All three: multimodal input, very long context, step-by-step reasoning, tool use. Differences are in price, style and strengths — try the same prompt on each.</p>
+    <p>A token is a word piece. One million tokens is roughly 750,000 words.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 9 · openrouter -->
+<section class="slide s-router">
+  <div class="page">
+    <header class="hd"><h2>OpenRouter: One Door, Many Models</h2><div class="kicker">A coordinator for hundreds of models · click a provider to route a request</div></header>
+    <div class="hub"><svg id="router" viewBox="0 0 470 470"></svg></div>
+    <div class="facts">
+      <article class="tile" data-b="1"><h3>300+ models, one account</h3><p>OpenAI, Anthropic, Google, Meta, Mistral, DeepSeek, Qwen and many open models — in one chat window or one API.</p></article>
+      <article class="tile" data-b="2"><h3>Credit based</h3><p>Buy credits in advance. Each request is charged at the provider's own per-token price; a small fee (about 5.5%) is added when you buy credits.</p></article>
+      <article class="tile" data-b="3"><h3>Compare side by side</h3><p>Send one prompt to several models and compare answers. Some models are free, with daily limits.</p></article>
+      <article class="tile wash" data-b="4"><h3>For in-depth exploration: subscribe</h3><p>Monthly plans (about $20: ChatGPT Plus, Claude Pro, Google AI Pro) add higher limits, projects, deep research, voice, images and video.</p></article>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The animation: your request goes to OpenRouter, which forwards it to the model you chose, and the answer comes back. Click any provider.</p>
+    <p>Good for trying many models cheaply. For sustained work in one tool, a subscription is simpler and includes the app features.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 10 · five elements -->
+<section class="slide s-five">
+  <div class="page">
+    <header class="hd"><h2>Five Elements</h2><div class="kicker">Part 1A–1E · what we'll practice today</div></header>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="code">1A</div><h3>Prompt</h3><p>Say what you want — specifically.</p><p class="ex">vague → fine-tuned</p></article>
+      <article class="tile" data-b="2"><div class="code">1B</div><h3>Level</h3><p>Set the audience and the length.</p><p class="ex">2nd grade → college; one line → report</p></article>
+      <article class="tile" data-b="3"><div class="code">1C</div><h3>Writing</h3><p>Write from where you stand.</p><p class="ex">notes → haiku, sonnet</p></article>
+      <article class="tile" data-b="4"><div class="code">1D</div><h3>Knowledge Graph</h3><p>Map the concepts of a topic.</p><p class="ex">semantic net, concept map, mind map</p></article>
+      <article class="tile" data-b="5"><div class="code">1E</div><h3>Roleplay</h3><p>Talk with someone you can't meet.</p><p class="ex">Pip, a Timucua elder, a geologist, a poet</p></article>
+    </div>
+    <p class="line" data-b="6">Each element is a habit you can use with any model.</p>
+  </div>
+  <aside class="notes"><p>Road map for the rest of the session.</p></aside>
+</section>
+
+<!-- ============================================================ 11 · 1A specificity -->
+<section class="slide s-spec">
+  <div class="page">
+    <header class="hd"><h2>1A · Prompt: Specificity Matters</h2><div class="kicker">Same subject, four prompts · click a level</div></header>
+    <div class="row steps" id="spec-steps"><span class="lbl">Specificity</span>
+      <button class="btn on" data-s="0">1 · Vague</button><button class="btn" data-s="1">2 · Some detail</button>
+      <button class="btn" data-s="2">3 · Specific</button><button class="btn" data-s="3">4 · Fully specified</button></div>
+    <div class="pbox"><span class="you">Your prompt</span><span id="spec-p"></span></div>
+    <article class="tile rbox"><div class="tag">The response</div><div class="txt" id="spec-r"></div></article>
+    <article class="tile meters">
+      <div class="meter work"><div class="k">Your work</div><div class="bar"><i id="m-work"></i></div></div>
+      <div class="meter fit"><div class="k">Fit to what you wanted</div><div class="bar"><i id="m-fit"></i></div></div>
+      <p id="spec-c"></p>
+    </article>
+    <p class="line" data-b="1">More detail is more work up front — and a response that fits.</p>
+  </div>
+  <aside class="notes">
+    <p>Click through the four levels. Ask: which would you actually use?</p>
+    <p>Level 4 names the audience, the form, the senses, and things to avoid. The responses were written with Claude.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 12 · anatomy -->
+<section class="slide s-anat">
+  <div class="page">
+    <header class="hd"><h2>1A · Anatomy of a Good Prompt</h2><div class="kicker">Hover a part to find it</div></header>
+    <article class="tile prompt">
+      <span class="c1" data-lens="role">You are a science teacher who loves birds.</span>
+      <span class="c2" data-lens="task">Write a six-line poem about a great blue heron</span>
+      <span class="c3" data-lens="ctx">at dawn on a Florida salt marsh,</span>
+      <span class="c4" data-lens="aud">for 8th graders on a field trip.</span>
+      <span class="c5" data-lens="fmt">Free verse, present tense, one sense per line.</span>
+      <span class="c6" data-lens="lim">No rhyme; avoid the word “majestic.”</span>
+      <span class="c7" data-lens="ex">Aim for lines like: “Cold mud holds its yellow feet.”</span>
+    </article>
+    <div class="legend">
+      <span class="c1" data-lens="role">Role</span><span class="c2" data-lens="task">Task</span><span class="c3" data-lens="ctx">Context</span>
+      <span class="c4" data-lens="aud">Audience</span><span class="c5" data-lens="fmt">Format</span><span class="c6" data-lens="lim">Constraints</span><span class="c7" data-lens="ex">Example</span>
+    </div>
+    <div class="box iter" data-b="1">
+      <h4>Then iterate: the first answer is a draft</h4>
+      <div class="row"><span class="say">Make line 3 stranger.</span><span class="say">Give me three other endings.</span><span class="say">What did you assume about my audience?</span><span class="say">Shorter.</span></div>
+      <p>A conversation, not a vending machine.</p>
+    </div>
+    <p class="line" data-b="2">You don't need all seven every time — but each one you add removes a guess.</p>
+  </div>
+  <aside class="notes">
+    <p>Hover each legend chip to light up that part of the prompt.</p>
+    <p>[build] Iteration: follow-up prompts refine the result.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 13 · 1B level -->
+<section class="slide s-level">
+  <div class="page">
+    <header class="hd"><h2>1B · Level: Audience and Length</h2><div class="kicker">One question, sixteen answers · “Why is the sky blue?”</div></header>
+    <div class="pick">
+      <div class="row" id="lv-grade"><span class="lbl">Audience</span>
+        <button class="btn on" data-g="0">Elementary</button><button class="btn" data-g="1">Middle school</button><button class="btn" data-g="2">High school</button><button class="btn" data-g="3">College</button></div>
+      <div class="row" id="lv-len"><span class="lbl">Length&nbsp;&nbsp;&nbsp;</span>
+        <button class="btn on" data-l="0">One sentence</button><button class="btn" data-l="1">Paragraph</button><button class="btn" data-l="2">Page</button><button class="btn" data-l="3">Report</button></div>
+    </div>
+    <div class="pline" id="lv-p"></div>
+    <article class="tile out"><div class="meta"><span id="lv-m1"></span><span id="lv-m2"></span></div><div class="body" id="lv-b"></div></article>
+    <p class="line" data-b="1">Level changes the vocabulary and the ideas. Length changes how many ideas fit.</p>
+  </div>
+  <aside class="notes">
+    <p>Pick an audience and a length. Sentences and paragraphs are shown in full; pages and reports are shown as the outline the model produced.</p>
+    <p>Notice: the college answer isn't just longer words — it brings in new ideas (density fluctuations, polarization).</p>
+    <p>Examples written with Claude.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 14 · 1C NWP -->
+<section class="slide s-nwp">
+  <div class="page">
+    <header class="hd"><h2>1C · Writing: The National Writing Project</h2><div class="kicker">Teachers who write, teaching writers</div></header>
+    <p class="tile quote">“Writing can and should be taught, not just assigned, at every grade level.”<cite>— a founding belief of the National Writing Project</cite></p>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">Origins</div><h3>Berkeley, 1974</h3><p>James Gray started the Bay Area Writing Project at UC Berkeley. It grew into a national network.</p></article>
+      <article class="tile" data-b="2"><div class="tag">Method</div><h3>Teachers teaching teachers</h3><p>Summer institutes where teachers write, share drafts and lead workshops for each other.</p></article>
+      <article class="tile" data-b="3"><div class="tag">Reach</div><h3>175+ local sites</h3><p>In all 50 states, D.C., Puerto Rico and the U.S. Virgin Islands — usually hosted by a university.</p></article>
+    </div>
+    <div class="box wo" data-b="4">
+      <div class="badge"><span>WRITE OUT 2026</span><b>Write Where<br>We Stand</b><span>October 11–25</span></div>
+      <p>With the National Park Service, NWP invites everyone to step outside classrooms, homes and workspaces and write in “the places that shape and sustain us” — a landscape, a trail, a neighborhood, a body of water — then share it on the Write Out map.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>NWP's model: teachers are writers too. The best way to teach writing is to do it, together, and share drafts.</p>
+    <p>[build 4] Write Out is happening right now (Oct 11–25, 2026). The theme is “Write Where We Stand.” writeout.nwp.org</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 15 · write where we stand -->
+<section class="slide s-stand">
+  <div class="page">
+    <header class="hd"><h2>1C · Write Where We Stand</h2><div class="kicker">Place-based writing, step by step</div></header>
+    <div class="path">
+      <div class="st" data-b="1"><div class="c">1</div><h3>Stand</h3><p>Go outside. Choose one spot and stay.</p></div>
+      <div class="st" data-b="2"><div class="c">2</div><h3>Notice</h3><p>Use every sense. What moves? What repeats?</p></div>
+      <div class="st" data-b="3"><div class="c">3</div><h3>Note</h3><p>Jot raw phrases, not sentences. Only what is there.</p></div>
+      <div class="st" data-b="4"><div class="c">4</div><h3>Shape</h3><p>Choose a form: haiku, sonnet, letter, found poem.</p></div>
+      <div class="st" data-b="5"><div class="c">5</div><h3>Share</h3><p>Read it aloud. Post it to the Write Out map.</p></div>
+    </div>
+    <article class="tile senses">
+      <div class="tag">Noticing prompts · click a sense</div>
+      <div class="row" id="senses">
+        <button class="btn on" data-s="0">See</button><button class="btn" data-s="1">Hear</button><button class="btn" data-s="2">Smell</button>
+        <button class="btn" data-s="3">Touch</button><button class="btn" data-s="4">Time</button></div>
+      <div class="q" id="sense-q"></div>
+      <div class="eg" id="sense-eg"></div>
+    </article>
+    <article class="tile wash ai" data-b="6">
+      <h3>Where AI fits</h3>
+      <p>After the noticing — never instead of it. The experience must be yours.</p>
+      <p>AI can help you <b>shape</b>: count syllables, suggest a form, offer rhymes, ask what you left out.</p>
+      <p>And say that you used it.</p>
+    </article>
+  </div>
+  <aside class="notes">
+    <p>The Write Out choice boards suggest prompts like: watch the sun rise or set, notice the contrasts around you, go for a walk and make a found poem, try a haiku.</p>
+    <p>[build 6] The order matters: noticing first, then AI for shaping.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 16 · haiku / sonnet -->
+<section class="slide s-poem2">
+  <div class="page">
+    <header class="hd"><h2>1C · From Notes to Poem</h2><div class="kicker">Direct experience in, form out</div></header>
+    <article class="tile notes-card">
+      <div class="tag">My notes · back steps, 7:10 a.m.</div>
+      <ul>
+        <li>live oak, Spanish moss barely moving</li>
+        <li>mockingbird: three songs, then repeats</li>
+        <li>coffee steam</li>
+        <li>boards still wet, cool under bare feet</li>
+        <li>a truck downshifts, far off</li>
+        <li>light through the moss in pieces</li>
+      </ul>
+      <div class="ask">Use only what's in my notes. Write a haiku (5-7-5). Then a Shakespearean sonnet. Don't add feelings I didn't write down.</div>
+    </article>
+    <article class="tile poem">
+      <div class="row"><span class="tag">The poem</span>
+        <span class="row" id="pform"><button class="btn on" data-f="h">Haiku</button><button class="btn" data-f="s">Sonnet</button></span></div>
+      <div id="pverse"></div>
+    </article>
+    <p class="ai-note">Notes are an illustrative example — replace them with your own. Poems drafted with Claude (Opus 5.5) from these notes.</p>
+  </div>
+  <aside class="notes">
+    <p>Swap in your own notes from a spot near the venue if you can — written that morning.</p>
+    <p>Haiku numbers show syllables per line (5-7-5). Sonnet letters show the rhyme scheme ABAB CDCD EFEF GG, iambic pentameter.</p>
+    <p>Ask: what did the form force the poem to choose? What did the AI get wrong about the experience?</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 17 · kinds of maps -->
+<section class="slide s-kinds">
+  <div class="page">
+    <header class="hd"><h2>1D · Knowledge Graph and Its Relatives</h2><div class="kicker">Four ways to draw what we know</div></header>
+    <div class="grid">
+      <article class="tile" data-b="1">
+        <svg viewBox="0 0 150 150"><g stroke="#9FB8B5" stroke-width="2"><line x1="75" y1="30" x2="35" y2="80"/><line x1="75" y1="30" x2="115" y2="80"/><line x1="35" y1="80" x2="75" y2="125"/></g>
+          <g fill="#fff" stroke="#1D6E73" stroke-width="2"><circle cx="75" cy="30" r="13"/><circle cx="35" cy="80" r="13"/><circle cx="115" cy="80" r="13"/><circle cx="75" cy="125" r="13"/></g>
+          <g font-size="10" font-style="italic" fill="#1D6E73" font-family="Noto Sans"><text x="30" y="52">is-a</text><text x="100" y="52">has</text><text x="58" y="108">is-a</text></g></svg>
+        <div><h3>Semantic network</h3><div class="who">Ross Quillian, 1968</div><p>Concepts as nodes; labeled links such as <i>is-a</i> and <i>has</i>. An early model of memory in AI.</p></div></article>
+      <article class="tile" data-b="2">
+        <svg viewBox="0 0 150 150"><g stroke="#9FB8B5" stroke-width="2"><line x1="75" y1="22" x2="35" y2="75"/><line x1="75" y1="22" x2="115" y2="75"/><line x1="115" y1="75" x2="115" y2="128"/></g>
+          <g fill="#fff" stroke="#1D6E73" stroke-width="2"><rect x="50" y="12" width="50" height="20" rx="5"/><rect x="10" y="65" width="50" height="20" rx="5"/><rect x="90" y="65" width="50" height="20" rx="5"/><rect x="90" y="118" width="50" height="20" rx="5"/></g>
+          <g font-size="9" font-style="italic" fill="#1D6E73" font-family="Noto Sans"><text x="14" y="48">need</text><text x="100" y="48">make</text><text x="119" y="105">into</text></g></svg>
+        <div><h3>Concept map</h3><div class="who">Joseph Novak, Cornell, 1970s</div><p>Top-down, with linking phrases that read as sentences: <i>plants — need — sunlight</i>. Built for learning.</p></div></article>
+      <article class="tile" data-b="3">
+        <svg viewBox="0 0 150 150"><g fill="none" stroke-width="4" stroke-linecap="round"><path d="M75 75 Q50 40 25 35" stroke="#C9852F"/><path d="M75 75 Q105 40 130 40" stroke="#1D6E73"/><path d="M75 75 Q40 100 25 120" stroke="#8A6236"/><path d="M75 75 Q110 110 128 118" stroke="#6E8FA8"/></g>
+          <circle cx="75" cy="75" r="16" fill="#C9852F"/></svg>
+        <div><h3>Mind map</h3><div class="who">Tony Buzan, 1974</div><p>A central idea with radiating branches, color and images. Fast and personal; links are not labeled.</p></div></article>
+      <article class="tile" data-b="4">
+        <svg viewBox="0 0 150 150"><g stroke="#9FB8B5" stroke-width="1.5"><line x1="30" y1="30" x2="75" y2="70"/><line x1="120" y1="25" x2="75" y2="70"/><line x1="75" y1="70" x2="40" y2="120"/><line x1="75" y1="70" x2="120" y2="115"/><line x1="30" y1="30" x2="40" y2="120"/><line x1="120" y1="25" x2="120" y2="115"/><line x1="40" y1="120" x2="120" y2="115"/></g>
+          <g fill="#1D6E73"><circle cx="30" cy="30" r="8"/><circle cx="120" cy="25" r="8"/><circle cx="75" cy="70" r="10" fill="#C9852F"/><circle cx="40" cy="120" r="8"/><circle cx="120" cy="115" r="8"/></g></svg>
+        <div><h3>Knowledge graph</h3><div class="who">Google, 2012</div><p>Facts as triples, <span class="mono">subject – relation – object</span>, at web scale. AI is very good at producing them.</p></div></article>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>All four organize concepts around a topic. They differ in how strict the links are: labeled relations (semantic net, knowledge graph), readable propositions (concept map), or loose association (mind map).</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 18 · honeybee -->
+<section class="slide s-graph">
+  <div class="page">
+    <header class="hd"><h2>1D · One Topic, Three Maps</h2><div class="kicker">Honeybee · switch the view, click a concept</div></header>
+    <div class="row views"><span class="row" id="gviews"><span class="lbl">View</span>
+      <button class="btn on" data-v="sem">Semantic network</button><button class="btn" data-v="con">Concept map</button><button class="btn" data-v="mind">Mind map</button></span>
+</div>
+    <article class="tile board"><svg id="graph" viewBox="0 0 849 400"></svg></article>
+    <p class="info" id="ginfo"></p>
+    <p class="info mono" style="top:628px;font-size:12.5px;color:var(--grey)">Ask a model: “List the key concepts of honeybees as subject – relation – object triples.”</p>
+  </div>
+  <aside class="notes">
+    <p>Same fourteen concepts, three structures. Semantic network: relation names. Concept map: hierarchy with readable phrases. Mind map: branches by theme, no labels.</p>
+    <p>Click a node to see its connections as triples — the form an AI model gives you when you ask for a knowledge graph.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 19 · roleplay -->
+<section class="slide s-role">
+  <div class="page">
+    <header class="hd"><h2>1E · Roleplay: Talk to Someone</h2><div class="kicker">Give the model a role, then ask · pick a person</div></header>
+    <div class="row who" id="personas">
+      <button class="btn on" data-p="pip">Pip · Great Expectations</button>
+      <button class="btn" data-p="tim">A Timucua elder · 1564</button>
+      <button class="btn" data-p="geo">A Florida geologist</button>
+      <button class="btn" data-p="poet">A poet who coaches</button>
+    </div>
+    <article class="tile chat"><div class="sys" id="sys"></div><div class="msgs" id="msgs"></div></article>
+    <p class="line">Set who, when and where · ask in character · step out of character to check the facts</p>
+  </div>
+  <aside class="notes">
+    <p>Each persona plays a short scripted exchange (written with Claude).</p>
+    <p>Pip is fiction in the public domain (Dickens, 1861). The Timucua are a real people of northeast Florida; the model's voice is a reconstruction from Spanish and French records and archaeology. Ask it to separate what is known from what it imagines, and treat the culture with respect.</p>
+    <p>The poet shows another use: the AI as coach, not author.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 20 · guidelines -->
+<section class="slide s-guide">
+  <div class="page">
+    <header class="hd"><h2>Guidelines</h2><div class="kicker">Using AI honestly</div></header>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">1 · Transparency</div><h3>Say if you used AI</h3><p>Always say whether and how AI helped: ideas, drafting, editing, images, music. Your readers deserve to know.</p></article>
+      <article class="tile" data-b="2"><div class="tag">2 · Copyright</div><h3>Respect others' work</h3><p>Don't feed in someone's work to copy their style or reproduce it. Check what you publish. Purely AI-made work may not be protected by copyright.</p></article>
+      <article class="tile" data-b="3"><div class="tag">3 · Credit</div><h3>Give credit</h3><p>Credit people, sources and tools — like the music on the title slide: “Celestial Drift” © Paul Fishwick, made with Google Flow Music.</p></article>
+    </div>
+    <div class="box build" data-b="4">
+      <h4>Build a disclosure · click what you used AI for</h4>
+      <div class="row" id="uses"><span class="lbl">Used for</span>
+        <button class="btn" data-u="brainstorming ideas">ideas</button><button class="btn" data-u="drafting text">drafting</button>
+        <button class="btn on" data-u="editing">editing</button><button class="btn" data-u="research and summaries">research</button>
+        <button class="btn" data-u="making images">images</button><button class="btn" data-u="making music">music</button></div>
+      <div class="row" id="tools"><span class="lbl">Tool</span>
+        <button class="btn on" data-t="Claude">Claude</button><button class="btn" data-t="ChatGPT">ChatGPT</button><button class="btn" data-t="Gemini">Gemini</button><button class="btn" data-t="Google Flow Music">Flow Music</button></div>
+      <div class="stmt" id="stmt"></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Three rules. [build 4] A disclosure builder: click uses and a tool to make a one-line statement.</p>
+    <p>On copyright: the U.S. Copyright Office protects human authorship; material generated entirely by AI is not registrable. What you add and arrange can be.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 21 · again -->
+<section class="slide s-again">
+  <div class="page">
+    <header class="hd"><h2>Remember</h2><div class="kicker">Psychology · again</div></header>
+    <div class="say">I can be <span class="role" id="again-role"></span><span class="caret"></span></div>
+    <div class="grid">
+      <article class="tile"><div class="tag">Openness</div><h3>Embrace what you can be</h3><p>Writer, musician, artist, designer, director. Try a role you never thought was yours — the first attempt is cheap now. The taste is still yours.</p></article>
+      <article class="tile wash"><div class="dotline"><i></i></div><div class="tag">Attention</div><h3>Exercise the attention muscle</h3><p>Look before you prompt. Read answers slowly. One thing at a time. Go back to the source.</p></article>
+    </div>
+    <div class="box next">Next time · <span>Part 2: Media</span> — images, sound, music and video</div>
+  </div>
+  <aside class="notes"><p>Close where we began: openness and attention. Then preview Part 2.</p></aside>
+</section>
+
+<!-- ============================================================ 22 · resources -->
+<section class="slide s-res">
+  <div class="page">
+    <header class="hd"><h2>Resources</h2><div class="kicker">For trying things this week</div></header>
+    <div class="grid">
+      <article class="tile"><h3>ChatGPT · GPT-6 Astra</h3><p><a href="https://chatgpt.com" target="_blank" rel="noopener">chatgpt.com</a></p></article>
+      <article class="tile"><h3>Claude · Opus 5.5</h3><p><a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a></p></article>
+      <article class="tile"><h3>Gemini · 4 Argon</h3><p><a href="https://gemini.google.com" target="_blank" rel="noopener">gemini.google.com</a></p></article>
+      <article class="tile"><h3>OpenRouter</h3><p><a href="https://openrouter.ai" target="_blank" rel="noopener">openrouter.ai</a> — many models, one account, credits</p></article>
+      <article class="tile"><h3>National Writing Project</h3><p><a href="https://www.nwp.org" target="_blank" rel="noopener">nwp.org</a></p></article>
+      <article class="tile"><h3>Write Out 2026 · Write Where We Stand</h3><p><a href="https://writeout.nwp.org" target="_blank" rel="noopener">writeout.nwp.org</a> — October 11–25, choice boards and map</p></article>
+      <article class="tile"><h3>Great Expectations (public domain)</h3><p><a href="https://www.gutenberg.org/ebooks/1400" target="_blank" rel="noopener">gutenberg.org/ebooks/1400</a></p></article>
+      <article class="tile"><h3>The Timucua</h3><p>Jerald T. Milanich, <i>The Timucua</i> (Blackwell, 1996)</p></article>
+      <article class="tile"><h3>Concept maps</h3><p>Novak &amp; Cañas, “The Theory Underlying Concept Maps and How to Construct Them” (IHMC)</p></article>
+      <article class="tile"><h3>Disclosure</h3><p>Examples in this deck were written with Claude and are labeled where they appear.</p></article>
+    </div>
+  </div>
+  <aside class="notes"><p>Links open in a new tab.</p></aside>
+</section>
+
+</div></div>
+
+<div id="hint">→ / space / click to advance · F fullscreen · P presenter view · M music</div>
+
+<div id="presenter">
+  <div id="pv-notes"></div>
+  <div id="pv-side">
+    <div id="pv-next"><div class="label">Next</div><div id="pv-nextstage"></div></div>
+    <div><div id="pv-count"></div><div id="pv-build"></div></div>
+    <div><div class="label">Elapsed (click to reset)</div><div id="pv-timer">0:00</div><div id="pv-clock"></div></div>
+  </div>
+</div>
+
+<script src="deck.js"></script>
+<script src="slides.js"></script>
+</body>
+</html>
