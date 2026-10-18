@@ -157,11 +157,13 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
 .yt:hover .play{transform:scale(1.08)}
 .yt .soon{position:absolute;left:10px;right:10px;bottom:10px;padding:6px 9px;border-radius:8px;background:rgba(0,0,0,.65);color:#eee;font-size:11.5px;text-align:center}
 .yt.live .soon{display:none}
+.ytlink{position:absolute;text-align:right;font-size:12px;font-weight:600;color:var(--teal);text-decoration:none}
+.ytlink:hover{text-decoration:underline}
 
 /* ===== songs ===== */
 .s-songs .yt{top:122px;width:220px;height:391px}
 .s-songs .v1{left:70px}.s-songs .v2{left:315px}
-.s-songs .cap{position:absolute;top:522px;width:220px;text-align:center;font-size:13.5px;font-weight:700;color:var(--ink)}
+.s-songs .cap{position:absolute;top:542px;width:220px;text-align:center;font-size:13.5px;font-weight:700;color:var(--ink)}
 .s-songs .cap span{display:block;font-weight:400;color:var(--grey)}
 .s-songs .side{position:absolute;left:575px;top:150px;width:329px}
 .s-songs .side p{margin:0 0 14px;font-size:17px;line-height:1.38;color:var(--ink)}
@@ -1070,12 +1072,18 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
   [].forEach.call(document.querySelectorAll('#stage .yt'),function(v){
     var id=v.getAttribute('data-yt'); if(id) v.classList.add('live');
     var slide=v.closest('.slide');
+    if(id){ var a=document.createElement('a'); a.className='ytlink'; a.target='_blank'; a.rel='noopener';
+      a.href='https://www.youtube.com/watch?v='+id+(v.dataset.start?'&t='+v.dataset.start+'s':''); a.textContent='Open on YouTube \u2197';
+      a.style.left=v.style.left||''; v.parentNode.insertBefore(a,v.nextSibling);
+      var r=v.getBoundingClientRect, cs=getComputedStyle(v);
+      a.style.left=cs.left; a.style.top=(parseFloat(cs.top)+parseFloat(cs.height)+6)+'px'; a.style.width=cs.width; }
     v.addEventListener('click',function(){
       id=v.getAttribute('data-yt'); if(!id||v.querySelector('iframe')) return;
-      var q='autoplay=1&rel=0&modestbranding=1'+(v.dataset.start?'&start='+v.dataset.start:'')+(v.dataset.end?'&end='+v.dataset.end:'');
+      var q='autoplay=1&rel=0&playsinline=1&origin='+encodeURIComponent(location.origin)+(v.dataset.start?'&start='+v.dataset.start:'')+(v.dataset.end?'&end='+v.dataset.end:'');
       var f=document.createElement('iframe');
-      f.src='https://www.youtube-nocookie.com/embed/'+id+'?'+q;
-      f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen=true;
+      f.src='https://www.youtube.com/embed/'+id+'?'+q;
+      f.referrerPolicy='strict-origin-when-cross-origin';
+      f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen; web-share'; f.allowFullscreen=true;
       v.appendChild(f);
     });
     new MutationObserver(function(){ if(!slide.classList.contains('on')){ var f=v.querySelector('iframe'); if(f) f.remove(); } })
