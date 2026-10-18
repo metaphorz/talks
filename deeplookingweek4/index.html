@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Subjects Meet Objects — Deep Looking, Week 4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck.css">
+<style>
+/* ===== shared pieces ===== */
+.tile{position:relative;background:var(--card);border-radius:18px;padding:18px 18px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.tile.wash{background:var(--teal-wash)}
+.tile .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--amber)}
+.tile h3{margin:9px 0 0;font-size:20px;line-height:1.2;font-weight:700;color:var(--ink)}
+.tile p{margin:13px 0 0;font-size:16px;line-height:1.32;color:var(--ink)}
+.grid{position:absolute;left:55px;width:849px;display:grid;gap:21px}
+.line{position:absolute;left:55px;width:849px;margin:0;text-align:center}
+.box{position:absolute;background:var(--teal-wash);border-radius:18px;box-shadow:0 5px 10px rgba(40,30,10,.25)}
+svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* ===== 1 · title ===== */
+.s-title .bar{position:absolute;left:65px;top:120px;width:9px;height:308px;background:var(--amber);box-shadow:2px 3px 4px rgba(0,0,0,.3)}
+.s-title .eyebrow{position:absolute;left:99px;top:139px;font-size:12.5px;font-weight:700;color:var(--teal);letter-spacing:.01em}
+.s-title h1{position:absolute;left:97px;top:170px;margin:0;font-size:56px;line-height:1.14;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.s-title .sub{position:absolute;left:99px;top:358px;width:430px;margin:0;font-size:19px;line-height:1.28;color:var(--grey)}
+.s-title .pairs{position:absolute;left:99px;top:492px;margin:0;font-size:17.5px;font-weight:700;color:var(--ink)}
+.s-title .q{position:absolute;left:99px;top:516px;width:800px;margin:0;font-size:17px;color:var(--grey)}
+.slide.on .bar.anim{transform-origin:top;animation:growbar .7s var(--ease) both}
+.slide.on .eyebrow.anim{animation:rise .6s var(--ease) .15s both}
+.slide.on h1.anim{animation:rise .7s var(--ease) .25s both}
+.s-title.on .sub.anim{animation:rise .7s var(--ease) .45s both}
+
+/* ===== 2 · recap and the turn ===== */
+.s-recap .grid{top:124px;grid-template-columns:repeat(3,1fr)}
+.s-recap .rung{height:262px;padding:0;overflow:hidden}
+.s-recap .rung .pic{height:118px;background:#e8e1d2 center/cover}
+.s-recap .rung svg{display:block;width:100%;height:118px;background:#EEF4F2}
+.s-recap .rung .txt{padding:12px 16px}
+.s-recap .rung h3{margin-top:6px;font-size:18.5px}
+.s-recap .rung p{margin-top:6px;font-size:14.5px;color:var(--ink-2)}
+.s-recap .turn{left:55px;top:408px;width:849px;height:214px;padding:14px 22px}
+.s-recap .half{position:absolute;top:14px;width:380px;height:186px}
+.s-recap .half.a{left:22px}.s-recap .half.b{left:446px}
+.s-recap .half h4{margin:0;font-size:12.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-recap .half.b h4{color:var(--amber)}
+.s-recap .half svg{display:block;width:380px;height:118px;margin-top:4px;overflow:visible}
+.s-recap .half p{margin:2px 0 0;font-size:15.5px;font-weight:700;color:var(--ink)}
+.s-recap .half p span{font-weight:400;color:var(--grey)}
+.s-recap .arrow{position:absolute;left:412px;top:80px;font-size:26px;font-weight:700;color:var(--amber)}
+.s-recap .draw7{stroke-dasharray:1;stroke-dashoffset:1}
+.s-recap.on .half.b.shown .draw7{animation:draw7 .6s var(--ease) both}
+.s-recap.on .half.b.shown .d1{animation-delay:.25s}.s-recap.on .half.b.shown .d2{animation-delay:.75s}
+.s-recap.on .half.b.shown .d3{animation-delay:1.05s}.s-recap.on .half.b.shown .d4{animation-delay:1.35s}
+@keyframes draw7{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+.s-recap .pop7{opacity:0}
+.s-recap.on .half.b.shown .pop7{animation:pop7 .4s var(--ease) both}
+.s-recap.on .half.b.shown .p1{animation-delay:.6s}.s-recap.on .half.b.shown .p2{animation-delay:.95s}
+.s-recap.on .half.b.shown .p3{animation-delay:1.25s}.s-recap.on .half.b.shown .p4{animation-delay:1.55s}
+@keyframes pop7{from{opacity:0}to{opacity:1}}
+.s-recap.seen .pop7{opacity:1}.s-recap.seen .draw7{stroke-dashoffset:0}
+
+/* ===== 3 · LAMESH on the worm stone ===== */
+.s-lamesh .stone{position:absolute;left:55px;top:150px;width:340px;height:300px;margin:0}
+.s-lamesh .stone img{display:block;width:340px;height:300px;object-fit:cover;border-radius:16px;box-shadow:0 5px 12px rgba(40,30,10,.3)}
+.s-lamesh .stone figcaption{margin-top:10px;font-size:14px;font-style:italic;color:var(--grey);text-align:center}
+.s-lamesh .lenses{position:absolute;left:470px;top:132px;width:434px;margin:0;padding:0;list-style:none}
+.s-lamesh .lenses li{position:relative;height:60px;margin-bottom:6px;padding:7px 12px 0 58px;border-radius:14px;background:#fff;
+  box-shadow:0 1px 0 #ece4d4,0 3px 7px rgba(40,30,10,.18);transition:box-shadow .2s,background .2s}
+.s-lamesh .lenses li:hover{box-shadow:0 0 0 2.5px var(--amber),0 3px 7px rgba(40,30,10,.18)}
+.s-lamesh .lenses .b{position:absolute;left:12px;top:12px;width:36px;height:36px;border-radius:50%;background:var(--teal);color:#fff;
+  display:grid;place-items:center;font-size:16px;font-weight:700}
+.s-lamesh .lenses li.h .b{background:var(--amber)}
+.s-lamesh .lenses .n{font-size:16px;font-weight:700;color:var(--ink)}
+.s-lamesh .lenses .q{font-size:13.5px;color:var(--grey);margin-left:6px}
+.s-lamesh .lenses .f{display:block;margin-top:3px;font-size:13.5px;font-weight:600;font-style:italic;color:#A86A1E}
+.s-lamesh .th{fill:none;stroke:var(--teal);stroke-width:2;opacity:0;transition:opacity .4s,stroke .2s,stroke-width .2s}
+.s-lamesh:has(.f[data-b="1"].shown) #th-L,.s-lamesh:has(.f[data-b="2"].shown) #th-A,.s-lamesh:has(.f[data-b="3"].shown) #th-M,
+.s-lamesh:has(.f[data-b="4"].shown) #th-E,.s-lamesh:has(.f[data-b="5"].shown) #th-S,.s-lamesh:has(.f[data-b="6"].shown) #th-H{opacity:.55}
+.s-lamesh:has(li[data-k=L]:hover) #th-L,.s-lamesh:has(li[data-k=A]:hover) #th-A,.s-lamesh:has(li[data-k=M]:hover) #th-M,
+.s-lamesh:has(li[data-k=E]:hover) #th-E,.s-lamesh:has(li[data-k=S]:hover) #th-S,.s-lamesh:has(li[data-k=H]:hover) #th-H{opacity:1;stroke:var(--amber);stroke-width:3}
+.s-lamesh .line{top:548px;font-size:16.5px;font-weight:700;color:var(--teal)}
+/* ===== the Deep Looking app ===== */
+.s-app .lead{position:absolute;left:66px;top:128px;width:410px;margin:0;font-size:18.5px;line-height:1.25;font-weight:700;color:var(--ink)}
+.s-app ol{position:absolute;left:66px;top:232px;width:400px;margin:0;padding:0;list-style:none}
+.s-app li{display:grid;grid-template-columns:38px 1fr;gap:20px;align-items:center;height:75.5px;font-size:16.5px;line-height:1.27;color:var(--ink)}
+.s-app li .n{width:38px;height:38px;border-radius:50%;background:var(--amber);color:#fff;display:grid;place-items:center;
+  font-size:14px;font-weight:700;box-shadow:1px 3px 5px rgba(0,0,0,.3)}
+.s-app .mock{position:absolute;left:533px;top:137px;width:362px;height:346px;background:#1E1F2E;border-radius:14px;
+  box-shadow:0 6px 12px rgba(0,0,0,.35)}
+.s-app .mock .brand{position:absolute;left:0;right:0;top:12px;text-align:center;font-size:12px;font-weight:700;color:var(--amber);letter-spacing:.03em}
+.s-app .mock .pic{position:absolute;left:21px;top:45px;width:320px;height:280px;background:url(img/cycad.jpg) center 46%/cover;overflow:hidden}
+.s-app .mock .seg{position:absolute;inset:0;width:320px;height:280px}
+.s-app .pop{position:absolute;left:190px;top:210px;width:160px;padding:9px 11px;background:#1E1F2E;border:1.5px solid var(--amber);
+  border-radius:8px;color:#e9e3d4}
+.s-app .tabs{display:flex;gap:8px;padding-bottom:7px;border-bottom:1px solid #4a4a5a}
+.s-app .tabs button{border:0;background:none;padding:0;font:600 9.5px var(--sans);color:#8f8f9f;cursor:pointer}
+.s-app .tabs button.on{color:var(--amber);font-weight:700}
+.s-app .pop .t{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--amber)}
+.s-app .pop .d{margin-top:5px;font-size:9.5px;line-height:1.35;font-style:italic}
+.s-app .cap{position:absolute;left:533px;width:362px;top:490px;text-align:center;font-size:10.5px;font-style:italic;color:var(--grey)}
+.s-app .styles{left:66px;top:541px;width:827px;height:80px;padding:15px 25px}
+.s-app .styles p{margin:0 0 5px;font-size:16.5px;color:var(--ink)}
+.s-app .styles b{color:var(--teal);margin-right:6px}
+
+/* ===== try it ===== */
+.s-try h1{position:absolute;left:97px;top:172px;margin:0;font-size:45px;line-height:1.24;font-weight:700;color:var(--ink)}
+.s-try .url{position:absolute;left:99px;top:330px;font-size:24px;font-weight:700;color:#3C7A80;text-decoration:underline;
+  text-underline-offset:4px;text-decoration-thickness:1.5px}
+.s-try .url:hover{color:var(--teal)}
+.s-try .sub{position:absolute;left:99px;top:379px;margin:0;font-size:15px;color:var(--grey)}
+.s-try .qr{position:absolute;left:617px;top:111px;width:284px;height:284px;background:#fff;border-radius:26px;
+  box-shadow:0 5px 10px rgba(40,30,10,.3);display:grid;place-items:center}
+.s-try .qr img{width:236px;height:236px;image-rendering:pixelated}
+.s-try.on .qr.anim{animation:pop .6s var(--ease) .5s both}
+.s-try .ask{left:98px;top:477px;width:796px;height:111px;padding:20px 24px}
+.s-try .ask .k{margin:0;font-size:16px;font-weight:700;color:var(--teal)}
+.s-try .ask p{margin:6px 0 0;font-size:16px;line-height:1.3;color:var(--ink)}
+.s-try .bar{position:absolute;left:65px;top:120px;width:9px;height:308px;background:var(--amber);box-shadow:2px 3px 4px rgba(0,0,0,.3)}
+.s-try .eyebrow{position:absolute;left:99px;top:139px;font-size:12.5px;font-weight:700;color:var(--teal);letter-spacing:.01em}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+</style>
+</head>
+<body data-footer="Deep Looking · Week 4">
+<div id="viewport"><div id="stage">
+
+<!-- ============================================================ 1 -->
+<section class="slide s-title" data-nonum>
+  <div class="page">
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">NEW THEME</div>
+    <h1 class="anim">Subjects<br>Meet Objects</h1>
+    <p class="sub anim">What happens when one end of a connection is a way of knowing — not another thing?</p>
+    <p class="pairs" data-b="1">Language ↔ a worm stone.&nbsp; Science ↔ a cycad.&nbsp; Humanities ↔ a museum.</p>
+    <p class="q" data-b="2">A lens doesn't stop at the object. It keeps going — into chains of questions.</p>
+  </div>
+  <svg class="full" id="constellation" viewBox="0 0 1280 720" aria-hidden="true"></svg>
+  <aside class="notes">
+    <p>Week 4. Last week we joined two things; this week one end of the connection is a subject — a LAMESH lens.</p>
+    <p>Watch the title: a lens reaches an object, and the thread doesn't stop — a chain of questions grows out the other side.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 -->
+<section class="slide s-recap">
+  <div class="page">
+    <header class="hd"><h2>Last Week: Making Connections</h2><div class="kicker">Recap · three rungs of the ladder</div></header>
+    <div class="grid">
+      <article class="tile rung"><div class="pic" style="background-image:url(img/raven.jpg)"></div>
+        <div class="txt"><div class="tag">Rung 1 · Words</div><h3>Raven ↔ writing-desk</h3><p>A ↔ B through one idea: <i>a quill</i>.</p></div></article>
+      <article class="tile rung">
+        <svg viewBox="0 0 269 118" aria-hidden="true">
+          <ellipse cx="72" cy="59" rx="52" ry="20" fill="none" stroke="#C9BFAE" stroke-dasharray="3 3"/><circle cx="72" cy="59" r="10" fill="#C9852F"/>
+          <circle r="4.5" fill="#4F7FA8"><animateMotion dur="6s" repeatCount="indefinite" path="M124,59 A52,20 0 1,1 20,59 A52,20 0 1,1 124,59"/></circle>
+          <text x="134" y="64" font-size="15" font-weight="700" fill="#C9852F" font-family="Noto Sans, Arial" text-anchor="middle">↔</text>
+          <ellipse cx="197" cy="59" rx="52" ry="20" fill="none" stroke="#8FB9B4" stroke-dasharray="3 3"/>
+          <circle cx="194" cy="58" r="4" fill="#C9852F"/><circle cx="200" cy="58" r="4" fill="#1D6E73"/><circle cx="197" cy="63" r="4" fill="#C9852F"/>
+          <circle r="3.5" fill="#1D6E73"><animateMotion dur="6s" repeatCount="indefinite" path="M249,59 A52,20 0 1,1 145,59 A52,20 0 1,1 249,59"/></circle>
+        </svg>
+        <div class="txt"><div class="tag">Rung 2 · Structures</div><h3>Atom ↔ solar system</h3><p>A whole set of relations carried across — until it breaks.</p></div></article>
+      <article class="tile rung"><div class="pic" style="background-image:url(img/bourton-1-81-top.jpg)"></div>
+        <div class="txt"><div class="tag">Rung 3 · Models</div><h3>Village ↔ model village</h3><p>A whole system at another scale: what is kept, what is lost.</p></div></article>
+    </div>
+    <div class="box turn">
+      <div class="half a">
+        <h4>Last week</h4>
+        <svg viewBox="0 0 380 118" aria-hidden="true">
+          <line x1="105" y1="59" x2="275" y2="59" stroke="#1D6E73" stroke-width="2.5" stroke-dasharray="8 7"/>
+          <circle cx="80" cy="59" r="30" fill="#fff" stroke="#A9CFC9" stroke-width="2"/><text x="80" y="66" text-anchor="middle" font-size="22" font-weight="700" fill="#1D6E73" font-family="Noto Sans, Arial">A</text>
+          <circle cx="300" cy="59" r="30" fill="#E9DDC7"/><text x="300" y="66" text-anchor="middle" font-size="22" font-weight="700" fill="#8A6236" font-family="Noto Sans, Arial">B</text>
+          <circle cx="190" cy="59" r="12" fill="#C9852F"/>
+        </svg>
+        <p>Thing ↔ thing, <span>through an idea in the middle.</span></p>
+      </div>
+      <div class="arrow" data-b="1">→</div>
+      <div class="half b" data-b="1">
+        <h4>This week</h4>
+        <svg viewBox="0 0 380 118" aria-hidden="true">
+          <defs><clipPath id="rc-cyc"><circle cx="150" cy="59" r="30"/></clipPath></defs>
+          <path class="draw7" pathLength="1" d="M52,59 L120,59" stroke="#C9852F" stroke-width="3" fill="none"/>
+          <path class="draw7 d1" pathLength="1" d="M180,59 Q205,30 232,32" stroke="#1D6E73" stroke-width="2" fill="none"/>
+          <path class="draw7 d2" pathLength="1" d="M240,32 Q268,40 288,62" stroke="#1D6E73" stroke-width="2" fill="none"/>
+          <path class="draw7 d3" pathLength="1" d="M292,70 Q310,92 340,92" stroke="#1D6E73" stroke-width="2" fill="none"/>
+          <circle cx="32" cy="59" r="22" fill="#1D6E73"/><text x="32" y="66" text-anchor="middle" font-size="19" font-weight="700" fill="#fff" font-family="Noto Sans, Arial">S</text>
+          <circle cx="150" cy="59" r="32" fill="#fff"/><image href="img/cycad.jpg" x="110" y="29" width="80" height="60" preserveAspectRatio="xMidYMid slice" clip-path="url(#rc-cyc)"/>
+          <g class="pop7 p1"><circle cx="236" cy="32" r="6" fill="#1D6E73"/><text x="236" y="16" text-anchor="middle" font-size="12" fill="#3A4148" font-family="Noto Sans, Arial">cycasin</text></g>
+          <g class="pop7 p2"><circle cx="290" cy="66" r="6" fill="#1D6E73"/><text x="312" y="58" text-anchor="start" font-size="12" fill="#3A4148" font-family="Noto Sans, Arial">MAM</text></g>
+          <g class="pop7 p3"><circle cx="344" cy="92" r="7" fill="#C9852F"/><text x="344" y="114" text-anchor="middle" font-size="12" font-weight="700" fill="#A86A1E" font-family="Noto Sans, Arial">DNA</text></g>
+        </svg>
+        <p>Subject → object → <span>a chain of questions that keeps going.</span></p>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Quick recap of the ladder: words, structures, models. Every connection had the form A ↔ B, through an idea.</p>
+    <p>[build] The turn: put a subject at one end. Science meets the cycad — and the thread runs on through it: cycasin, MAM, DNA.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 -->
+<section class="slide s-lamesh">
+  <div class="page">
+    <header class="hd"><h2>LAMESH</h2><div class="kicker">Six lenses for opening a subject</div></header>
+    <figure class="stone"><img src="img/wormstone.jpg" alt="A grey, honeycombed stone built by marine worms"><figcaption>One object: a stone built by worms.</figcaption></figure>
+    <ul class="lenses">
+      <li data-k="L"><span class="b">L</span><span class="n">Language</span><span class="q">What do we call it?</span>
+        <span class="f" data-b="1">→ honeycomb; the Ainu <i>upopoy</i> — singing together</span></li>
+      <li data-k="A"><span class="b">A</span><span class="n">Art</span><span class="q">How might we re-see it?</span>
+        <span class="f" data-b="2">→ an imagined reef, in video and song</span></li>
+      <li data-k="M"><span class="b">M</span><span class="n">Mathematics</span><span class="q">What can we measure or model?</span>
+        <span class="f" data-b="3">→ a state machine of building; a 3D model</span></li>
+      <li data-k="E"><span class="b">E</span><span class="n">Engineering</span><span class="q">How is it made or structured?</span>
+        <span class="f" data-b="4">→ the worms are masons: catch, place, cement</span></li>
+      <li data-k="S"><span class="b">S</span><span class="n">Science</span><span class="q">What processes explain it?</span>
+        <span class="f" data-b="5">→ a reef that creates niches for life</span></li>
+      <li data-k="H" class="h"><span class="b">H</span><span class="n">Humanities</span><span class="q">What does it mean to people?</span>
+        <span class="f" data-b="6">→ <i>kamuy</i>: beings visiting from the spirit world</span></li>
+    </ul>
+    <p class="line" data-b="7">One object, six subjects — each lens opens a different field around it.</p>
+  </div>
+  <svg class="full" viewBox="0 0 1280 720" aria-hidden="true" style="pointer-events:none">
+    <g transform="translate(160 0)">
+      <path id="th-L" class="th" d="M395,300 C432,300 436,162 470,162"/>
+      <path id="th-A" class="th" d="M395,300 C432,300 436,228 470,228"/>
+      <path id="th-M" class="th" d="M395,300 C432,300 436,294 470,294"/>
+      <path id="th-E" class="th" d="M395,300 C432,300 436,360 470,360"/>
+      <path id="th-S" class="th" d="M395,300 C432,300 436,426 470,426"/>
+      <path id="th-H" class="th" d="M395,300 C432,300 436,492 470,492"/>
+    </g>
+  </svg>
+  <aside class="notes">
+    <p>The six lenses, each a question. Each click reveals what that lens found in the worm stone — a preview of the walk-through that follows.</p>
+    <p>Threads gather on the stone as the lenses accumulate. Hover a lens to light its thread.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ the app -->
+<section class="slide s-app">
+  <div class="page">
+    <header class="hd"><h2>The Deep Looking App</h2><div class="kicker">An open, web-based gallery for looking through lenses</div></header>
+    <p class="lead">A web app (free on GitHub) that turns one image into many connections.</p>
+    <ol>
+      <li data-b="1"><span class="n">1</span><span><b>Choose an image</b> from a curated gallery.</span></li>
+      <li data-b="2"><span class="n">2</span><span><b>Hover over it</b> — the image is divided into segments (sky, boardwalk, frond…).</span></li>
+      <li data-b="3"><span class="n">3</span><span><b>A window opens</b> with a tab for each lens: poetry, geometry, art history…</span></li>
+      <li data-b="4"><span class="n">4</span><span><b>Pin it and explore</b> — follow links, then go back to looking.</span></li>
+    </ol>
+    <div class="mock" data-b="1">
+      <div class="brand">DEEP LOOKING</div>
+      <div class="pic">
+        <svg class="seg" viewBox="0 0 320 280" data-b="2"><ellipse cx="160" cy="105" rx="30" ry="62" fill="rgba(201,133,47,.12)" stroke="#E0A040" stroke-width="2.5" stroke-dasharray="9 6"/></svg>
+      </div>
+      <div class="pop" data-b="3">
+        <div class="tabs"><button class="on" data-tab="0">Poetry</button><button data-tab="1">Geometry</button><button data-tab="2">Science</button></div>
+        <div class="t">The cone</div>
+        <div class="d">a poem, an image or a model for this part of the picture…</div>
+      </div>
+    </div>
+    <div class="cap" data-b="1">Illustration of the interface — not a screenshot</div>
+    <div class="box styles" data-b="5">
+      <p><b>Three lens styles:</b> curated multi-lens &nbsp;·&nbsp; LAMESH lenses &nbsp;·&nbsp; single lens</p>
+      <p><b>Galleries so far:</b> Proto Gallery (Fishwick) &nbsp;·&nbsp; Experimental Publishing (Malina &amp; Chen)</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The mock builds with the steps: image, hover segment, lens window. The tabs in the mock are clickable.</p>
+    <p>Next slide is the live link and QR code.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ try it -->
+<section class="slide s-try">
+  <div class="page">
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">TRY IT</div>
+    <h1 class="anim">Explore the<br>Deep Looking App</h1>
+    <a class="url" href="https://metaphorz.github.io/DeepLooking" target="_blank" rel="noopener">metaphorz.github.io/DeepLooking</a>
+    <p class="sub">Click the link, or scan the code with your phone.</p>
+    <div class="qr anim"><img src="img/qr.png" alt="QR code for metaphorz.github.io/DeepLooking"></div>
+    <div class="box ask" data-b="1">
+      <p class="k">As you explore, ask:</p>
+      <p>Which connection did this lens make?&nbsp; What did it make you notice that you hadn't seen before?</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The link is live — click it to demo, or let people scan the code.</p>
+    <p>[build] The two questions to carry while exploring.</p>
+  </aside>
+</section>
+
+</div></div>
+
+<div id="hint">→ / space / click to advance · F fullscreen · P presenter view</div>
+
+<div id="presenter">
+  <div id="pv-notes"></div>
+  <div id="pv-side">
+    <div id="pv-next"><div class="label">Next</div><div id="pv-nextstage"></div></div>
+    <div><div id="pv-count"></div><div id="pv-build"></div></div>
+    <div><div class="label">Elapsed (click to reset)</div><div id="pv-timer">0:00</div><div id="pv-clock"></div></div>
+  </div>
+</div>
+
+<script src="deck.js"></script>
+<script>
+// Title: lenses reach objects, and each thread keeps going as a chain of questions
+(function(){
+  var svg=document.getElementById('constellation'); if(!svg) return;
+  var slide=svg.closest('.slide'), NS='http://www.w3.org/2000/svg';
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+  var seed=23; function rnd(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646;}
+  function ease(u){return u<0?0:u>1?1:u*u*(3-2*u);}
+  var LENS={L:'Language',A:'Art',M:'Mathematics',E:'Engineering',S:'Science',H:'Humanities'};
+  var lensY={L:92,A:162,M:232,E:302,S:372,H:442}, lensX=752;
+  var OBJ={stone:{x:900,y:175,img:'img/wormstone.jpg'},cycad:{x:900,y:375,img:'img/cycad.jpg'}};
+  var OFF=[[88,-58],[150,0],[88,58]];
+  var cycles=[['S','cycad',['cycasin','MAM','DNA']],['L','stone',['upopoy','singing together','a poem']],
+    ['H','cycad',['famine food','“cycad hell”','Ryukyu']],['E','stone',['catch','place','cement']],
+    ['L','cycad',['swords','haiku','metaphor']],['A','stone',['imagined reef','video','song']],['M','stone',['states','sequence','3D model']]];
+  var gL=el('g',{},svg), gT=el('g',{},svg), gN=el('g',{},svg);
+  var dots=[];
+  for(var i=0;i<34;i++) dots.push({x:715+rnd()*400,y:55+rnd()*445,r:1.3+rnd()*1.6,ph:rnd()*6.28,sp:.25+rnd()*.4,amp:5+rnd()*7});
+  dots.forEach(function(d){ d.c=el('circle',{r:d.r,fill:'#A7AEB2'},gN); });
+  var lenses={};
+  Object.keys(lensY).forEach(function(k){
+    var n={x:lensX,y:lensY[k],ph:rnd()*6.28,sp:.2+rnd()*.2,amp:4};
+    n.g=el('g',{},gN); n.c=el('circle',{r:15,fill:k==='H'?'#C9852F':'#1D6E73'},n.g);
+    n.t=el('text',{'text-anchor':'middle','font-size':14,'font-weight':700,fill:'#fff','font-family':'Noto Sans, Arial'},n.g); n.t.textContent=k;
+    lenses[k]=n; dots.push(n);
+  });
+  var objs={};
+  Object.keys(OBJ).forEach(function(k,i){
+    var o=OBJ[k], n={x:o.x,y:o.y,ph:rnd()*6.28,sp:.18+rnd()*.2,amp:5};
+    var cp=el('clipPath',{id:'cobj'+i},svg); n.clip=el('circle',{r:34},cp);
+    n.ring=el('circle',{r:37,fill:'#fff'},gN); n.img=el('image',{href:o.img,width:84,height:84,preserveAspectRatio:'xMidYMid slice','clip-path':'url(#cobj'+i+')'},gN);
+    n.halo=el('circle',{r:38,fill:'none',stroke:'#C9852F','stroke-width':3,opacity:0},gN);
+    objs[k]=n; dots.push(n);
+  });
+  var links=[];
+  for(var a=0;a<dots.length;a++) for(var b=a+1;b<dots.length;b++){
+    var dx=dots[a].x-dots[b].x, dy=dots[a].y-dots[b].y;
+    if(Math.sqrt(dx*dx+dy*dy)<105) links.push({a:dots[a],b:dots[b],l:el('line',{stroke:'#1D6E73','stroke-width':1},gL)});
+  }
+  var thread=el('path',{fill:'none',stroke:'#C9852F','stroke-width':2.6,'stroke-linecap':'round'},gT);
+  var spark=el('circle',{r:5.5,fill:'#C9852F'},gT);
+  var lensLabel=el('text',{'font-size':14,'font-weight':700,'font-style':'italic',fill:'#A86A1E','text-anchor':'middle','font-family':'Noto Sans, Arial',
+    stroke:'#F7F3EA','stroke-width':5,'paint-order':'stroke'},gT);
+  var chain=[0,1,2].map(function(i){ return {
+    link:el('line',{stroke:'#1D6E73','stroke-width':2,'stroke-linecap':'round'},gT),
+    dot:el('circle',{r:i===2?7:5.5,fill:i===2?'#C9852F':'#1D6E73'},gT),
+    lab:el('text',{'text-anchor':'middle','font-size':i===2?14:13,'font-weight':i===2?700:600,fill:i===2?'#A86A1E':'#3A4148','font-family':'Noto Sans, Arial',
+      stroke:'#F7F3EA','stroke-width':4,'paint-order':'stroke'},gT)}; });
+  var CYCLE=4.4, k=-1, cur=null;
+  function pos(n,t){ n.px=n.x+Math.sin(t*n.sp+n.ph)*n.amp; n.py=n.y+Math.cos(t*n.sp*.8+n.ph)*n.amp; }
+  function render(t){
+    dots.forEach(function(n){ pos(n,t); });
+    dots.forEach(function(n){ if(n.c&&!n.g) { n.c.setAttribute('cx',n.px.toFixed(1)); n.c.setAttribute('cy',n.py.toFixed(1)); } });
+    Object.keys(lenses).forEach(function(k){ var n=lenses[k]; n.g.setAttribute('transform','translate('+n.px.toFixed(1)+' '+n.py.toFixed(1)+')'); n.t.setAttribute('y',5); });
+    Object.keys(objs).forEach(function(k){ var n=objs[k];
+      n.clip.setAttribute('cx',n.px.toFixed(1)); n.clip.setAttribute('cy',n.py.toFixed(1));
+      n.ring.setAttribute('cx',n.px.toFixed(1)); n.ring.setAttribute('cy',n.py.toFixed(1));
+      n.halo.setAttribute('cx',n.px.toFixed(1)); n.halo.setAttribute('cy',n.py.toFixed(1));
+      n.img.setAttribute('x',(n.px-42).toFixed(1)); n.img.setAttribute('y',(n.py-42).toFixed(1)); });
+    links.forEach(function(L){ var dx=L.a.px-L.b.px, dy=L.a.py-L.b.py, d=Math.sqrt(dx*dx+dy*dy);
+      L.l.setAttribute('x1',L.a.px.toFixed(1));L.l.setAttribute('y1',L.a.py.toFixed(1));L.l.setAttribute('x2',L.b.px.toFixed(1));L.l.setAttribute('y2',L.b.py.toFixed(1));
+      L.l.setAttribute('opacity',Math.max(0,.2*(1-d/115)).toFixed(3)); });
+    var kk=Math.floor(t/CYCLE), u=(t%CYCLE)/CYCLE;
+    if(kk!==k){ k=kk; if(cur) cur.lens.c.setAttribute('r',15);
+      var c=cycles[k%cycles.length]; cur={lens:lenses[c[0]],obj:objs[c[1]],words:c[2],name:LENS[c[0]]};
+      lensLabel.textContent=cur.name; chain.forEach(function(ch,i){ ch.lab.textContent=cur.words[i]; }); }
+    var A=cur.lens, B=cur.obj, fade=1-ease((u-.86)/.14);
+    A.c.setAttribute('r',u<.86?18:15);
+    // the lens thread: lens -> object rim
+    var dx=B.px-A.px, dy=B.py-A.py, len=Math.sqrt(dx*dx+dy*dy), ex=B.px-dx/len*38, ey=B.py-dy/len*38;
+    var cx=(A.px+ex)/2-dy*.18, cy=(A.py+ey)/2+dx*.18;
+    thread.setAttribute('d','M'+A.px.toFixed(1)+','+A.py.toFixed(1)+' Q'+cx.toFixed(1)+','+cy.toFixed(1)+' '+ex.toFixed(1)+','+ey.toFixed(1));
+    var L=thread.getTotalLength(), dr=ease(u/.22);
+    thread.setAttribute('stroke-dasharray',L); thread.setAttribute('stroke-dashoffset',(L*(1-dr)).toFixed(1)); thread.setAttribute('opacity',fade.toFixed(2));
+    var pt=thread.getPointAtLength(L*dr); spark.setAttribute('cx',pt.x.toFixed(1)); spark.setAttribute('cy',pt.y.toFixed(1));
+    spark.setAttribute('opacity',(u<.24?1:0)*fade);
+    var mid=thread.getPointAtLength(L*.5); lensLabel.setAttribute('x',mid.x.toFixed(1)); lensLabel.setAttribute('y',(mid.y-12).toFixed(1));
+    lensLabel.setAttribute('opacity',(ease((u-.08)/.12)*fade).toFixed(2));
+    B.halo.setAttribute('opacity',(u>.2?Math.max(0,1-(u-.2)/.12):0).toFixed(2)); B.halo.setAttribute('r',(38+(u>.2?(u-.2)*120:0)).toFixed(1));
+    // the chain keeps going out the far side
+    var prev={x:B.px+36,y:B.py};
+    chain.forEach(function(ch,i){
+      var nx=B.px+OFF[i][0], ny=B.py+OFF[i][1], s=ease((u-.26-i*.11)/.1)*fade;
+      var lx=prev.x+(nx-prev.x)*Math.min(1,s*1.2), ly=prev.y+(ny-prev.y)*Math.min(1,s*1.2);
+      ch.link.setAttribute('x1',prev.x.toFixed(1)); ch.link.setAttribute('y1',prev.y.toFixed(1));
+      ch.link.setAttribute('x2',lx.toFixed(1)); ch.link.setAttribute('y2',ly.toFixed(1)); ch.link.setAttribute('opacity',(s>0?.85*fade:0).toFixed(2));
+      ch.dot.setAttribute('cx',nx.toFixed(1)); ch.dot.setAttribute('cy',ny.toFixed(1)); ch.dot.setAttribute('opacity',s.toFixed(2));
+      ch.lab.setAttribute('x',nx.toFixed(1)); ch.lab.setAttribute('y',(ny+(i===1?-12:21)).toFixed(1)); ch.lab.setAttribute('opacity',s.toFixed(2));
+      prev={x:nx,y:ny};
+    });
+  }
+  if(reduce){ render(CYCLE*.7); return; }
+  var t0=null, raf=0;
+  function frame(ts){ if(t0===null) t0=ts; render((ts-t0)/1000); raf=requestAnimationFrame(frame); }
+  function sync(){ var on=slide.classList.contains('on');
+    if(on&&!raf) raf=requestAnimationFrame(frame);
+    if(!on&&raf){ cancelAnimationFrame(raf); raf=0; } }
+  new MutationObserver(sync).observe(slide,{attributes:true,attributeFilter:['class']});
+  render(0); sync();
+})();
+// The app slide: the mock lens window's tabs switch
+(function(){
+  var text=['a poem, an image or a model for this part of the picture…',
+            'spirals in the scales — count them each way…',
+            'cycads are either male or female — which is this one?'];
+  [].forEach.call(document.querySelectorAll('#stage .s-app .tabs button'),function(b,_,all){
+    b.addEventListener('click',function(){
+      [].forEach.call(b.parentNode.children,function(x){x.classList.toggle('on',x===b);});
+      b.closest('.pop').querySelector('.d').textContent=text[+b.getAttribute('data-tab')];
+    });
+  });
+})();
+</script>
+</body>
+</html>

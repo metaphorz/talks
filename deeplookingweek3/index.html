@@ -296,42 +296,6 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
 .s-challenge .grid p{margin:0 0 10px;font-size:16.5px;line-height:1.28}
 .s-challenge .grid b{margin-right:6px}
 
-/* ===== 13 · app ===== */
-.s-app .lead{position:absolute;left:66px;top:128px;width:410px;margin:0;font-size:18.5px;line-height:1.25;font-weight:700;color:var(--ink)}
-.s-app ol{position:absolute;left:66px;top:232px;width:400px;margin:0;padding:0;list-style:none}
-.s-app li{display:grid;grid-template-columns:38px 1fr;gap:20px;align-items:center;height:75.5px;font-size:16.5px;line-height:1.27;color:var(--ink)}
-.s-app li .n{width:38px;height:38px;border-radius:50%;background:var(--amber);color:#fff;display:grid;place-items:center;
-  font-size:14px;font-weight:700;box-shadow:1px 3px 5px rgba(0,0,0,.3)}
-.s-app .mock{position:absolute;left:533px;top:137px;width:362px;height:346px;background:#1E1F2E;border-radius:14px;
-  box-shadow:0 6px 12px rgba(0,0,0,.35)}
-.s-app .mock .brand{position:absolute;left:0;right:0;top:12px;text-align:center;font-size:12px;font-weight:700;color:var(--amber);letter-spacing:.03em}
-.s-app .mock .pic{position:absolute;left:21px;top:45px;width:320px;height:280px;background:url(img/cycad.jpg) center 46%/cover;overflow:hidden}
-.s-app .mock .seg{position:absolute;inset:0;width:320px;height:280px}
-.s-app .pop{position:absolute;left:190px;top:210px;width:160px;padding:9px 11px;background:#1E1F2E;border:1.5px solid var(--amber);
-  border-radius:8px;color:#e9e3d4}
-.s-app .tabs{display:flex;gap:8px;padding-bottom:7px;border-bottom:1px solid #4a4a5a}
-.s-app .tabs button{border:0;background:none;padding:0;font:600 9.5px var(--sans);color:#8f8f9f;cursor:pointer}
-.s-app .tabs button.on{color:var(--amber);font-weight:700}
-.s-app .pop .t{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--amber)}
-.s-app .pop .d{margin-top:5px;font-size:9.5px;line-height:1.35;font-style:italic}
-.s-app .cap{position:absolute;left:533px;width:362px;top:490px;text-align:center;font-size:10.5px;font-style:italic;color:var(--grey)}
-.s-app .styles{left:66px;top:541px;width:827px;height:80px;padding:15px 25px}
-.s-app .styles p{margin:0 0 5px;font-size:16.5px;color:var(--ink)}
-.s-app .styles b{color:var(--teal);margin-right:6px}
-
-/* ===== 14 · try it ===== */
-.s-try h1{position:absolute;left:97px;top:172px;margin:0;font-size:45px;line-height:1.24;font-weight:700;color:var(--ink)}
-.s-try .url{position:absolute;left:99px;top:330px;font-size:24px;font-weight:700;color:#3C7A80;text-decoration:underline;
-  text-underline-offset:4px;text-decoration-thickness:1.5px}
-.s-try .url:hover{color:var(--teal)}
-.s-try .sub{position:absolute;left:99px;top:379px;margin:0;font-size:15px;color:var(--grey)}
-.s-try .qr{position:absolute;left:617px;top:111px;width:284px;height:284px;background:#fff;border-radius:26px;
-  box-shadow:0 5px 10px rgba(40,30,10,.3);display:grid;place-items:center}
-.s-try .qr img{width:236px;height:236px;image-rendering:pixelated}
-.s-try.on .qr.anim{animation:pop .6s var(--ease) .5s both}
-.s-try .ask{left:98px;top:477px;width:796px;height:111px;padding:20px 24px}
-.s-try .ask .k{margin:0;font-size:16px;font-weight:700;color:var(--teal)}
-.s-try .ask p{margin:6px 0 0;font-size:16px;line-height:1.3;color:var(--ink)}
 </style>
 </head>
 <body data-footer="Deep Looking · Week 3">
@@ -886,60 +850,6 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
   </aside>
 </section>
 
-<!-- ============================================================ 13 -->
-<section class="slide s-app">
-  <div class="page">
-    <header class="hd"><h2>The Deep Looking App</h2><div class="kicker">An open, web-based gallery for looking through lenses</div></header>
-    <p class="lead">A web app (free on GitHub) that turns one image into many connections.</p>
-    <ol>
-      <li data-b="1"><span class="n">1</span><span><b>Choose an image</b> from a curated gallery.</span></li>
-      <li data-b="2"><span class="n">2</span><span><b>Hover over it</b> — the image is divided into segments (sky, boardwalk, frond…).</span></li>
-      <li data-b="3"><span class="n">3</span><span><b>A window opens</b> with a tab for each lens: poetry, geometry, art history…</span></li>
-      <li data-b="4"><span class="n">4</span><span><b>Pin it and explore</b> — follow links, then go back to looking.</span></li>
-    </ol>
-    <div class="mock" data-b="1">
-      <div class="brand">DEEP LOOKING</div>
-      <div class="pic">
-        <svg class="seg" viewBox="0 0 320 280" data-b="2"><ellipse cx="160" cy="105" rx="30" ry="62" fill="rgba(201,133,47,.12)" stroke="#E0A040" stroke-width="2.5" stroke-dasharray="9 6"/></svg>
-      </div>
-      <div class="pop" data-b="3">
-        <div class="tabs"><button class="on" data-tab="0">Poetry</button><button data-tab="1">Geometry</button><button data-tab="2">Science</button></div>
-        <div class="t">The cone</div>
-        <div class="d">a poem, an image or a model for this part of the picture…</div>
-      </div>
-    </div>
-    <div class="cap" data-b="1">Illustration of the interface — not a screenshot</div>
-    <div class="box styles" data-b="5">
-      <p><b>Three lens styles:</b> curated multi-lens &nbsp;·&nbsp; LAMESH lenses &nbsp;·&nbsp; single lens</p>
-      <p><b>Galleries so far:</b> Proto Gallery (Fishwick) &nbsp;·&nbsp; Experimental Publishing (Malina &amp; Chen)</p>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>The mock builds with the steps: image, hover segment, lens window. The tabs in the mock are clickable.</p>
-    <p>Next slide is the live link and QR code.</p>
-  </aside>
-</section>
-
-<!-- ============================================================ 14 -->
-<section class="slide s-try">
-  <div class="page">
-    <div class="bar anim"></div>
-    <div class="eyebrow anim">TRY IT</div>
-    <h1 class="anim">Explore the<br>Deep Looking App</h1>
-    <a class="url" href="https://metaphorz.github.io/DeepLooking" target="_blank" rel="noopener">metaphorz.github.io/DeepLooking</a>
-    <p class="sub">Click the link, or scan the code with your phone.</p>
-    <div class="qr anim"><img src="img/qr.png" alt="QR code for metaphorz.github.io/DeepLooking"></div>
-    <div class="box ask" data-b="1">
-      <p class="k">As you explore, ask:</p>
-      <p>Which connection did this lens make?&nbsp; What did it make you notice that you hadn't seen before?</p>
-    </div>
-  </div>
-  <aside class="notes">
-    <p>The link is live — click it to demo, or let people scan the code.</p>
-    <p>[build] The two questions to carry while exploring.</p>
-  </aside>
-</section>
-
 </div></div>
 
 <div id="hint">→ / space / click to advance · F fullscreen · P presenter view</div>
@@ -1106,18 +1016,6 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
   cards.forEach(function(c){c.addEventListener('click',deal);});
   document.addEventListener('keydown',function(e){
     if((e.key==='d'||e.key==='D')&&!e.metaKey&&!e.ctrlKey&&document.querySelector('#stage .s-challenge.on')) deal();
-  });
-})();
-// Slide 13: the mock lens window's tabs switch
-(function(){
-  var text=['a poem, an image or a model for this part of the picture…',
-            'spirals in the scales — count them each way…',
-            'cycads are either male or female — which is this one?'];
-  [].forEach.call(document.querySelectorAll('#stage .s-app .tabs button'),function(b,_,all){
-    b.addEventListener('click',function(){
-      [].forEach.call(b.parentNode.children,function(x){x.classList.toggle('on',x===b);});
-      b.closest('.pop').querySelector('.d').textContent=text[+b.getAttribute('data-tab')];
-    });
   });
 })();
 </script>
