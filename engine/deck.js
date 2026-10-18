@@ -172,7 +172,7 @@
     }
   });
   vp.addEventListener('click',function(e){
-    if(e.target.closest('a,[data-lens],button')) return;
+    if(e.target.closest('a,[data-lens],button,.yt,iframe,video,[data-noadvance]')) return;
     var r=vp.getBoundingClientRect();
     if(window.matchMedia('(pointer: coarse)').matches){go(1);return;}
     go(e.clientX-r.left<r.width*.2?-1:1);
