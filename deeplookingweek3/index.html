@@ -129,6 +129,106 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
 .s-found .horn[data-b].shown{transform:rotate(180deg)}
 .s-found .line{top:574px;font-size:15.5px;font-weight:700;color:var(--teal)}
 
+/* ===== ladder · structures: matching ===== */
+.s-mapping .side{position:absolute;top:122px;width:310px;height:474px;padding:16px 16px}
+.s-mapping .side.l{left:55px}.s-mapping .side.r{left:594px}
+.s-mapping .side h3{margin:0;font-size:18px}
+.s-mapping .side h3 span{font-weight:400;font-size:13px;color:var(--grey)}
+.s-mapping .side svg{display:block;width:278px;height:90px;margin-top:10px}
+.s-mapping .chip{position:absolute;width:278px;height:34px;padding:0 13px;white-space:nowrap;border:1.5px solid #E3D9C6;border-radius:17px;
+  background:#fff;font:600 14px var(--sans);color:var(--ink);text-align:left;cursor:pointer;
+  transition:border-color .2s,box-shadow .2s,background .3s}
+.s-mapping .chip:hover{border-color:var(--teal)}
+.s-mapping .chip.sel{border-color:var(--amber);box-shadow:0 0 0 3px rgba(201,133,47,.28)}
+.s-mapping .chip.nope{animation:nope .4s}
+@keyframes nope{20%,60%{transform:translateX(-5px)}40%,80%{transform:translateX(5px)}}
+.s-mapping .chip.l{left:71px}.s-mapping .chip.r{left:610px}
+.s-mapping .thread{fill:none;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1;
+  transition:stroke-dashoffset .8s var(--ease),opacity .2s}
+.s-mapping .thread.obj{stroke:var(--amber);stroke-width:2.2}
+.s-mapping .thread.rel{stroke:var(--teal);stroke-width:3.2}
+.s-mapping .thread.shown,.s-mapping .thread.linked{opacity:1;stroke-dashoffset:0}
+.s-mapping:has(#t-sun.shown,#t-sun.linked) [data-id=sun],.s-mapping:has(#t-sun.shown,#t-sun.linked) [data-id=nuc],
+.s-mapping:has(#t-planet.shown,#t-planet.linked) [data-id=planet],.s-mapping:has(#t-planet.shown,#t-planet.linked) [data-id=e]
+  {background:#F1E4CF;border-color:#E3CFA8}
+.s-mapping:has(#t-grav.shown,#t-grav.linked) [data-id=grav],.s-mapping:has(#t-grav.shown,#t-grav.linked) [data-id=charge],
+.s-mapping:has(#t-orb.shown,#t-orb.linked) [data-id=orb],.s-mapping:has(#t-orb.shown,#t-orb.linked) [data-id=orb2],
+.s-mapping:has(#t-mass.shown,#t-mass.linked) [data-id=mass],.s-mapping:has(#t-mass.shown,#t-mass.linked) [data-id=mass2]
+  {background:var(--teal-wash);border-color:#A9CFC9}
+.s-mapping .stay{position:absolute;left:358px;width:150px;font-size:12.5px;font-style:italic;color:var(--grey)}
+.s-mapping .stay.linked{opacity:1;transform:none}
+.s-mapping:has(.stay[data-for=hot].shown,.stay[data-for=hot].linked) [data-id=hot],
+.s-mapping:has(.stay[data-for=yellow].shown,.stay[data-for=yellow].linked) [data-id=yellow]
+  {color:var(--grey-2);border-style:dashed;text-decoration:line-through}
+.s-mapping .hint{position:absolute;left:365px;width:229px;top:200px;margin:0;text-align:center;font-size:12.5px;line-height:1.35;font-style:italic;color:var(--grey)}
+.s-mapping .line{top:607px;font-size:16.5px;font-weight:700;color:var(--teal)}
+.s-mapping .line span{font-weight:400;font-size:14px;color:var(--grey)}
+
+/* ===== ladder · where the analogy breaks ===== */
+.s-bohr .scene{position:absolute;left:55px;top:122px;width:465px;height:478px;background:#1E1F2E;border-radius:18px;
+  box-shadow:0 6px 12px rgba(0,0,0,.3);overflow:hidden}
+.s-bohr .scene svg{position:absolute;inset:0;width:465px;height:478px}
+.s-bohr .mode{position:absolute;left:20px;top:16px;font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--amber);
+  transition:opacity .5s}
+.s-bohr .ma,.s-bohr .la{transition:opacity .6s}
+.s-bohr .mb,.s-bohr .mc,.s-bohr .lb,.s-bohr .lc{opacity:0;transition:opacity .6s}
+.s-bohr:has(.trig1.shown) .ma,.s-bohr:has(.trig1.shown) .la{opacity:0}
+.s-bohr:has(.trig1.shown):not(:has(.trig2.shown)) .mb,.s-bohr:has(.trig1.shown):not(:has(.trig2.shown)) .lb{opacity:1}
+.s-bohr:has(.trig2.shown) .mc,.s-bohr:has(.trig2.shown) .lc{opacity:1}
+.s-bohr .steps{position:absolute;left:540px;top:122px;width:364px;display:flex;flex-direction:column;gap:12px}
+.s-bohr .steps .tile{padding:14px 18px}
+.s-bohr .steps h3{margin-top:6px;font-size:18px}
+.s-bohr .steps p{margin-top:7px;font-size:14.5px;line-height:1.32}
+.s-bohr .steps .box{position:static;padding:14px 18px;font-size:16.5px;font-weight:700;line-height:1.3;color:var(--teal)}
+
+/* ===== ladder · models: zoom ===== */
+.s-zoom .frame{position:absolute;left:55px;top:122px;width:585px;height:464px;border-radius:14px;overflow:hidden;background:#F3EEE2;
+  box-shadow:0 5px 12px rgba(40,30,10,.3)}
+.s-zoom .lvl{position:absolute;inset:0;transition:transform 1.1s var(--ease),opacity .9s var(--ease)}
+.s-zoom .lvl img{display:block;width:100%;height:100%;object-fit:cover}
+.s-zoom .lvl[data-b]{opacity:0;transform:scale(.22);transform-origin:var(--zi,50% 50%)}
+.s-zoom .lvl[data-b].shown{opacity:1;transform:none}
+.s-zoom .lvl:has(~ .lvl.shown){opacity:0;transform:scale(3.2);transform-origin:var(--zo,50% 50%)}
+.s-zoom .maplabel{position:absolute;font-size:12.5px;font-weight:700;font-style:italic}
+.s-zoom .maplabel.river{left:236px;top:322px;color:var(--teal);transform:rotate(41deg)}
+.s-zoom .maplabel.mv{left:298px;top:250px;width:150px;text-align:right;color:#A86A1E}
+.s-zoom .credit{position:absolute;left:57px;top:592px;width:585px;font-size:9.5px;line-height:1.35;color:var(--grey)}
+.s-zoom .caps{position:absolute;left:660px;top:122px;width:244px;height:190px}
+.s-zoom .cap{position:absolute;inset:0;transition:opacity .5s}
+.s-zoom .cap[data-b]{transform:none}
+.s-zoom .cap:has(~ .cap.shown){opacity:0}
+.s-zoom .cap .scale{font-size:46px;line-height:1;font-weight:700;color:var(--teal);letter-spacing:-.01em}
+.s-zoom .cap h3{margin:12px 0 0;font-size:19px;color:var(--ink)}
+.s-zoom .cap p{margin:6px 0 0;font-size:14.5px;line-height:1.32;color:var(--ink-2)}
+.s-zoom .plaque{position:absolute;margin:0;left:660px;top:328px;width:244px;padding:10px;border-radius:14px}
+.s-zoom .plaque img{display:block;width:224px;height:150px;object-fit:cover;border-radius:6px}
+.s-zoom .plaque p{margin:8px 2px 0;font-size:12.5px;line-height:1.32;font-style:italic;color:var(--ink-2)}
+.s-zoom .plaque p span{font-style:normal;color:var(--grey)}
+
+/* ===== ladder · what a model keeps ===== */
+.s-keep .how,.s-keep .take{top:120px;font-size:14.5px;transition:opacity .4s}
+.s-keep .how{color:var(--grey);font-style:italic}
+.s-keep .take{font-size:16.5px;font-weight:700;color:var(--teal);background:var(--paper)}
+.s-keep:has(.take.shown) .how{opacity:0}
+.s-keep .pool{position:absolute;left:55px;top:150px;width:849px;min-height:88px;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:9px}
+.s-keep .prop{height:36px;padding:0 16px;border:1.5px solid #E3D9C6;border-radius:18px;background:#fff;
+  font:600 14.5px var(--sans);color:var(--ink);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+  box-shadow:0 2px 4px rgba(40,30,10,.12)}
+.s-keep .prop.dragging{cursor:grabbing;position:relative;z-index:20;box-shadow:0 8px 16px rgba(40,30,10,.3)}
+.s-keep .bin{position:absolute;top:250px;width:414px;height:262px;padding:14px 16px;border-radius:20px}
+.s-keep .bin.kept{left:55px}.s-keep .bin.lost{left:490px}
+.s-keep .bin h4{margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-keep .bin.lost h4{color:var(--amber)}
+.s-keep .bin.hover{outline:3px dashed var(--amber);outline-offset:-6px}
+.s-keep .drop{display:flex;flex-wrap:wrap;gap:9px;align-content:flex-start;min-height:180px}
+.s-keep .bin.kept .prop{background:#fff;border-color:#A9CFC9}
+.s-keep .bin.lost .prop{background:#FBF4E8;border-color:#E3CFA8}
+.s-keep .ev{position:absolute;top:526px;width:414px;height:110px;display:flex;gap:12px;align-items:center;padding:10px}
+.s-keep .ev.a{left:55px}.s-keep .ev.b{left:490px}
+.s-keep .ev img{width:120px;height:90px;object-fit:cover;border-radius:8px;flex:none}
+.s-keep .ev p{margin:0;font-size:14px;line-height:1.3;color:var(--ink)}
+.s-keep .ev b{color:var(--teal)}
+
 /* ===== 9 · LAMESH star ===== */
 .s-lamesh .spoke{stroke:var(--spoke);stroke-width:1.6;stroke-dasharray:5 5}
 .s-lamesh .lens text{fill:#fff;font:700 18px var(--sans);text-anchor:middle;dominant-baseline:central}
@@ -239,27 +339,7 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
     <p class="pairs" data-b="1">Bridge ↔ wading bird.&nbsp; Cycad ↔ rhinoceros.&nbsp; Cycad ↔ poetry.</p>
     <p class="q" data-b="2">Before we open the six lenses again, a step back: what does it mean to connect two things?</p>
   </div>
-  <svg class="full" viewBox="0 0 1280 720" aria-hidden="true">
-    <defs>
-      <filter id="sh1" x="-30%" y="-30%" width="160%" height="170%">
-        <feDropShadow dx="1" dy="4" stdDeviation="4" flood-color="#3a2a10" flood-opacity=".35"/>
-      </filter>
-      <mask id="m-draw" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720">
-        <line class="draw anim" x1="863" y1="262" x2="947" y2="341" stroke="#fff" stroke-width="10"
-              pathLength="1" stroke-dasharray="1"/>
-      </mask>
-    </defs>
-    <line x1="863" y1="262" x2="947" y2="341" stroke="#1D6E73" stroke-width="3.2" stroke-dasharray="9 8" mask="url(#m-draw)"/>
-    <g class="node node-a anim" filter="url(#sh1)">
-      <circle cx="829" cy="230" r="47" fill="#DCEBE8"/>
-      <text x="829" y="231" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans,Arial" font-weight="700" font-size="31" fill="#1D6E73">A</text>
-    </g>
-    <g class="node node-b anim" filter="url(#sh1)">
-      <circle cx="981" cy="373" r="47" fill="#E9DDC7"/>
-      <text x="981" y="374" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans,Arial" font-weight="700" font-size="31" fill="#8A6236">B</text>
-    </g>
-    <circle class="node mid anim" cx="905" cy="301" r="18" fill="#C9852F" filter="url(#sh1)"/>
-  </svg>
+  <svg class="full" id="constellation" viewBox="0 0 1280 720" aria-hidden="true"></svg>
   <aside class="notes">
     <p>New theme. Last week we used the six lenses; this week, a step back.</p>
     <p>[build] Three pairs we'll meet today — read them aloud, don't explain yet.</p>
@@ -474,6 +554,185 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
   </aside>
 </section>
 
+<!-- ============================================================ ladder · structures -->
+<section class="slide s-mapping">
+  <div class="page">
+    <header class="hd"><h2>From Words to Structures</h2><div class="kicker">Rung 2 · The atom ↔ the solar system</div></header>
+    <div class="tile side l"><h3>Solar system</h3>
+      <svg viewBox="0 0 278 90" aria-hidden="true">
+        <ellipse cx="139" cy="45" rx="105" ry="30" fill="none" stroke="#C9BFAE" stroke-width="1.4" stroke-dasharray="4 4"/>
+        <circle cx="139" cy="45" r="20" fill="#C9852F" opacity=".18"/><circle cx="139" cy="45" r="13" fill="#C9852F"/>
+        <circle r="6" fill="#4F7FA8"><animateMotion dur="7s" repeatCount="indefinite" path="M244,45 A105,30 0 1,1 34,45 A105,30 0 1,1 244,45"/></circle>
+      </svg>
+    </div>
+    <div class="tile wash side r"><h3>Atom <span>(Rutherford, 1911)</span></h3>
+      <svg viewBox="0 0 278 90" aria-hidden="true">
+        <ellipse cx="139" cy="45" rx="105" ry="30" fill="none" stroke="#8FB9B4" stroke-width="1.4" stroke-dasharray="4 4"/>
+        <circle cx="135" cy="43" r="5.5" fill="#C9852F"/><circle cx="143" cy="44" r="5.5" fill="#1D6E73"/><circle cx="139" cy="50" r="5.5" fill="#C9852F"/>
+        <circle r="4" fill="#1D6E73"><animateMotion dur="7s" repeatCount="indefinite" path="M244,45 A105,30 0 1,1 34,45 A105,30 0 1,1 244,45"/></circle>
+      </svg>
+    </div>
+    <p class="hint">Click an item on one side,<br>then its partner on the other.</p>
+    <button class="chip l" data-side="l" data-id="sun"    style="top:276px">Sun</button>
+    <button class="chip l" data-side="l" data-id="planet" style="top:318px">Planet</button>
+    <button class="chip l" data-side="l" data-id="grav"   style="top:360px">Gravity pulls the planet in</button>
+    <button class="chip l" data-side="l" data-id="orb"    style="top:402px">Planet orbits the sun</button>
+    <button class="chip l" data-side="l" data-id="mass"   style="top:444px">Sun is far heavier than planets</button>
+    <button class="chip l" data-side="l" data-id="hot"    style="top:486px">Sun is hot</button>
+    <button class="chip l" data-side="l" data-id="yellow" style="top:528px">Sun is yellow</button>
+    <button class="chip r" data-side="r" data-id="e"      style="top:276px">Electron</button>
+    <button class="chip r" data-side="r" data-id="mass2"  style="top:318px">Nucleus far heavier than electron</button>
+    <button class="chip r" data-side="r" data-id="nuc"    style="top:360px">Nucleus</button>
+    <button class="chip r" data-side="r" data-id="orb2"   style="top:402px">Electron orbits the nucleus</button>
+    <button class="chip r" data-side="r" data-id="charge" style="top:444px">Electric charge pulls electron in</button>
+    <span class="stay" data-b="3" data-for="hot" style="top:495px">✕ stays behind</span>
+    <span class="stay" data-b="3" data-for="yellow" style="top:537px">✕ stays behind</span>
+    <p class="line" data-b="4">Relations carry across; attributes stay behind. <span>— Dedre Gentner, structure-mapping (1983)</span></p>
+  </div>
+  <svg class="full" viewBox="0 0 1280 720" aria-hidden="true" style="pointer-events:none">
+    <g transform="translate(160 0)">
+      <path id="t-sun"    class="thread obj" data-b="1" pathLength="1" d="M349,293 C470,293 490,377 610,377"/>
+      <path id="t-planet" class="thread obj" data-b="1" pathLength="1" d="M349,335 C470,335 490,293 610,293"/>
+      <path id="t-grav"   class="thread rel" data-b="2" pathLength="1" d="M349,377 C470,377 490,461 610,461"/>
+      <path id="t-orb"    class="thread rel" data-b="2" pathLength="1" d="M349,419 C470,419 490,419 610,419"/>
+      <path id="t-mass"   class="thread rel" data-b="2" pathLength="1" d="M349,461 C470,461 490,335 610,335"/>
+    </g>
+  </svg>
+  <aside class="notes">
+    <p>Rung 2: not two words but two <i>systems</i>. Invite the room to call out matches; click a left item, then its partner. Wrong pairs shake.</p>
+    <p>[build 1] Objects: sun ↔ nucleus, planet ↔ electron. [build 2] Relations: pulls inward, orbits, far heavier.</p>
+    <p>[build 3] Hot and yellow have no partner — attributes stay behind. [build 4] Gentner: good analogies carry relations, not attributes.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ ladder · where it breaks -->
+<section class="slide s-bohr">
+  <div class="page">
+    <header class="hd"><h2>Where the Analogy Breaks</h2><div class="kicker">Rung 2 · Rutherford 1911 → Bohr 1913</div></header>
+    <div class="scene">
+      <svg viewBox="0 0 465 478" aria-label="Animated atom: planetary orbit, collapse, then Bohr's allowed orbits">
+        <!-- A: the planetary picture -->
+        <g class="ma">
+          <circle cx="232" cy="215" r="150" fill="none" stroke="#5E6B7E" stroke-width="1.4" stroke-dasharray="5 5"/>
+          <circle r="6.5" fill="#7FD3CC"><animateMotion dur="4s" repeatCount="indefinite" path="M382,215 A150,150 0 1,1 82,215 A150,150 0 1,1 382,215"/></circle>
+        </g>
+        <!-- B: classical prediction — spiral in -->
+        <g class="mb">
+          <path id="bohr-spiral" d="" fill="none" stroke="#5E6B7E" stroke-width="1.2" stroke-dasharray="3 4"/>
+          <circle r="6.5" fill="#7FD3CC"><animateMotion dur="3.2s" repeatCount="indefinite"><mpath href="#bohr-spiral"/></animateMotion></circle>
+          <circle cx="232" cy="215" fill="none" stroke="#FFD27A" stroke-width="2"><animate attributeName="r" values="14;60" dur="1.1s" repeatCount="indefinite"/><animate attributeName="opacity" values=".7;0" dur="1.1s" repeatCount="indefinite"/></circle>
+        </g>
+        <!-- C: Bohr's allowed orbits, with jumps that emit light -->
+        <g class="mc">
+          <g fill="none" stroke="#7FD3CC" stroke-opacity=".45" stroke-width="1.3">
+            <circle cx="232" cy="215" r="40"/><circle cx="232" cy="215" r="75"/><circle cx="232" cy="215" r="110"/><circle cx="232" cy="215" r="145"/>
+          </g>
+          <g fill="#8C97A6" font-size="10.5" font-family="Noto Sans, Arial">
+            <text x="276" y="211">n=1</text><text x="311" y="211">n=2</text><text x="346" y="211">n=3</text><text x="381" y="211">n=4</text>
+          </g>
+          <circle cx="232" cy="215" fill="none" stroke="#FF3B2F" stroke-width="3">
+            <animate attributeName="r" values="0;0;20;220;220" keyTimes="0;.25;.25;.4;1" dur="6s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0;.95;0;0" keyTimes="0;.25;.25;.4;1" dur="6s" repeatCount="indefinite"/></circle>
+          <circle cx="232" cy="215" fill="none" stroke="#22C8FF" stroke-width="3">
+            <animate attributeName="r" values="0;0;20;220;220" keyTimes="0;.75;.75;.9;1" dur="6s" repeatCount="indefinite"/>
+            <animate attributeName="opacity" values="0;0;.95;0;0" keyTimes="0;.75;.75;.9;1" dur="6s" repeatCount="indefinite"/></circle>
+          <g>
+            <animateTransform attributeName="transform" type="rotate" from="0 232 215" to="360 232 215" dur="2.4s" repeatCount="indefinite"/>
+            <circle cy="215" r="6.5" fill="#7FD3CC"><animate attributeName="cx" values="342;307;377;307" keyTimes="0;.25;.5;.75" dur="6s" calcMode="discrete" repeatCount="indefinite"/></circle>
+          </g>
+        </g>
+        <!-- nucleus -->
+        <circle cx="228" cy="212" r="7" fill="#C9852F"/><circle cx="237" cy="214" r="7" fill="#E0A85A"/><circle cx="231" cy="221" r="7" fill="#C9852F"/>
+        <!-- hydrogen spectrum -->
+        <g data-b="3">
+          <text x="40" y="410" fill="#C9CED6" font-size="11.5" font-family="Noto Sans, Arial">Hydrogen's visible spectrum</text>
+          <rect x="40" y="418" width="385" height="28" rx="3" fill="#0B0C12" stroke="#3A3D4E"/>
+          <rect x="75" y="420" width="3" height="24" fill="#8B3DFF"/><rect x="104" y="420" width="3" height="24" fill="#4B4BFF"/>
+          <rect x="167" y="420" width="3" height="24" fill="#22C8FF"/><rect x="371" y="420" width="3" height="24" fill="#FF3B2F"/>
+          <g fill="#8C97A6" font-size="9.5" font-family="Noto Sans, Arial" text-anchor="middle">
+            <text x="76" y="460">410</text><text x="105" y="460">434</text><text x="168" y="460">486</text><text x="372" y="460">656 nm</text></g>
+        </g>
+      </svg>
+      <div class="mode la">The planetary picture</div>
+      <div class="mode lb">What classical physics predicts</div>
+      <div class="mode lc">Bohr's allowed orbits</div>
+    </div>
+    <div class="steps">
+      <article class="tile"><div class="tag">1911 · Rutherford</div><h3>Like a little solar system</h3>
+        <p>A tiny, heavy nucleus with electrons circling it — the planetary picture.</p></article>
+      <article class="tile trig1" data-b="1"><div class="tag">Classical physics</div><h3>It should collapse</h3>
+        <p>An orbiting charge gives off light, loses energy and spirals in — in about a hundred-billionth of a second. Atoms would not last.</p></article>
+      <article class="tile wash trig2" data-b="2"><div class="tag">1913 · Bohr</div><h3>Only certain orbits are allowed</h3>
+        <p>The electron jumps between them, and each jump down gives off light of one colour: red for 3 → 2, blue-green for 4 → 2.</p></article>
+      <div class="box" data-b="3">Where the analogy breaks is where the new idea begins.</div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Start: the planetary picture, orbiting happily.</p>
+    <p>[build 1] Classical electrodynamics: an accelerating charge radiates, so the electron spirals in (~10⁻¹¹ s). The analogy fails.</p>
+    <p>[build 2] Bohr's fix: only certain orbits allowed; jumps emit one colour each (rings not to scale — real radii grow as n²). Red flash = 3→2 (656 nm), blue-green = 4→2 (486 nm).</p>
+    <p>[build 3] Those colours are the lines of hydrogen's spectrum — the evidence. The break was the discovery.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ ladder · models: zoom -->
+<section class="slide s-zoom">
+  <div class="page">
+    <header class="hd"><h2>From Structures to Models</h2><div class="kicker">Rung 3 · Bourton-on-the-Water ↔ its model village</div></header>
+    <div class="frame">
+      <div class="lvl" style="--zo:82% 69%">
+        <img src="img/bourton-map.svg" alt="Map of the centre of Bourton-on-the-Water, with the River Windrush and the model village marked">
+        <span class="maplabel river">River Windrush</span>
+        <span class="maplabel mv">The Model Village</span>
+      </div>
+      <div class="lvl" data-b="1" style="--zi:82% 69%;--zo:50% 60%"><img src="img/bourton-1-9.jpg" alt="Looking across the one-ninth scale model village"></div>
+      <div class="lvl" data-b="2" style="--zi:50% 60%;--zo:50% 70%"><img src="img/bourton-1-81.jpg" alt="The model of the model village, with the 1:9 model cottages behind it"></div>
+      <div class="lvl" data-b="3" style="--zi:50% 70%;--zo:55% 84%"><img src="img/bourton-1-81-top.jpg" alt="The model of the model village seen from above"></div>
+      <div class="lvl" data-b="4" style="--zi:55% 84%"><img src="img/bourton-1-729.jpg" alt="The model inside the model of the model village"></div>
+    </div>
+    <p class="credit">Map data © OpenStreetMap contributors · 1:9 overview: Brian Robert Marshall, CC BY-SA 2.0 · 1:81 from above and 1:729: Karen Roe, CC BY 2.0 · other photos: Paul Fishwick</p>
+    <div class="caps">
+      <div class="cap"><div class="scale">1 : 1</div><h3>The village</h3><p>Bourton-on-the-Water, Gloucestershire. The amber outline is the model village, behind the Old New Inn.</p></div>
+      <div class="cap" data-b="1"><div class="scale">1 : 9</div><h3>The model village</h3><p>The village rebuilt in Cotswold stone by local craftsmen, 1936–1940.</p></div>
+      <div class="cap" data-b="2"><div class="scale">1 : 81</div><h3>A model of the model</h3><p>Inside the model village is a model of the model village.</p></div>
+      <div class="cap" data-b="3"><div class="scale">1 : 81</div><h3>…seen from above</h3><p>Now look at the bottom centre.</p></div>
+      <div class="cap" data-b="4"><div class="scale">≈ 1 : 729</div><h3>And a model of that</h3><p>Each level copies the one that contains it.</p></div>
+    </div>
+    <figure class="tile plaque">
+      <img src="img/bourton-plaque.jpg" alt="Bronze plaque at the model village">
+      <p>“…built of Cotswold stone to a one-ninth scale… opened on Coronation Day 1937.” <span>— the plaque</span></p>
+    </figure>
+  </div>
+  <aside class="notes">
+    <p>Rung 3: a whole system copied at a different scale. Each click zooms one level in.</p>
+    <p>Plaque: conceived 1936 by C.A. Morris, landlord of the Old New Inn; one-ninth scale; opened Coronation Day 1937, completed 1940.</p>
+    <p>Ask at each level: what is the same, what has changed? 1:729 is our arithmetic (9 × 9 × 9), not a published figure.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ ladder · what a model keeps -->
+<section class="slide s-keep">
+  <div class="page">
+    <header class="hd"><h2>What Does a Model Keep?</h2><div class="kicker">Rung 3 · Model ↔ original</div></header>
+    <p class="line how">Drag each card into a box — or click it to cycle. Kept in the model, or lost?</p>
+    <p class="line take" data-b="2">A model keeps what its makers chose — and freezes it. In time, it becomes a record of the past.</p>
+    <div class="pool drop">
+      <button class="prop">Street layout</button><button class="prop">River Windrush</button><button class="prop">Cotswold stone</button>
+      <button class="prop">Building shapes</button><button class="prop">Size</button><button class="prop">People</button>
+      <button class="prop">Interiors</button><button class="prop">You can live in it</button><button class="prop">The present day</button>
+    </div>
+    <div class="box bin kept"><h4>Kept in the model</h4><div class="drop"></div></div>
+    <div class="tile bin lost"><h4>Lost in the model</h4><div class="drop"></div></div>
+    <div class="tile ev a" data-b="1"><img src="img/model-church.jpg" alt="Inside the model church: tiny pews and a congregation"><p><b>Interiors?</b> Some were kept: the model church has pews, a pulpit and a congregation.</p></div>
+    <div class="tile ev b" data-b="1"><img src="img/model-restoration.jpg" alt="A model house with a sign: under restoration, please do not touch"><p><b>The present day?</b> “This building is under restoration.” The model ages too — but shows the 1930s.</p></div>
+  </div>
+  <aside class="notes">
+    <p>Let the room sort the cards; there are arguments either way. Drag, or click to cycle pool → kept → lost.</p>
+    <p>[build 1] Two of your photos complicate the easy answers: interiors (the church) and time (restoration).</p>
+    <p>[build 2] The takeaway: a model is a set of choices — and over time it turns into history.</p>
+  </aside>
+</section>
+
 <!-- ============================================================ 9 -->
 <section class="slide s-lamesh">
   <div class="page">
@@ -683,6 +942,133 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
 
 <script src="deck.js"></script>
 <script>
+// Title: a drifting constellation in which the session's pairs connect, one at a time
+(function(){
+  var svg=document.getElementById('constellation'); if(!svg) return;
+  var slide=svg.closest('.slide'), NS='http://www.w3.org/2000/svg';
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function el(tag,attrs){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);return e;}
+  var words={'raven':[760,95],'atom':[965,90],'village':[860,165],'rhinoceros':[1065,165],'bridge':[745,245],
+    'writing-desk':[1040,250],'cycad':[905,310],'solar system':[800,385],'heron':[1055,385],'model village':[770,465],'poetry':[960,455]};
+  var pairs=[['raven','writing-desk','quill'],['bridge','heron','support'],['atom','solar system','orbit'],
+             ['cycad','rhinoceros','defense'],['village','model village','scale'],['cycad','poetry','image']];
+  var seed=11; function rnd(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646;}
+  var nodes=[], byWord={};
+  for(var i=0;i<38;i++) nodes.push({x:715+rnd()*410,y:55+rnd()*440,r:1.4+rnd()*1.8,ph:rnd()*6.28,sp:.25+rnd()*.45,amp:5+rnd()*7});
+  Object.keys(words).forEach(function(w){var n={x:words[w][0],y:words[w][1],r:4.5,ph:rnd()*6.28,sp:.2+rnd()*.25,amp:6,word:w};nodes.push(n);byWord[w]=n;});
+  var gL=el('g',{}), gT=el('g',{}), gN=el('g',{}); svg.appendChild(gL); svg.appendChild(gT); svg.appendChild(gN);
+  nodes.forEach(function(n){
+    n.c=el('circle',{r:n.r,fill:n.word?'#1D6E73':'#A7AEB2'}); gN.appendChild(n.c);
+    if(n.word){ n.t=el('text',{'font-size':13.5,'font-weight':600,'font-family':'Noto Sans, Arial',fill:'#3A4148','text-anchor':n.x>1000?'end':'start'});
+      n.t.textContent=n.word; gN.appendChild(n.t); }
+  });
+  var links=[];
+  for(var a=0;a<nodes.length;a++) for(var b=a+1;b<nodes.length;b++){
+    var dx=nodes[a].x-nodes[b].x, dy=nodes[a].y-nodes[b].y;
+    if(Math.sqrt(dx*dx+dy*dy)<115){ var l=el('line',{stroke:'#1D6E73','stroke-width':1}); gL.appendChild(l); links.push({a:nodes[a],b:nodes[b],l:l}); }
+  }
+  var path=el('path',{fill:'none',stroke:'#C9852F','stroke-width':2.4,'stroke-linecap':'round'});
+  var spark=el('circle',{r:6,fill:'#C9852F'});
+  var halo=el('circle',{r:13,fill:'#C9852F',opacity:.18});
+  var label=el('text',{'font-size':15,'font-weight':700,'font-style':'italic','font-family':'Noto Sans, Arial',fill:'#A86A1E','text-anchor':'middle',
+    stroke:'#F7F3EA','stroke-width':5,'paint-order':'stroke'});
+  gT.appendChild(path); gT.appendChild(halo); gT.appendChild(spark); gT.appendChild(label);
+  var CYCLE=3.6, k=-1, active=null;
+  function pos(n,t){ n.px=n.x+Math.sin(t*n.sp+n.ph)*n.amp; n.py=n.y+Math.cos(t*n.sp*.8+n.ph)*n.amp; }
+  function ease(u){return u<0?0:u>1?1:u*u*(3-2*u);}
+  function render(t){
+    nodes.forEach(function(n){ pos(n,t); n.c.setAttribute('cx',n.px.toFixed(1)); n.c.setAttribute('cy',n.py.toFixed(1));
+      if(n.t){ n.t.setAttribute('x',(n.px+(n.x>1000?-9:9)).toFixed(1)); n.t.setAttribute('y',(n.py+4.5).toFixed(1)); } });
+    links.forEach(function(L){ var dx=L.a.px-L.b.px, dy=L.a.py-L.b.py, d=Math.sqrt(dx*dx+dy*dy);
+      L.l.setAttribute('x1',L.a.px.toFixed(1));L.l.setAttribute('y1',L.a.py.toFixed(1));L.l.setAttribute('x2',L.b.px.toFixed(1));L.l.setAttribute('y2',L.b.py.toFixed(1));
+      L.l.setAttribute('opacity',Math.max(0,.24*(1-d/125)).toFixed(3)); });
+    var kk=Math.floor(t/CYCLE), u=(t%CYCLE)/CYCLE;
+    if(kk!==k){ k=kk; if(active){active[0].t.setAttribute('fill','#3A4148');active[1].t.setAttribute('fill','#3A4148');active[0].c.setAttribute('r',4.5);active[1].c.setAttribute('r',4.5);}
+      var p=pairs[k%pairs.length]; active=[byWord[p[0]],byWord[p[1]],p[2]]; label.textContent=p[2]; }
+    var A=active[0], B=active[1];
+    A.t.setAttribute('fill','#1D6E73'); B.t.setAttribute('fill','#1D6E73'); A.c.setAttribute('r',6.5); B.c.setAttribute('r',6.5);
+    var mx=(A.px+B.px)/2, my=(A.py+B.py)/2, dx=B.px-A.px, dy=B.py-A.py, len=Math.sqrt(dx*dx+dy*dy);
+    var cx=mx-dy*.22, cy=my+dx*.22;
+    path.setAttribute('d','M'+A.px.toFixed(1)+','+A.py.toFixed(1)+' Q'+cx.toFixed(1)+','+cy.toFixed(1)+' '+B.px.toFixed(1)+','+B.py.toFixed(1));
+    var L=path.getTotalLength();
+    var draw=ease(u/.32), fade=1-ease((u-.82)/.18);
+    path.setAttribute('stroke-dasharray',L); path.setAttribute('stroke-dashoffset',(L*(1-draw)).toFixed(1));
+    path.setAttribute('opacity',fade.toFixed(2));
+    var s = u<.32 ? draw : 1-.5*ease((u-.32)/.16);      // spark leads the thread, then settles at its middle
+    var pt=path.getPointAtLength(L*s);
+    spark.setAttribute('cx',pt.x.toFixed(1)); spark.setAttribute('cy',pt.y.toFixed(1)); spark.setAttribute('opacity',fade.toFixed(2));
+    halo.setAttribute('cx',pt.x.toFixed(1)); halo.setAttribute('cy',pt.y.toFixed(1));
+    halo.setAttribute('r',(13+5*Math.sin(t*5)).toFixed(1)); halo.setAttribute('opacity',(.18*fade).toFixed(2));
+    var lo=ease((u-.42)/.12)*fade;
+    label.setAttribute('x',pt.x.toFixed(1)); label.setAttribute('y',(pt.y-16).toFixed(1)); label.setAttribute('opacity',lo.toFixed(2));
+  }
+  if(reduce){ render(CYCLE*.6); return; }
+  var t0=null;
+  (function frame(ts){
+    if(t0===null) t0=ts;
+    if(slide.classList.contains('on')) render((ts-t0)/1000);
+    requestAnimationFrame(frame);
+  })(performance.now());
+})();
+
+// Rung 2: the spiral an orbiting electron would follow if classical physics held
+(function(){
+  var p=document.getElementById('bohr-spiral'); if(!p) return;
+  var cx=232, cy=215, d='', turns=4.5, N=360;
+  for(var i=0;i<=N;i++){ var t=i/N, a=t*turns*2*Math.PI, r=150-136*Math.pow(t,1.15);
+    d+=(i?' L':'M')+(cx+r*Math.cos(a)).toFixed(1)+','+(cy+r*Math.sin(a)).toFixed(1); }
+  p.setAttribute('d',d);
+})();
+
+// Rung 2: click an item, then its partner, to draw the mapping
+(function(){
+  var slide=document.querySelector('#stage .s-mapping'); if(!slide) return;
+  var PAIR={sun:'nuc',planet:'e',grav:'charge',orb:'orb2',mass:'mass2'}, ATTR={hot:1,yellow:1}, sel=null;
+  function nope(c){c.classList.remove('nope');void c.offsetWidth;c.classList.add('nope');}
+  [].forEach.call(slide.querySelectorAll('.chip'),function(c){
+    c.addEventListener('click',function(){
+      var id=c.getAttribute('data-id');
+      if(ATTR[id]){ slide.querySelector('.stay[data-for="'+id+'"]').classList.add('linked'); if(sel)sel.classList.remove('sel'); sel=null; return; }
+      if(!sel||sel.getAttribute('data-side')===c.getAttribute('data-side')){ if(sel)sel.classList.remove('sel'); sel=c; c.classList.add('sel'); return; }
+      var l=c.getAttribute('data-side')==='l'?c:sel, r=l===c?sel:c;
+      if(PAIR[l.getAttribute('data-id')]===r.getAttribute('data-id')) document.getElementById('t-'+l.getAttribute('data-id')).classList.add('linked');
+      else { nope(l); nope(r); }
+      sel.classList.remove('sel'); sel=null;
+    });
+  });
+})();
+
+// Rung 3: drag property cards between the pool and the two boxes (a click cycles them)
+(function(){
+  var slide=document.querySelector('#stage .s-keep'); if(!slide) return;
+  var stage=document.getElementById('stage');
+  var pool=slide.querySelector('.pool'), kept=slide.querySelector('.bin.kept .drop'), lost=slide.querySelector('.bin.lost .drop');
+  function binAt(x,y){
+    var els=document.elementsFromPoint(x,y);
+    for(var i=0;i<els.length;i++){ var b=els[i].closest&&els[i].closest('.bin,.pool'); if(b&&slide.contains(b)) return b; }
+    return null;
+  }
+  function target(b){ return b.classList.contains('pool')?pool:b.querySelector('.drop'); }
+  [].forEach.call(slide.querySelectorAll('.prop'),function(c){
+    var x0,y0,drag=false,over=null;
+    c.addEventListener('pointerdown',function(e){ x0=e.clientX;y0=e.clientY;drag=false; c.setPointerCapture(e.pointerId); });
+    c.addEventListener('pointermove',function(e){
+      if(x0==null) return;
+      var k=stage.getBoundingClientRect().width/1280, dx=(e.clientX-x0)/k, dy=(e.clientY-y0)/k;
+      if(!drag&&Math.abs(dx)+Math.abs(dy)>6){ drag=true; c.classList.add('dragging'); }
+      if(drag){ c.style.transform='translate('+dx+'px,'+dy+'px)';
+        var b=binAt(e.clientX,e.clientY); if(over&&over!==b) over.classList.remove('hover'); if(b&&!b.classList.contains('pool')) b.classList.add('hover'); over=b; }
+    });
+    c.addEventListener('pointerup',function(e){
+      if(x0==null) return; x0=null;
+      if(over) over.classList.remove('hover');
+      if(drag){ var b=binAt(e.clientX,e.clientY); if(b) target(b).appendChild(c); }
+      else { var from=c.parentNode; (from===pool?kept:from===kept?lost:pool).appendChild(c); }
+      c.classList.remove('dragging'); c.style.transform=''; drag=false; over=null;
+    });
+  });
+})();
+
 // Slide 12: deal a new object / target / lens (click a card, or press D on that slide)
 (function(){
   var pools={
