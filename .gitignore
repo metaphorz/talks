@@ -1,5 +1,6 @@
 # Source material stays local; only the HTML decks are published
-week 3/
+# each deck keeps its originals (pptx, pdf, full-size photos) in <deck>/source/
+source/
 *.pptx
 *.pdf
 *.webloc
