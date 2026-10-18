@@ -1,0 +1,724 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Making Connections — Deep Looking, Week 3</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck.css">
+<style>
+/* ===== shared pieces ===== */
+.tile{position:relative;background:var(--card);border-radius:18px;padding:18px 18px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.tile.wash{background:var(--teal-wash)}
+.tile .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--amber)}
+.tile h3{margin:9px 0 0;font-size:20px;line-height:1.2;font-weight:700;color:var(--ink)}
+.tile p{margin:13px 0 0;font-size:16px;line-height:1.32;color:var(--ink)}
+.grid{position:absolute;left:55px;width:849px;display:grid;gap:21px}
+.line{position:absolute;left:55px;width:849px;margin:0;text-align:center}
+.box{position:absolute;background:var(--teal-wash);border-radius:18px;box-shadow:0 5px 10px rgba(40,30,10,.25)}
+.statement{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:21.5px;line-height:1.32;font-weight:700;color:var(--ink)}
+svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* ===== 1 · title ===== */
+.s-title .bar,.s-try .bar{position:absolute;left:65px;top:120px;width:9px;height:308px;background:var(--amber);
+  box-shadow:2px 3px 4px rgba(0,0,0,.3)}
+.s-title .eyebrow,.s-try .eyebrow{position:absolute;left:99px;top:139px;font-size:12.5px;font-weight:700;color:var(--teal);letter-spacing:.01em}
+.s-title h1{position:absolute;left:97px;top:170px;margin:0;font-size:56px;line-height:1.14;font-weight:700;
+  letter-spacing:-.01em;color:var(--ink)}
+.s-title .sub{position:absolute;left:99px;top:358px;width:480px;margin:0;font-size:19.5px;line-height:1.25;color:var(--grey)}
+.s-title .pairs{position:absolute;left:99px;top:492px;margin:0;font-size:17.5px;font-weight:700;color:var(--ink)}
+.s-title .q{position:absolute;left:99px;top:516px;margin:0;font-size:17px;color:var(--grey)}
+.slide.on .bar.anim{transform-origin:top;animation:growbar .7s var(--ease) both}
+.slide.on .eyebrow.anim{animation:rise .6s var(--ease) .15s both}
+.slide.on h1.anim{animation:rise .7s var(--ease) .25s both}
+.s-title.on .sub.anim{animation:rise .7s var(--ease) .45s both}
+.node{transform-box:fill-box;transform-origin:center}
+.s-title.on .node-a.anim{animation:pop .55s var(--ease) .6s both}
+.s-title.on .node-b.anim{animation:pop .55s var(--ease) .85s both}
+.slide.on .draw.anim{animation:draw .7s var(--ease) 1.25s both}
+.s-title.on .mid.anim{animation:pop .45s var(--ease) 1.8s both}
+
+/* ===== 2 · riddle ===== */
+.s-riddle figure{position:absolute;left:56px;top:139px;margin:0;width:465px}
+.s-riddle figure img{display:block;width:465px;height:315px;object-fit:cover;border:4px solid #fff;
+  box-shadow:0 4px 10px rgba(40,30,10,.35)}
+.s-riddle figcaption{margin-top:5px;font-size:10px;font-style:italic;color:var(--grey)}
+.s-riddle .dialogue{position:absolute;left:555px;top:136px;width:350px;margin:0}
+.s-riddle .dialogue p{margin:0 0 5px;font-size:16px;line-height:1.3;font-style:italic;font-weight:700;color:var(--ink)}
+.s-riddle .dialogue p.hatter{font-weight:400;color:var(--grey)}
+.s-riddle .admit{left:555px;top:279px;width:349px;height:130px;padding:18px 21px}
+.s-riddle .admit .k{font-size:14px;font-weight:700;color:var(--teal)}
+.s-riddle .admit blockquote{margin:5px 0 0;font-size:17px;line-height:1.3;font-weight:700;color:var(--ink)}
+.s-riddle .admit cite{display:block;margin-top:4px;font-size:12.5px;font-style:normal;color:var(--grey)}
+.s-riddle .moral{position:absolute;left:555px;top:437px;width:345px;margin:0;font-size:17px;line-height:1.25;font-weight:700;color:var(--teal)}
+.s-riddle .starts{position:absolute;left:61px;top:580px;margin:0;font-size:17px;color:var(--ink)}
+
+/* ===== 3 · paths ===== */
+.s-paths .grid{top:137px;grid-template-columns:repeat(3,1fr);grid-auto-rows:207px;gap:28px 21px}
+.s-paths .line{top:597px;font-size:15px;font-weight:700;color:var(--teal)}
+
+/* ===== 4 · answers ===== */
+.s-answers .cards{position:absolute;left:55px;top:137px;width:849px;display:grid;grid-template-columns:repeat(3,1fr);gap:21px}
+.card{position:relative;height:325px;background:var(--card);border-radius:22px;padding:19px 20px 24px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.card .who{display:flex;align-items:center;gap:13px;height:67px}
+.card .yr{flex:none;width:67px;height:67px;border-radius:50%;background:var(--amber);color:#fff;
+  display:grid;place-items:center;font-size:14px;font-weight:700;box-shadow:1px 4px 6px rgba(0,0,0,.3)}
+.card .name{font-size:18px;font-weight:600;color:var(--ink)}
+.card blockquote{margin:22px 0 0;font-size:17.5px;line-height:1.36;font-style:italic;color:var(--ink-2)}
+.card .gloss{position:absolute;left:20px;right:20px;bottom:24px;margin:0;font-size:14px;line-height:1.25;
+  font-weight:700;color:var(--teal)}
+.s-answers .callout{position:absolute;left:87px;top:494px;width:786px;height:126px;background:var(--teal-wash);
+  border-radius:20px;padding:26px 30px;box-shadow:0 5px 10px rgba(40,30,10,.25)}
+.callout p{margin:0;font-size:17.5px;line-height:1.3;font-weight:700;color:var(--ink)}
+.callout p + p{margin-top:9px;font-size:18.5px;color:var(--teal)}
+
+/* ===== 5 · why ===== */
+.s-why .statement{top:132px;padding:0 60px}
+.s-why .grid{top:237px;grid-template-columns:repeat(3,1fr)}
+.s-why .tile{height:246px;padding:20px 22px}
+.s-why .hdr{display:flex;align-items:center;gap:10px}
+.s-why .n{width:36px;height:36px;border-radius:50%;background:var(--amber);color:#fff;display:grid;place-items:center;
+  font-size:14px;font-weight:700;box-shadow:1px 3px 5px rgba(0,0,0,.3)}
+.s-why .hdr span:last-child{font-size:13.5px;font-weight:700;color:var(--teal);letter-spacing:.02em}
+.s-why .tile p{font-size:17px;line-height:1.3}
+.s-why .rel{left:107px;top:518px;width:745px;height:94px;padding:20px 24px;text-align:center}
+.s-why .rel .a{margin:0;font-size:19.5px;font-weight:700;color:var(--teal)}
+.s-why .rel .a b{color:var(--ink);margin-left:8px}
+.s-why .rel .b{margin:4px 0 0;font-size:14.5px;color:var(--grey)}
+
+/* ===== 6 · related work ===== */
+.s-related .grid{top:130px;grid-template-columns:repeat(3,1fr);grid-auto-rows:249px}
+.s-related .tile h3{margin:0;font-size:18px}
+.s-related .tile .cite{margin:8px 0 0;font-size:12.5px;line-height:1.3;font-weight:700;font-style:italic;color:var(--teal)}
+.s-related .tile p{font-size:15.5px;line-height:1.3;margin-top:12px}
+
+/* ===== 7 · one pair ===== */
+.s-pair .pill{position:absolute;top:137px;width:199px;height:66px;border-radius:33px;background:var(--ink);color:#fff;
+  display:grid;place-items:center;font-size:21px;font-weight:700;box-shadow:0 5px 9px rgba(0,0,0,.35)}
+.s-pair .pill.l{left:71px}.s-pair .pill.r{left:688px}
+.s-pair .via{position:absolute;left:280px;width:400px;top:139px;text-align:center;font-size:15px;font-weight:700;font-style:italic;color:var(--teal)}
+.s-pair .grid{top:242px;grid-template-columns:repeat(4,1fr);gap:19px}
+.s-pair .tile{height:225px;padding:18px 16px}
+.s-pair .tile p{font-size:16.5px}
+.s-pair .no{top:509px;font-size:17px;color:var(--grey)}
+.s-pair .no b{color:var(--grey)}
+.s-pair .yes{top:540px;font-size:17.5px;font-weight:700;color:var(--teal)}
+
+/* ===== 8 · found and made ===== */
+.s-found .statement{top:130px}
+.s-found .grid{top:200px;grid-template-columns:1fr 1fr}
+.s-found .tile{height:356px;padding:26px 25px;border-radius:24px}
+.s-found .tile h3{font-size:21.5px;margin-top:12px}
+.s-found .tile p{font-size:16.5px;margin-top:12px}
+.s-found .tile p:first-of-type{margin-top:22px}
+.s-found .k{font-weight:700;color:var(--teal)}
+.s-found .newq{font-weight:700;font-style:italic}
+.s-found .imperfect{font-style:italic;color:var(--ink-2)}
+.s-found .flip{position:absolute;left:0;right:0;bottom:22px;display:flex;justify-content:center;align-items:center;gap:26px}
+.s-found .flip svg{width:52px;height:56px;overflow:visible}
+.s-found .flip .swap{font-size:20px;font-weight:700;color:var(--teal)}
+.s-found .horn[data-b]{opacity:1;transform:none;transition:transform .9s var(--ease)}
+.s-found .horn[data-b].shown{transform:rotate(180deg)}
+.s-found .line{top:574px;font-size:15.5px;font-weight:700;color:var(--teal)}
+
+/* ===== 9 · LAMESH star ===== */
+.s-lamesh .spoke{stroke:var(--spoke);stroke-width:1.6;stroke-dasharray:5 5}
+.s-lamesh .lens text{fill:#fff;font:700 18px var(--sans);text-anchor:middle;dominant-baseline:central}
+.s-lamesh .lens .dot{transform-box:fill-box;transform-origin:center;transition:transform .25s var(--ease)}
+.s-lamesh .lens.hot .dot{transform:scale(1.14)}
+.s-lamesh .lead{position:absolute;left:570px;top:150px;width:350px;margin:0;font-size:19.5px;line-height:1.3;font-weight:700;color:var(--ink)}
+.s-lamesh .lead em{color:var(--teal)}
+.s-lamesh .rows{position:absolute;left:556px;top:250px;width:350px;margin:0;padding:0;list-style:none}
+.s-lamesh .rows li{display:grid;grid-template-columns:163px 1fr;align-items:center;height:47.3px;
+  padding:0 14px;border-radius:10px;font-size:17.5px;transition:background .25s}
+.s-lamesh .rows li.hot{background:var(--teal-wash)}
+.s-lamesh .rows .k{font-weight:700;color:var(--teal)}
+.s-lamesh .rows .h .k{color:var(--amber)}
+.s-lamesh .rows li.h.hot{background:#f1e4cf}
+.s-lamesh .rows .v{color:var(--ink)}
+.s-lamesh .coda{position:absolute;left:570px;top:550px;width:340px;margin:0;font-size:16.5px;line-height:1.3;
+  font-style:italic;color:var(--grey)}
+
+/* ===== 10 · what LAMESH adds ===== */
+.s-adds .grid{top:137px;grid-template-columns:1fr 1fr;left:71px;width:818px}
+.s-adds .tile{height:293px;padding:24px 25px;border-radius:24px}
+.s-adds .tile h3{margin:0 0 22px;font-size:21.5px}
+.s-adds .tile.wash h3{color:var(--teal)}
+.s-adds ul{margin:0;padding:0;list-style:none}
+.s-adds li{margin:0 0 9px;font-size:16.5px;line-height:1.3;color:var(--ink)}
+.s-adds li::before{content:"–\00a0\00a0"}
+.s-adds .eq{position:absolute;left:71px;width:818px;top:467px;height:74px;display:flex;align-items:center;justify-content:space-between}
+.s-adds .eq .p{width:170px;height:74px;border-radius:37px;background:#fff;display:grid;place-items:center;
+  font-size:16.5px;font-weight:700;color:var(--ink);box-shadow:0 5px 9px rgba(40,30,10,.3)}
+.s-adds .eq .p.dl{background:var(--amber);color:#fff}
+.s-adds .eq .op{font-size:22px;font-weight:700;color:var(--amber)}
+.s-adds .line{top:571px;padding:0 70px;font-size:15px;line-height:1.35;color:var(--grey)}
+
+/* ===== 11 · cycle ===== */
+.s-cycle .ring text{text-anchor:middle;font-family:var(--sans)}
+.s-cycle .ring .t{font-size:14px;font-weight:700;fill:var(--ink)}
+.s-cycle .ring .s{font-size:11.5px;fill:var(--ink-2)}
+.s-cycle .ring.amber .t,.s-cycle .ring.amber .s{fill:#fff}
+.s-cycle .arrow{stroke:var(--teal);stroke-width:2;fill:none}
+.s-cycle .quote{position:absolute;left:539px;top:159px;width:365px;height:260px;padding:22px 30px;border-radius:22px}
+.s-cycle .quote .mark{font-size:44px;line-height:.8;font-weight:700;font-style:italic;color:var(--amber)}
+.s-cycle .quote p{margin:12px 0 0;font-size:22px;line-height:1.24;color:var(--ink)}
+.s-cycle .after{position:absolute;left:539px;width:340px;margin:0;font-size:16.5px;line-height:1.25;color:var(--ink)}
+.s-cycle .after.a{top:452px}
+.s-cycle .after.b{top:503px;font-weight:700;color:var(--teal)}
+
+/* ===== 12 · challenge ===== */
+.s-challenge .draws{position:absolute;left:69px;top:137px;width:822px;display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.s-challenge .draw{height:120px;border:0;font:inherit;text-align:center;cursor:pointer;padding:22px 10px}
+.s-challenge .draw:hover{transform:translateY(-2px)}
+.s-challenge .draw .val{display:block;margin-top:12px;font-size:21px;font-weight:700;color:var(--ink);transition:opacity .07s}
+.s-challenge .draw.rolling .val{opacity:.55}
+.s-challenge .how{top:274px;font-size:16.5px;font-weight:700;color:var(--ink)}
+.s-challenge .grid{top:337px;left:71px;width:818px;grid-template-columns:1fr 1fr}
+.s-challenge .grid .tile{height:246px;padding:24px 25px;border-radius:24px}
+.s-challenge .grid h4{margin:0 0 20px;font-size:12.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--teal)}
+.s-challenge .grid p{margin:0 0 10px;font-size:16.5px;line-height:1.28}
+.s-challenge .grid b{margin-right:6px}
+
+/* ===== 13 · app ===== */
+.s-app .lead{position:absolute;left:66px;top:128px;width:410px;margin:0;font-size:18.5px;line-height:1.25;font-weight:700;color:var(--ink)}
+.s-app ol{position:absolute;left:66px;top:232px;width:400px;margin:0;padding:0;list-style:none}
+.s-app li{display:grid;grid-template-columns:38px 1fr;gap:20px;align-items:center;height:75.5px;font-size:16.5px;line-height:1.27;color:var(--ink)}
+.s-app li .n{width:38px;height:38px;border-radius:50%;background:var(--amber);color:#fff;display:grid;place-items:center;
+  font-size:14px;font-weight:700;box-shadow:1px 3px 5px rgba(0,0,0,.3)}
+.s-app .mock{position:absolute;left:533px;top:137px;width:362px;height:346px;background:#1E1F2E;border-radius:14px;
+  box-shadow:0 6px 12px rgba(0,0,0,.35)}
+.s-app .mock .brand{position:absolute;left:0;right:0;top:12px;text-align:center;font-size:12px;font-weight:700;color:var(--amber);letter-spacing:.03em}
+.s-app .mock .pic{position:absolute;left:21px;top:45px;width:320px;height:280px;background:url(img/cycad.jpg) center 46%/cover;overflow:hidden}
+.s-app .mock .seg{position:absolute;inset:0;width:320px;height:280px}
+.s-app .pop{position:absolute;left:190px;top:210px;width:160px;padding:9px 11px;background:#1E1F2E;border:1.5px solid var(--amber);
+  border-radius:8px;color:#e9e3d4}
+.s-app .tabs{display:flex;gap:8px;padding-bottom:7px;border-bottom:1px solid #4a4a5a}
+.s-app .tabs button{border:0;background:none;padding:0;font:600 9.5px var(--sans);color:#8f8f9f;cursor:pointer}
+.s-app .tabs button.on{color:var(--amber);font-weight:700}
+.s-app .pop .t{margin-top:8px;font-size:12.5px;font-weight:700;color:var(--amber)}
+.s-app .pop .d{margin-top:5px;font-size:9.5px;line-height:1.35;font-style:italic}
+.s-app .cap{position:absolute;left:533px;width:362px;top:490px;text-align:center;font-size:10.5px;font-style:italic;color:var(--grey)}
+.s-app .styles{left:66px;top:541px;width:827px;height:80px;padding:15px 25px}
+.s-app .styles p{margin:0 0 5px;font-size:16.5px;color:var(--ink)}
+.s-app .styles b{color:var(--teal);margin-right:6px}
+
+/* ===== 14 · try it ===== */
+.s-try h1{position:absolute;left:97px;top:172px;margin:0;font-size:45px;line-height:1.24;font-weight:700;color:var(--ink)}
+.s-try .url{position:absolute;left:99px;top:330px;font-size:24px;font-weight:700;color:#3C7A80;text-decoration:underline;
+  text-underline-offset:4px;text-decoration-thickness:1.5px}
+.s-try .url:hover{color:var(--teal)}
+.s-try .sub{position:absolute;left:99px;top:379px;margin:0;font-size:15px;color:var(--grey)}
+.s-try .qr{position:absolute;left:617px;top:111px;width:284px;height:284px;background:#fff;border-radius:26px;
+  box-shadow:0 5px 10px rgba(40,30,10,.3);display:grid;place-items:center}
+.s-try .qr img{width:236px;height:236px;image-rendering:pixelated}
+.s-try.on .qr.anim{animation:pop .6s var(--ease) .5s both}
+.s-try .ask{left:98px;top:477px;width:796px;height:111px;padding:20px 24px}
+.s-try .ask .k{margin:0;font-size:16px;font-weight:700;color:var(--teal)}
+.s-try .ask p{margin:6px 0 0;font-size:16px;line-height:1.3;color:var(--ink)}
+</style>
+</head>
+<body data-footer="Deep Looking · Week 3">
+<div id="viewport"><div id="stage">
+
+<!-- ============================================================ 1 -->
+<section class="slide s-title" data-nonum>
+  <div class="page">
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">NEW THEME</div>
+    <h1 class="anim">Making<br>Connections</h1>
+    <p class="sub anim">Relations between two things — and what it takes to see them.</p>
+    <p class="pairs" data-b="1">Bridge ↔ wading bird.&nbsp; Cycad ↔ rhinoceros.&nbsp; Cycad ↔ poetry.</p>
+    <p class="q" data-b="2">Before we open the six lenses again, a step back: what does it mean to connect two things?</p>
+  </div>
+  <svg class="full" viewBox="0 0 1280 720" aria-hidden="true">
+    <defs>
+      <filter id="sh1" x="-30%" y="-30%" width="160%" height="170%">
+        <feDropShadow dx="1" dy="4" stdDeviation="4" flood-color="#3a2a10" flood-opacity=".35"/>
+      </filter>
+      <mask id="m-draw" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720">
+        <line class="draw anim" x1="863" y1="262" x2="947" y2="341" stroke="#fff" stroke-width="10"
+              pathLength="1" stroke-dasharray="1"/>
+      </mask>
+    </defs>
+    <line x1="863" y1="262" x2="947" y2="341" stroke="#1D6E73" stroke-width="3.2" stroke-dasharray="9 8" mask="url(#m-draw)"/>
+    <g class="node node-a anim" filter="url(#sh1)">
+      <circle cx="829" cy="230" r="47" fill="#DCEBE8"/>
+      <text x="829" y="231" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans,Arial" font-weight="700" font-size="31" fill="#1D6E73">A</text>
+    </g>
+    <g class="node node-b anim" filter="url(#sh1)">
+      <circle cx="981" cy="373" r="47" fill="#E9DDC7"/>
+      <text x="981" y="374" text-anchor="middle" dominant-baseline="central" font-family="Noto Sans,Arial" font-weight="700" font-size="31" fill="#8A6236">B</text>
+    </g>
+    <circle class="node mid anim" cx="905" cy="301" r="18" fill="#C9852F" filter="url(#sh1)"/>
+  </svg>
+  <aside class="notes">
+    <p>New theme. Last week we used the six lenses; this week, a step back.</p>
+    <p>[build] Three pairs we'll meet today — read them aloud, don't explain yet.</p>
+    <p>[build] The question for the session: what does it mean to connect two things?</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 -->
+<section class="slide s-riddle">
+  <div class="page">
+    <header class="hd"><h2>Why Is a Raven Like a Writing-Desk?</h2><div class="kicker">The Mad Hatter's riddle · Alice's Adventures in Wonderland, 1865</div></header>
+    <figure>
+      <img src="img/raven.jpg" alt="A raven perched on an old writing-desk beside an inkwell, quill and candle">
+      <figcaption>AI-generated image (Gemini 3 Pro Image)</figcaption>
+    </figure>
+    <div class="dialogue">
+      <p>“Have you guessed the riddle yet?”</p>
+      <p>“No, I give it up. What’s the answer?”</p>
+      <p class="hatter" data-b="1">“I haven’t the slightest idea,” said the Hatter.</p>
+    </div>
+    <div class="box admit" data-b="2">
+      <div class="k">Carroll later admitted:</div>
+      <blockquote>“The Riddle, as originally invented, had no answer at all.”</blockquote>
+      <cite>— Preface, 1896 edition</cite>
+    </div>
+    <p class="moral" data-b="3">A riddle with no answer is an open invitation: every answer is a connection someone made.</p>
+    <p class="starts" data-b="4"><b>Two starting points:</b>&nbsp; quill (feathers write) &nbsp;·&nbsp; tree (ravens nest in trees; desks are wood)</p>
+  </div>
+  <aside class="notes">
+    <p>Read the exchange; pause before the Hatter's line.</p>
+    <p>[build] The Hatter doesn't know either. [build] Nor did Carroll — the riddle had no answer.</p>
+    <p>[build] So every answer is a connection someone made. [build] Two easy ones to get started.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 -->
+<section class="slide s-paths">
+  <div class="page">
+    <header class="hd"><h2>Paths From Raven to Desk</h2><div class="kicker">One pair, seen through different lenses</div></header>
+    <div class="grid">
+      <article class="tile wash" data-b="1"><div class="tag">Engineering</div><h3>Quill</h3>
+        <p>Large flight feathers were cut into pens. Fine “crowquill” nibs still carry the name.</p></article>
+      <article class="tile wash" data-b="2"><div class="tag">Science</div><h3>Tree</h3>
+        <p>Ravens nest in trees; desks are built from them — oak, walnut, mahogany.</p></article>
+      <article class="tile" data-b="3"><div class="tag">Science</div><h3>Ink</h3>
+        <p>Iron-gall ink was brewed from oak galls. Raven-black, ink-black.</p></article>
+      <article class="tile" data-b="4"><div class="tag">Language</div><h3>Pigeonholes</h3>
+        <p>A desk’s cubbies are named after nest holes in a dovecote. Ravens hide food; desks hide papers.</p></article>
+      <article class="tile" data-b="5"><div class="tag">Humanities</div><h3>Thought &amp; Memory</h3>
+        <p>Odin’s ravens, Huginn and Muninn, are “Thought” and “Memory” — what we bring to a desk.</p></article>
+      <article class="tile" data-b="6"><div class="tag">Art</div><h3>Poe</h3>
+        <p>Poe wrote “The Raven” (1845) — at a desk. Sam Loyd: “Because Poe wrote on both.”</p></article>
+    </div>
+    <p class="line" data-b="7">Material links (quill, tree, ink) · word links (pigeonhole) · cultural links (Odin, Poe)</p>
+  </div>
+  <aside class="notes">
+    <p>The first two are the starting points from the last slide. Each card is a different lens on the same pair.</p>
+    <p>Ask the room for one before revealing each card.</p>
+    <p>[last build] Group them: material, word, cultural.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 -->
+<section class="slide s-answers">
+  <div class="page">
+    <header class="hd"><h2>Answers Through the Years</h2><div class="kicker">Wordplay is a lens too</div></header>
+    <div class="cards">
+      <article class="card" data-b="1">
+        <div class="who"><div class="yr">1896</div><div class="name">Lewis Carroll</div></div>
+        <blockquote>“Because it can produce a few notes, tho they are very flat; and it is nevar put with the wrong end in front!”</blockquote>
+        <p class="gloss" data-b="2">Nevar = raven spelled backwards. Printers “corrected” it to never.</p>
+      </article>
+      <article class="card" data-b="3">
+        <div class="who"><div class="yr">1914</div><div class="name">Sam Loyd</div></div>
+        <blockquote>“Because the notes for which they are noted are not noted for being musical notes.”</blockquote>
+        <p class="gloss" data-b="4">Plays on three meanings of note.</p>
+      </article>
+      <article class="card" data-b="5">
+        <div class="who"><div class="yr">1928</div><div class="name">Aldous Huxley</div></div>
+        <blockquote>“Because there is a B in both and an N in neither.”</blockquote>
+        <p class="gloss" data-b="6">A trick: true of the words “both” and “neither” — not of raven or desk.</p>
+      </article>
+    </div>
+    <div class="callout" data-b="7">
+      <p>Carroll’s “nevar” is a transformation — reverse the word — just like turning a cycad upside down to find a horn.</p>
+      <p data-b="8">Your turn: find one more way a raven is like a writing-desk.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Each card appears with its quote first. Let the room try to decode it before the gloss appears.</p>
+    <p>Carroll (1896 preface) — “nevar” is raven backwards; printers “fixed” it to “never”.</p>
+    <p>Loyd — three meanings of <i>note</i>. Huxley — it works on the words, not the things.</p>
+    <p>Close with the challenge: give them 60 seconds in pairs.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 5 -->
+<section class="slide s-why">
+  <div class="page">
+    <header class="hd"><h2>Why Connections Matter</h2><div class="kicker">Understanding is relational</div></header>
+    <p class="statement">We understand something new by relating it to something we already know.</p>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="hdr"><span class="n">1</span><span>LEARNING</span></div>
+        <p>New knowledge sticks when it attaches to old knowledge. An isolated fact fades; a connected one is kept.</p></article>
+      <article class="tile" data-b="2"><div class="hdr"><span class="n">2</span><span>DISCOVERY</span></div>
+        <p>Many breakthroughs join two fields that were never meant to meet — a wine press becomes a printing press; a burr on a dog becomes Velcro.</p></article>
+      <article class="tile" data-b="3"><div class="hdr"><span class="n">3</span><span>MEANING</span></div>
+        <p>A thing's meaning lives in its relations: what it is like, what it causes, what it is used for, what it recalls.</p></article>
+    </div>
+    <div class="box rel" data-b="4">
+      <p class="a">A connection is a relation: <b>A ↔ B, through some idea.</b></p>
+      <p class="b">The idea in the middle — support, threshold, defense, shape — is where the thinking happens.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Three reasons connections matter: learning, discovery, meaning.</p>
+    <p>[last build] The working definition for the rest of the session: A ↔ B through some idea.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 6 -->
+<section class="slide s-related">
+  <div class="page">
+    <header class="hd"><h2>Related Work</h2><div class="kicker">Others who have studied the art of connecting</div></header>
+    <div class="grid">
+      <article class="tile wash" data-b="1"><h3>James Burke</h3><div class="cite">Connections (BBC, 1978) &nbsp;·&nbsp; The Knowledge Web (1999)</div>
+        <p>Traces surprising historical chains between inventions, people and ideas. The Knowledge Web project (k-web.org) aims to make those links navigable.</p></article>
+      <article class="tile" data-b="2"><h3>Edward de Bono</h3><div class="cite">Lateral Thinking (1970)</div>
+        <p>Escape habitual thought on purpose. The random-word technique forces an unrelated concept into the problem to spark new associations.</p></article>
+      <article class="tile" data-b="3"><h3>Arthur Koestler</h3><div class="cite">The Act of Creation (1964)</div>
+        <p>Bisociation: seeing one idea in two frames of reference at once — the shared root of humor, discovery and art.</p></article>
+      <article class="tile" data-b="4"><h3>Sarnoff Mednick</h3><div class="cite">The Associative Basis of the Creative Process (1962)</div>
+        <p>Creativity brings remote associations together usefully. Basis of the Remote Associates Test: cottage · Swiss · cake → cheese.</p></article>
+      <article class="tile" data-b="5"><h3>Hofstadter &amp; Sander</h3><div class="cite">Surfaces and Essences (2013)</div>
+        <p>Analogy is the core of cognition, not decoration. We grasp the unfamiliar by mapping it onto the familiar.</p></article>
+      <article class="tile wash" data-b="6"><h3>Games</h3><div class="cite">Story Cubes · Concept · NYT Connections</div>
+        <p>Roll-and-link storytelling, building ideas from icons, and finding hidden groupings. Burke even made a Connections game (1995).</p></article>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>One card per click. Burke and Games are highlighted — the history-of-links and play-with-links ends of the spectrum.</p>
+    <p>Mednick: try the RAT triple on the room — cottage · Swiss · cake.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7 -->
+<section class="slide s-pair">
+  <div class="page">
+    <header class="hd"><h2>One Pair, Many Paths</h2><div class="kicker">Bridge &nbsp;↔&nbsp; Wading bird</div></header>
+    <div class="pill l">Bridge</div>
+    <div class="via">through…</div>
+    <div class="pill r">Wading bird</div>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">Structural</div><h3>Support</h3>
+        <p>Piers carry a deck above water. Long legs carry a body above water.</p></article>
+      <article class="tile" data-b="2"><div class="tag">Systemic</div><h3>Crossing</h3>
+        <p>A bridge links two shores. A heron links aquatic and land food webs.</p></article>
+      <article class="tile wash" data-b="3"><div class="tag">Causal</div><h3>Fishing</h3>
+        <p>Bridge shade and currents gather fish — and the heron hunts there.</p></article>
+      <article class="tile wash" data-b="4"><div class="tag">Metaphorical</div><h3>Threshold</h3>
+        <p>Both live at a boundary: land, water, air. One built, one born.</p></article>
+    </div>
+    <p class="line no" data-b="5"><b>“Both are near water”</b> is a coincidence, not a connection.</p>
+    <p class="line yes" data-b="6">A good connection is structural, causal, metaphorical or historical.</p>
+  </div>
+  <svg class="full" viewBox="0 0 1280 720" aria-hidden="true">
+    <defs>
+      <mask id="m-draw7" maskUnits="userSpaceOnUse" x="0" y="0" width="1280" height="720">
+        <line class="draw anim" x1="442" y1="171" x2="838" y2="171" stroke="#fff" stroke-width="8" pathLength="1" stroke-dasharray="1"/>
+      </mask>
+    </defs>
+    <line x1="442" y1="171" x2="838" y2="171" stroke="#1D6E73" stroke-width="2.2" stroke-dasharray="10 8" mask="url(#m-draw7)"/>
+  </svg>
+  <aside class="notes">
+    <p>Same pair as the title slide. Each card is a different <i>kind</i> of path.</p>
+    <p>[build 5] “Both are near water” — a shared fact isn't yet a connection.</p>
+    <p>[build 6] The test: structural, causal, metaphorical or historical.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 8 -->
+<section class="slide s-found">
+  <div class="page">
+    <header class="hd"><h2>Found and Made Connections</h2><div class="kicker">Sago cycad &nbsp;↔&nbsp; Rhinoceros</div></header>
+    <p class="statement">Some connections are discovered. Others are invented.</p>
+    <div class="grid">
+      <article class="tile" data-b="1">
+        <div class="tag">Found · through shared facts</div>
+        <h3>Armor versus poison</h3>
+        <p><span class="k">Rhino:</span> size, thick skin and a horn.</p>
+        <p><span class="k">Cycad:</span> can't flee or fight — so it grows sharp leaflets and makes toxins such as cycasin.</p>
+        <p class="newq">New question: why do some organisms evolve physical defenses and others chemical ones?</p>
+      </article>
+      <article class="tile wash" data-b="2">
+        <div class="tag">Made · through a transformation</div>
+        <h3>The upside-down horn</h3>
+        <p>A horn tapers up from a broad base. A cycad rises from a narrow trunk to a broad crown. Flip one, and you see the other.</p>
+        <p class="imperfect">Imperfect — the crown is many fronds, not one surface — but it changes how we look at both.</p>
+        <div class="flip">
+          <svg class="horn" data-b="3" viewBox="0 0 52 56"><polygon points="26,0 52,56 0,56" fill="#E9DDC7"/></svg>
+          <span class="swap">⇄</span>
+          <svg viewBox="0 0 52 56"><polygon points="0,0 52,0 26,56" fill="#8FC0BB"/></svg>
+        </div>
+      </article>
+    </div>
+    <p class="line" data-b="4">Inversion, exaggeration and change of scale are tools for making connections.</p>
+  </div>
+  <aside class="notes">
+    <p>Found: shared facts lead to a real biological question.</p>
+    <p>Made: a transformation. [build 3] The horn flips — that is the move.</p>
+    <p>Link back to Carroll's “nevar”: reversal as a tool.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 9 -->
+<section class="slide s-lamesh">
+  <div class="page">
+    <header class="hd"><h2>LAMESH Makes Connections</h2><div class="kicker">Each lens links the object to a new domain</div></header>
+    <p class="lead">Seeing a cycad through poetry <em>is</em> connecting the cycad to poetry.</p>
+    <ul class="rows">
+      <li data-b="1" data-lens="L"><span class="k">Language</span><span class="v">cycad ↔ poetry</span></li>
+      <li data-b="2" data-lens="A"><span class="k">Art</span><span class="v">cycad ↔ sculpture</span></li>
+      <li data-b="3" data-lens="M"><span class="k">Mathematics</span><span class="v">cycad ↔ spirals</span></li>
+      <li data-b="4" data-lens="E"><span class="k">Engineering</span><span class="v">cycad ↔ armor</span></li>
+      <li data-b="5" data-lens="S"><span class="k">Science</span><span class="v">cycad ↔ toxins</span></li>
+      <li data-b="6" data-lens="H" class="h"><span class="k">Humanities</span><span class="v">cycad ↔ deep time</span></li>
+    </ul>
+    <p class="coda" data-b="7">Six lenses = six guaranteed starting points for a connection.</p>
+  </div>
+  <svg class="full" viewBox="0 0 1280 720" role="img" aria-label="The cycad at the centre, linked to the six LAMESH lenses">
+    <defs>
+      <filter id="sh9" x="-40%" y="-40%" width="180%" height="190%">
+        <feDropShadow dx="1" dy="3.5" stdDeviation="3.5" flood-color="#2a2010" flood-opacity=".4"/>
+      </filter>
+      <clipPath id="cyc"><circle cx="467" cy="378" r="78"/></clipPath>
+    </defs>
+    <!-- spokes: from the photo's rim (r=84) to each lens rim (r=149) -->
+    <line class="spoke" data-b="1" x1="467" y1="294" x2="467" y2="229"/>
+    <line class="spoke" data-b="2" x1="539.7" y1="336" x2="596" y2="303.5"/>
+    <line class="spoke" data-b="3" x1="539.7" y1="420" x2="596" y2="452.5"/>
+    <line class="spoke" data-b="4" x1="467" y1="462" x2="467" y2="527"/>
+    <line class="spoke" data-b="5" x1="394.3" y1="420" x2="338" y2="452.5"/>
+    <line class="spoke" data-b="6" x1="394.3" y1="336" x2="338" y2="303.5"/>
+    <!-- the object -->
+    <circle cx="467" cy="378" r="83" fill="#fff" filter="url(#sh9)"/>
+    <image href="img/cycad.jpg" x="363" y="300" width="208" height="156" preserveAspectRatio="xMidYMid slice" clip-path="url(#cyc)"/>
+    <!-- the six lenses -->
+    <g class="lens pop" data-b="1" data-lens="L"><g class="dot"><circle cx="467"   cy="204" r="26" fill="#1D6E73" filter="url(#sh9)"/><text x="467"   y="205">L</text></g></g>
+    <g class="lens pop" data-b="2" data-lens="A"><g class="dot"><circle cx="617.7" cy="291" r="26" fill="#1D6E73" filter="url(#sh9)"/><text x="617.7" y="292">A</text></g></g>
+    <g class="lens pop" data-b="3" data-lens="M"><g class="dot"><circle cx="617.7" cy="465" r="26" fill="#1D6E73" filter="url(#sh9)"/><text x="617.7" y="466">M</text></g></g>
+    <g class="lens pop" data-b="4" data-lens="E"><g class="dot"><circle cx="467"   cy="552" r="26" fill="#1D6E73" filter="url(#sh9)"/><text x="467"   y="553">E</text></g></g>
+    <g class="lens pop" data-b="5" data-lens="S"><g class="dot"><circle cx="316.3" cy="465" r="26" fill="#1D6E73" filter="url(#sh9)"/><text x="316.3" y="466">S</text></g></g>
+    <g class="lens pop" data-b="6" data-lens="H"><g class="dot"><circle cx="316.3" cy="291" r="26" fill="#C9852F" filter="url(#sh9)"/><text x="316.3" y="292">H</text></g></g>
+  </svg>
+  <aside class="notes">
+    <p>Each lens, as it appears, links the cycad to a new domain. Hover a letter or a row to light up the pair.</p>
+    <p>Humanities is amber — deep time: cycads predate the dinosaurs.</p>
+    <p>[last build] Six lenses = six guaranteed starting points.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 10 -->
+<section class="slide s-adds">
+  <div class="page">
+    <header class="hd"><h2>What LAMESH Adds</h2><div class="kicker">Connection is general · Deep looking is perceptual</div></header>
+    <div class="grid">
+      <article class="tile"><h3>Making connections</h3>
+        <ul><li>Relates any A to any B</li><li>Can start from words, memory or a random card</li>
+            <li>Can happen without the object present</li><li>Says nothing about how we perceive</li></ul></article>
+      <article class="tile wash" data-b="1"><h3>LAMESH</h3>
+        <ul><li>Starts with a real object, looked at slowly</li><li>Attention: notice what is actually there</li>
+            <li>Openness: try lenses we would not normally pick</li><li>The connection grows out of the looking</li></ul></article>
+    </div>
+    <div class="eq">
+      <div class="p" data-b="2">Connection</div>
+      <span class="op" data-b="3">+</span><div class="p" data-b="3">Attention</div>
+      <span class="op" data-b="4">+</span><div class="p" data-b="4">Openness</div>
+      <span class="op" data-b="5">=</span><div class="p dl" data-b="5">Deep looking</div>
+    </div>
+    <p class="line" data-b="5">Connection alone can be done with eyes closed. LAMESH asks us to look first — and to stay open to unfamiliar lenses.</p>
+  </div>
+  <aside class="notes">
+    <p>Contrast: connection-making in general vs. what LAMESH asks of us.</p>
+    <p>[builds] Assemble the equation term by term: Connection + Attention + Openness = Deep looking.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 11 -->
+<section class="slide s-cycle">
+  <div class="page">
+    <header class="hd"><h2>Connections Change What We See</h2><div class="kicker">Observation · Connection · Question · Research</div></header>
+    <div class="tile quote" data-b="5">
+      <div class="mark">“</div>
+      <p>Connection-making is not merely a way of combining knowledge. It can change what we notice in the first place.</p>
+    </div>
+    <p class="after a" data-b="6">Once you see a cycad as an upside-down horn, you look at its geometry differently.</p>
+    <p class="after b" data-b="7">Once you compare its defenses to a rhino's, it stops being scenery and becomes an organism in a struggle.</p>
+  </div>
+  <svg class="full" viewBox="0 0 1280 720" role="img" aria-label="A cycle: observe, connect, question, research, and back to observe">
+    <defs>
+      <filter id="sh11" x="-30%" y="-30%" width="160%" height="170%">
+        <feDropShadow dx="1" dy="4" stdDeviation="4" flood-color="#2a2010" flood-opacity=".35"/>
+      </filter>
+      <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M0,0 L10,5 L0,10 z" fill="#1D6E73"/>
+      </marker>
+    </defs>
+    <line class="arrow" data-b="2" x1="507.8" y1="276" x2="558.2" y2="327" marker-end="url(#arr)"/>
+    <line class="arrow" data-b="3" x1="558.2" y1="429" x2="507.8" y2="479" marker-end="url(#arr)"/>
+    <line class="arrow" data-b="4" x1="406.2" y1="479" x2="355.8" y2="429" marker-end="url(#arr)"/>
+    <line class="arrow" data-b="4" x1="355.8" y1="327" x2="406.2" y2="276" marker-end="url(#arr)"/>
+    <g class="ring pop" data-b="1"><circle cx="457" cy="225" r="63" fill="#fff" filter="url(#sh11)"/>
+      <text class="t" x="457" y="222">OBSERVE</text><text class="s" x="457" y="239">look slowly</text></g>
+    <g class="ring amber pop" data-b="2"><circle cx="609" cy="378" r="63" fill="#C9852F" filter="url(#sh11)"/>
+      <text class="t" x="609" y="375">CONNECT</text><text class="s" x="609" y="392">link to a lens</text></g>
+    <g class="ring pop" data-b="3"><circle cx="457" cy="530" r="63" fill="#fff" filter="url(#sh11)"/>
+      <text class="t" x="457" y="527">QUESTION</text><text class="s" x="457" y="544">what's new here?</text></g>
+    <g class="ring pop" data-b="4"><circle cx="305" cy="378" r="63" fill="#DCEBE8" filter="url(#sh11)"/>
+      <text class="t" x="305" y="375">RESEARCH</text><text class="s" x="305" y="392">find out</text></g>
+  </svg>
+  <aside class="notes">
+    <p>Build the loop one step at a time; the last step closes it back to observing.</p>
+    <p>[build 5] The key claim: connecting changes what we notice.</p>
+    <p>[builds 6–7] The two cycad examples from earlier — horn (geometry) and rhino (defense).</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 12 -->
+<section class="slide s-challenge">
+  <div class="page">
+    <header class="hd"><h2>The Connection Challenge</h2><div class="kicker">A game for today</div></header>
+    <div class="draws">
+      <button class="tile draw" data-pool="object" title="Click (or press D) to draw new cards"><span class="tag">Object</span><span class="val">Sago cycad</span></button>
+      <button class="tile draw" data-pool="target" title="Click (or press D) to draw new cards"><span class="tag">Target</span><span class="val">Rhinoceros</span></button>
+      <button class="tile draw wash" data-pool="lens" title="Click (or press D) to draw new cards"><span class="tag">Lens</span><span class="val">Defense / survival</span></button>
+    </div>
+    <p class="line how">Draw an object, a target and a lens.&nbsp; Describe a connection — however unexpected.</p>
+    <div class="grid">
+      <article class="tile" data-b="1"><h4>Three levels</h4>
+        <p><b>Immediate</b> both look armored and prehistoric</p>
+        <p><b>Investigative</b> compare mechanical and chemical defense</p>
+        <p><b>Creative</b> could a rhino safely eat a cycad? Find out.</p></article>
+      <article class="tile" data-b="2"><h4>Judge by, not right / wrong</h4>
+        <p><b>Surprise</b> did it make us see something new?</p>
+        <p><b>Plausibility</b> does it hold up?</p>
+        <p><b>Fruitfulness</b> does it lead to further questions?</p></article>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Start with the worked example (cycad / rhino / defense), then click any card or press D to deal a new hand for each group.</p>
+    <p>[builds] The three levels of answer, then how we judge them.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 13 -->
+<section class="slide s-app">
+  <div class="page">
+    <header class="hd"><h2>The Deep Looking App</h2><div class="kicker">An open, web-based gallery for looking through lenses</div></header>
+    <p class="lead">A web app (free on GitHub) that turns one image into many connections.</p>
+    <ol>
+      <li data-b="1"><span class="n">1</span><span><b>Choose an image</b> from a curated gallery.</span></li>
+      <li data-b="2"><span class="n">2</span><span><b>Hover over it</b> — the image is divided into segments (sky, boardwalk, frond…).</span></li>
+      <li data-b="3"><span class="n">3</span><span><b>A window opens</b> with a tab for each lens: poetry, geometry, art history…</span></li>
+      <li data-b="4"><span class="n">4</span><span><b>Pin it and explore</b> — follow links, then go back to looking.</span></li>
+    </ol>
+    <div class="mock" data-b="1">
+      <div class="brand">DEEP LOOKING</div>
+      <div class="pic">
+        <svg class="seg" viewBox="0 0 320 280" data-b="2"><ellipse cx="160" cy="105" rx="30" ry="62" fill="rgba(201,133,47,.12)" stroke="#E0A040" stroke-width="2.5" stroke-dasharray="9 6"/></svg>
+      </div>
+      <div class="pop" data-b="3">
+        <div class="tabs"><button class="on" data-tab="0">Poetry</button><button data-tab="1">Geometry</button><button data-tab="2">Science</button></div>
+        <div class="t">The cone</div>
+        <div class="d">a poem, an image or a model for this part of the picture…</div>
+      </div>
+    </div>
+    <div class="cap" data-b="1">Illustration of the interface — not a screenshot</div>
+    <div class="box styles" data-b="5">
+      <p><b>Three lens styles:</b> curated multi-lens &nbsp;·&nbsp; LAMESH lenses &nbsp;·&nbsp; single lens</p>
+      <p><b>Galleries so far:</b> Proto Gallery (Fishwick) &nbsp;·&nbsp; Experimental Publishing (Malina &amp; Chen)</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The mock builds with the steps: image, hover segment, lens window. The tabs in the mock are clickable.</p>
+    <p>Next slide is the live link and QR code.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 14 -->
+<section class="slide s-try">
+  <div class="page">
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">TRY IT</div>
+    <h1 class="anim">Explore the<br>Deep Looking App</h1>
+    <a class="url" href="https://metaphorz.github.io/DeepLooking" target="_blank" rel="noopener">metaphorz.github.io/DeepLooking</a>
+    <p class="sub">Click the link, or scan the code with your phone.</p>
+    <div class="qr anim"><img src="img/qr.png" alt="QR code for metaphorz.github.io/DeepLooking"></div>
+    <div class="box ask" data-b="1">
+      <p class="k">As you explore, ask:</p>
+      <p>Which connection did this lens make?&nbsp; What did it make you notice that you hadn't seen before?</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The link is live — click it to demo, or let people scan the code.</p>
+    <p>[build] The two questions to carry while exploring.</p>
+  </aside>
+</section>
+
+</div></div>
+
+<div id="hint">→ / space / click to advance · F fullscreen · P presenter view</div>
+
+<div id="presenter">
+  <div id="pv-notes"></div>
+  <div id="pv-side">
+    <div id="pv-next"><div class="label">Next</div><div id="pv-nextstage"></div></div>
+    <div><div id="pv-count"></div><div id="pv-build"></div></div>
+    <div><div class="label">Elapsed (click to reset)</div><div id="pv-timer">0:00</div><div id="pv-clock"></div></div>
+  </div>
+</div>
+
+<script src="deck.js"></script>
+<script>
+// Slide 12: deal a new object / target / lens (click a card, or press D on that slide)
+(function(){
+  var pools={
+    object:['Sago cycad','Raven','Writing-desk','Bridge','Pinecone','Spiral staircase','Lighthouse','Teapot','Umbrella','Beehive','Violin','Boardwalk'],
+    target:['Rhinoceros','Wading bird','Cathedral','Clock','Octopus','Library','Volcano','Spider web','Accordion','Glacier','Chessboard','Lungs'],
+    lens:['Defense / survival','Support / structure','Threshold','Change of scale','Inversion','Spirals / pattern','Deep time','Shelter','Signals','Growth','Balance','Memory']
+  };
+  var cards=[].slice.call(document.querySelectorAll('#stage .s-challenge .draw'));
+  function deal(){
+    cards.forEach(function(c){
+      var pool=pools[c.getAttribute('data-pool')], v=c.querySelector('.val'), n=0;
+      c.classList.add('rolling');
+      var t=setInterval(function(){
+        var next; do{ next=pool[Math.floor(Math.random()*pool.length)]; }while(next===v.textContent);
+        v.textContent=next;
+        if(++n>8){clearInterval(t);c.classList.remove('rolling');}
+      },70);
+    });
+  }
+  cards.forEach(function(c){c.addEventListener('click',deal);});
+  document.addEventListener('keydown',function(e){
+    if((e.key==='d'||e.key==='D')&&!e.metaKey&&!e.ctrlKey&&document.querySelector('#stage .s-challenge.on')) deal();
+  });
+})();
+// Slide 13: the mock lens window's tabs switch
+(function(){
+  var text=['a poem, an image or a model for this part of the picture…',
+            'spirals in the scales — count them each way…',
+            'cycads are either male or female — which is this one?'];
+  [].forEach.call(document.querySelectorAll('#stage .s-app .tabs button'),function(b,_,all){
+    b.addEventListener('click',function(){
+      [].forEach.call(b.parentNode.children,function(x){x.classList.toggle('on',x===b);});
+      b.closest('.pop').querySelector('.d').textContent=text[+b.getAttribute('data-tab')];
+    });
+  });
+})();
+</script>
+</body>
+</html>

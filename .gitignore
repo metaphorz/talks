@@ -1,0 +1,6 @@
+# Source material stays local; only the HTML decks are published
+week 3/
+*.pptx
+*.pdf
+*.webloc
+.DS_Store
