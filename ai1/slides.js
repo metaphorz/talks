@@ -290,11 +290,21 @@
     var STEPS=[
       [['water',.46],['shallows',.22],['marsh',.14],['rain',.08],['fog',.06],['library',.04]],
       [['waiting',.36],['watching',.27],['motionless,',.17],['alone,',.12],['humming',.05],['juggling',.03]],
-      [['for',.44],['as',.2],['while',.16],['like',.1],['until',.07],['because',.03]],
-      [['a fish.',.4],['the tide.',.24],['the light.',.16],['nothing.',.11],['a poem.',.06],['Tuesday.',.03]]
+      (function(){ var verb=[['for',.44],['as',.2],['while',.16],['like',.1],['until',.07],['because',.03]],
+                         still=[['as',.34],['while',.26],['like',.2],['until',.12],['because',.08]];
+        return {'waiting':verb,'watching':verb,'humming':verb,'juggling':verb,'motionless,':still,'alone,':still}; })(),
+      { // the ending depends on the word before it, so every sentence stays grammatical
+        'for':[['a fish.',.4],['the tide.',.24],['the light.',.16],['its mate.',.11],['nothing.',.06],['Tuesday.',.03]],
+        'as':[['a fish appeared.',.38],['the tide turned.',.25],['the sun rose.',.17],['the fog lifted.',.11],['the world woke.',.06],['a poem began.',.03]],
+        'while':[['fish circled its feet.',.36],['the tide turned.',.25],['the sun rose.',.17],['the frogs sang.',.12],['the rain fell.',.07],['jazz played.',.03]],
+        'like':[['a statue.',.42],['a fence post.',.24],['a question mark.',.15],['an old priest.',.1],['a poem.',.06],['a Tuesday.',.03]],
+        'until':[['a fish appeared.',.4],['the tide turned.',.24],['the sun rose.',.16],['the fog lifted.',.11],['nightfall.',.06],['Tuesday.',.03]],
+        'because':[['it was hungry.',.42],['the fish were near.',.25],['it was tired.',.15],['herons do.',.1],['it could.',.05],['it liked jazz.',.03]]
+      }
     ];
     var T=1, k=0, words=[];
-    function probs(){ var s=STEPS[k], q=s.map(function(c){return Math.pow(c[1],1/T);}), z=q.reduce(function(a,b){return a+b;},0);
+    function step(){ var s=STEPS[k]; return Array.isArray(s)?s:s[words[words.length-1]]; }
+    function probs(){ var s=step(), q=s.map(function(c){return Math.pow(c[1],1/T);}), z=q.reduce(function(a,b){return a+b;},0);
       return s.map(function(c,i){return [c[0],q[i]/z];}); }
     function render(){
       var html=START+' '+words.map(function(w,i){return '<span class="'+(i===words.length-1?'new':'')+'">'+w+'</span>';}).join(' ');
