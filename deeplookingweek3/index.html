@@ -114,20 +114,28 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
 
 /* ===== 8 · found and made ===== */
 .s-found .statement{top:130px}
-.s-found .grid{top:200px;grid-template-columns:1fr 1fr}
-.s-found .tile{height:356px;padding:26px 25px;border-radius:24px}
+.s-found .grid{top:186px;grid-template-columns:1fr 1fr}
+.s-found .tile{height:378px;padding:24px 25px;border-radius:24px}
+.s-found .pics{position:absolute;left:25px;right:25px;bottom:18px;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.s-found figure{position:relative;margin:0}
+.s-found figure img{display:block;width:100%;height:96px;object-fit:cover;border-radius:10px}
+.s-found figcaption{position:absolute;left:6px;bottom:6px;padding:2px 7px;border-radius:6px;background:rgba(32,37,43,.72);
+  color:#fff;font-size:11px;font-weight:600}
+.s-found .flip{position:absolute;left:25px;right:25px;bottom:18px;display:flex;justify-content:center;align-items:center;gap:22px}
+.s-found .flip figure img{height:112px;border-radius:10px;object-fit:cover}
+.s-found .flip .hornpic{width:106px}
+.s-found .flip img.horn{width:152px}
+.s-found .flip .swap{font-size:22px;font-weight:700;color:var(--teal)}
+.s-found .credit{position:absolute;left:57px;top:652px;width:849px;font-size:9.5px;color:var(--grey)}
 .s-found .tile h3{font-size:21.5px;margin-top:12px}
 .s-found .tile p{font-size:16.5px;margin-top:12px}
 .s-found .tile p:first-of-type{margin-top:22px}
 .s-found .k{font-weight:700;color:var(--teal)}
 .s-found .newq{font-weight:700;font-style:italic}
 .s-found .imperfect{font-style:italic;color:var(--ink-2)}
-.s-found .flip{position:absolute;left:0;right:0;bottom:22px;display:flex;justify-content:center;align-items:center;gap:26px}
-.s-found .flip svg{width:52px;height:56px;overflow:visible}
-.s-found .flip .swap{font-size:20px;font-weight:700;color:var(--teal)}
 .s-found .horn[data-b]{opacity:1;transform:none;transition:transform .9s var(--ease)}
 .s-found .horn[data-b].shown{transform:rotate(180deg)}
-.s-found .line{top:574px;font-size:15.5px;font-weight:700;color:var(--teal)}
+.s-found .line{top:580px;font-size:15.5px;font-weight:700;color:var(--teal)}
 
 /* ===== ladder · structures: matching ===== */
 .s-mapping .side{position:absolute;top:122px;width:310px;height:474px;padding:16px 16px}
@@ -532,6 +540,10 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
         <p><span class="k">Rhino:</span> size, thick skin and a horn.</p>
         <p><span class="k">Cycad:</span> can't flee or fight — so it grows sharp leaflets and makes toxins such as cycasin.</p>
         <p class="newq">New question: why do some organisms evolve physical defenses and others chemical ones?</p>
+        <div class="pics">
+          <figure><img src="img/rhino.jpg" alt="A white rhinoceros in profile"><figcaption>Rhino: armor</figcaption></figure>
+          <figure><img src="img/cycad-spines.jpg" alt="Sharp spines on a cycad leaf stem"><figcaption>Cycad: spines and poison</figcaption></figure>
+        </div>
       </article>
       <article class="tile wash" data-b="2">
         <div class="tag">Made · through a transformation</div>
@@ -539,17 +551,18 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
         <p>A horn tapers up from a broad base. A cycad rises from a narrow trunk to a broad crown. Flip one, and you see the other.</p>
         <p class="imperfect">Imperfect — the crown is many fronds, not one surface — but it changes how we look at both.</p>
         <div class="flip">
-          <svg class="horn" data-b="3" viewBox="0 0 52 56"><polygon points="26,0 52,56 0,56" fill="#E9DDC7"/></svg>
+          <figure><img class="hornpic" src="img/rhino-horn.jpg" alt="A rhino's horn: broad at the base, tapering up"><figcaption>Horn</figcaption></figure>
           <span class="swap">⇄</span>
-          <svg viewBox="0 0 52 56"><polygon points="0,0 52,0 26,56" fill="#8FC0BB"/></svg>
+          <figure><img class="horn" data-b="3" src="img/cycad-side.jpg" alt="A sago cycad from the side: narrow trunk, broad crown"><figcaption>Cycad</figcaption></figure>
         </div>
       </article>
     </div>
     <p class="line" data-b="4">Inversion, exaggeration and change of scale are tools for making connections.</p>
+    <p class="credit">Photos via Wikimedia Commons: rhino — Giles Laurent, CC BY-SA 4.0 · cycad — Dinesh Valke, CC BY-SA 2.0 · cycad spines — Marija Gajić, CC BY-SA 4.0</p>
   </div>
   <aside class="notes">
     <p>Found: shared facts lead to a real biological question.</p>
-    <p>Made: a transformation. [build 3] The horn flips — that is the move.</p>
+    <p>Made: a transformation. [build 3] The cycad photo turns upside down: broad crown becomes a broad base, narrow trunk a tapering tip — the horn. That is the move.</p>
     <p>Link back to Carroll's “nevar”: reversal as a tool.</p>
   </aside>
 </section>
