@@ -123,6 +123,172 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
 .s-try .bar{position:absolute;left:65px;top:120px;width:9px;height:308px;background:var(--amber);box-shadow:2px 3px 4px rgba(0,0,0,.3)}
 .s-try .eyebrow{position:absolute;left:99px;top:139px;font-size:12.5px;font-weight:700;color:var(--teal);letter-spacing:.01em}
 @keyframes pop{0%{opacity:0;transform:scale(.3)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+/* ===== language ===== */
+.s-lang .frame{position:absolute;left:55px;top:124px;width:360px;height:320px;border-radius:16px;overflow:hidden;box-shadow:0 5px 12px rgba(40,30,10,.3)}
+.s-lang .frame img{display:block;width:100%;height:100%;object-fit:cover;transform-origin:var(--o,50% 50%);transform:scale(var(--z,1));transition:transform .8s var(--ease),transform-origin .8s var(--ease)}
+.s-lang .frame .word{position:absolute;left:12px;bottom:12px;padding:4px 10px;border-radius:8px;background:rgba(32,37,43,.75);color:#fff;font-size:14px;font-weight:700;opacity:0;transition:opacity .3s}
+.s-lang .words{left:435px;top:124px;width:469px;height:150px;position:absolute}
+.s-lang h4{margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-lang .chips{display:flex;flex-wrap:wrap;gap:8px}
+.s-lang .chips button{height:34px;padding:0 15px;border:1.5px solid #E3D9C6;border-radius:17px;background:#fff;font:600 15px var(--sans);color:var(--ink);cursor:pointer}
+.s-lang .chips button:hover,.s-lang .chips button.on{border-color:var(--amber);background:#FBF4E8}
+.s-lang .ainu{left:435px;top:290px;width:469px;height:154px;padding:16px 20px;position:absolute}
+.s-lang .ainu .big{margin-top:6px;font-size:30px;font-weight:700;color:var(--teal)}
+.s-lang .ainu .big span{margin-left:12px;font-size:24px;color:var(--ink-2)}
+.s-lang .ainu p{margin-top:6px;font-size:15.5px}
+.s-lang .l1{top:466px;font-size:17px;font-weight:700;color:var(--teal)}
+.s-lang .l2{top:510px;font-size:17px;color:var(--ink-2)}
+
+/* ===== poem ===== */
+.s-poem .bg{position:absolute;left:55px;top:122px;width:849px;height:480px;border-radius:20px;overflow:hidden;
+  background:url(img/reef.jpg) center/cover;box-shadow:0 6px 14px rgba(0,0,0,.3)}
+.s-poem .card{position:absolute;left:150px;top:30px;width:549px;height:420px;padding:26px 40px;border-radius:16px;background:rgba(247,243,234,.92)}
+.s-poem .mark{font-size:54px;line-height:.6;font-weight:700;color:var(--amber)}
+.s-poem .stanza{margin:10px 0 0;font-size:22px;line-height:1.42;font-style:italic;color:var(--ink)}
+.s-poem .stanza + .stanza{margin-top:16px}
+.s-poem .by{position:absolute;right:40px;bottom:22px;font-size:14px;color:var(--grey)}
+
+/* ===== videos (YouTube, loaded on click) ===== */
+.yt{position:absolute;border-radius:14px;overflow:hidden;background:#111 center/cover;box-shadow:0 6px 14px rgba(0,0,0,.35);cursor:pointer}
+.yt iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
+.yt .play{position:absolute;left:50%;top:50%;width:64px;height:64px;margin:-32px 0 0 -32px;border-radius:50%;background:rgba(201,133,47,.92);
+  box-shadow:0 4px 12px rgba(0,0,0,.4);transition:transform .2s}
+.yt .play::after{content:"";position:absolute;left:25px;top:19px;border-left:20px solid #fff;border-top:13px solid transparent;border-bottom:13px solid transparent}
+.yt:hover .play{transform:scale(1.08)}
+.yt .soon{position:absolute;left:10px;right:10px;bottom:10px;padding:6px 9px;border-radius:8px;background:rgba(0,0,0,.65);color:#eee;font-size:11.5px;text-align:center}
+.yt.live .soon{display:none}
+
+/* ===== songs ===== */
+.s-songs .yt{top:122px;width:220px;height:391px}
+.s-songs .v1{left:70px}.s-songs .v2{left:315px}
+.s-songs .cap{position:absolute;top:522px;width:220px;text-align:center;font-size:13.5px;font-weight:700;color:var(--ink)}
+.s-songs .cap span{display:block;font-weight:400;color:var(--grey)}
+.s-songs .side{position:absolute;left:575px;top:150px;width:329px}
+.s-songs .side p{margin:0 0 14px;font-size:17px;line-height:1.38;color:var(--ink)}
+.s-songs .side .credit{font-size:14px;color:var(--grey)}
+
+/* ===== art ===== */
+.s-art .from{position:absolute;left:55px;top:190px;width:210px;margin:0}
+.s-art .from img{display:block;width:210px;height:158px;object-fit:cover;border-radius:12px;box-shadow:0 4px 9px rgba(40,30,10,.3)}
+.s-art figcaption{margin-top:8px;font-size:13.5px;font-style:italic;color:var(--grey);text-align:center}
+.s-art .arrow{position:absolute;left:278px;top:242px;font-size:34px;font-weight:700;color:var(--amber)}
+.s-art .yt{left:330px;top:128px;width:574px;height:323px}
+.s-art .l1{top:478px;font-size:19px;font-weight:700;color:var(--ink)}
+.s-art .l2{top:512px;font-size:14px;color:var(--grey)}
+
+/* ===== mathematics / CS: state machine ===== */
+.s-fsm .machine{position:absolute;left:40px;top:116px;width:560px;height:540px}
+.s-fsm .st rect{fill:#fff;stroke:#C9BFAE;stroke-width:1.5;transition:fill .25s,stroke .25s}
+.s-fsm .st text{font:700 12.5px var(--sans);fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+.s-fsm .st.on rect{fill:#FBF0DE;stroke:var(--amber);stroke-width:2.5}
+.s-fsm .group{fill:rgba(220,235,232,.55);stroke:#A9CFC9;stroke-width:1.2}
+.s-fsm .gl{font:700 11.5px var(--sans);fill:var(--teal);letter-spacing:.02em}
+.s-fsm .ed{fill:none;stroke:#8C97A6;stroke-width:1.4}
+.s-fsm .el{font:10.5px var(--sans);fill:var(--grey)}
+.s-fsm .panel{position:absolute;left:615px;top:124px;width:289px;padding:16px 18px}
+.s-fsm .panel .k{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--amber)}
+.s-fsm .panel h3{margin:6px 0 0;font-size:19px;min-height:24px}
+.s-fsm .panel p{margin:8px 0 0;font-size:14.5px;line-height:1.35;min-height:58px}
+.s-fsm .tube{display:block;width:253px;height:120px;margin-top:6px}
+.s-fsm .count{font-size:14px;color:var(--ink-2)}
+.s-fsm .count b{font-size:20px;color:var(--teal)}
+.s-fsm .ctl{display:flex;gap:8px;margin-top:10px}
+.s-fsm .ctl button{height:32px;padding:0 14px;border-radius:16px;border:1.5px solid #A9CFC9;background:#fff;font:700 13px var(--sans);color:var(--teal);cursor:pointer}
+.s-fsm .q{position:absolute;left:615px;top:500px;width:289px;margin:0;font-size:15px;line-height:1.35;font-weight:700;color:var(--teal)}
+
+/* ===== mathematics / geometry ===== */
+.s-geo .shot{position:absolute;left:55px;top:120px;width:849px;height:468px;margin:0;border-radius:12px;overflow:hidden;box-shadow:0 6px 14px rgba(40,30,10,.3)}
+.s-geo .shot img{display:block;width:100%;height:100%;object-fit:cover}
+.s-geo .line{top:604px;padding:8px 0;background:rgba(247,243,234,.94);border-radius:10px;font-size:16.5px;font-weight:700;color:var(--teal)}
+
+/* ===== engineering ===== */
+.s-eng .statement{position:absolute;left:55px;width:849px;top:126px;margin:0;text-align:center;font-size:21px;font-weight:700;color:var(--ink)}
+.s-eng .grid{top:178px;grid-template-columns:repeat(3,1fr)}
+.s-eng .tile{height:300px;padding:0;overflow:hidden}
+.s-eng .tile svg{display:block;width:100%;height:140px;background:#EEF4F2}
+.s-eng .txt{padding:14px 18px}
+.s-eng .step{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;background:var(--amber);color:#fff;font-size:14px;font-weight:700;margin-right:8px}
+.s-eng .txt h3{display:inline;font-size:19px;letter-spacing:.02em}
+.s-eng .txt p{margin-top:10px;font-size:15.5px}
+.s-eng .ask{left:105px;top:506px;width:749px;padding:18px 26px;text-align:center;font-size:17px;font-weight:700;line-height:1.35;color:var(--ink)}
+.s-eng .ask b{color:var(--teal)}
+@keyframes drift{0%{transform:translate(-30px,-50px);opacity:0}25%{opacity:1}70%{transform:translate(0,0);opacity:1}100%{transform:translate(0,0);opacity:0}}
+@keyframes placeit{0%,15%{transform:translate(-70px,-40px) rotate(-40deg)}55%,100%{transform:translate(0,0) rotate(0)}}
+@keyframes glue{0%,40%{opacity:0;r:2}60%{opacity:1;r:6}100%{opacity:.85;r:4.5}}
+.s-eng .g1{animation:drift 3s ease-in-out infinite}.s-eng .g2{animation:drift 3s ease-in-out .9s infinite}.s-eng .g3{animation:drift 3s ease-in-out 1.8s infinite}
+.s-eng .pl{animation:placeit 3s var(--ease) infinite alternate}
+.s-eng .gl1{animation:glue 2.4s ease-in-out infinite alternate}.s-eng .gl2{animation:glue 2.4s ease-in-out .4s infinite alternate}
+.s-eng .gl3{animation:glue 2.4s ease-in-out .8s infinite alternate}.s-eng .gl4{animation:glue 2.4s ease-in-out 1.2s infinite alternate}
+
+/* ===== science ===== */
+.s-sci .pic{position:absolute;left:55px;top:124px;width:420px;height:236px;margin:0}
+.s-sci .pic img{display:block;width:420px;height:236px;object-fit:cover;border-radius:14px;box-shadow:0 5px 12px rgba(40,30,10,.3)}
+.s-sci .pic figcaption{position:absolute;right:8px;bottom:8px;padding:2px 7px;border-radius:6px;background:rgba(0,0,0,.6);color:#eee;font-size:10.5px}
+.s-sci .say{position:absolute;left:500px;top:130px;width:404px}
+.s-sci .say h3{margin:0;font-size:23px;color:var(--ink)}
+.s-sci .say p{margin:12px 0 0;font-size:17px;line-height:1.38;color:var(--ink-2)}
+.s-sci .grid{top:384px;grid-template-columns:repeat(4,1fr);gap:16px}
+.s-sci .tile{height:112px;text-align:center;padding:18px 10px}
+.s-sci .tile .tag{font-size:13px;color:var(--teal)}
+.s-sci .tile p{margin-top:8px;font-size:15.5px}
+.s-sci .line{top:530px;font-size:18px;font-weight:700;color:var(--teal)}
+
+/* ===== humanities ===== */
+.s-hum .quote{position:absolute;left:55px;top:126px;width:500px;height:300px;padding:22px 28px}
+.s-hum .quote .mark{font-size:46px;line-height:.7;font-weight:700;font-style:italic;color:var(--amber)}
+.s-hum .quote p{margin:10px 0 0;font-size:18.5px;line-height:1.42;color:var(--ink)}
+.s-hum .ring{position:absolute;left:575px;top:116px;width:330px;height:330px}
+.s-hum .ring text{font:700 14.5px var(--sans);fill:var(--teal);text-anchor:middle;dominant-baseline:central}
+.s-hum .l1{top:452px;font-size:17px;color:var(--ink-2)}
+.s-hum .l1 b{color:var(--ink)}
+.s-hum .l2{top:500px;font-size:18px;font-weight:700;color:var(--teal)}
+
+/* ===== pointers to other talks ===== */
+.s-ptr .bar{position:absolute;left:65px;top:120px;width:9px;height:300px;background:var(--amber);box-shadow:2px 3px 4px rgba(0,0,0,.3)}
+.s-ptr .eyebrow{position:absolute;left:99px;top:139px;font-size:12.5px;font-weight:700;color:var(--teal)}
+.s-ptr h1{position:absolute;left:97px;top:170px;margin:0;font-size:52px;line-height:1.14;font-weight:700;color:var(--ink)}
+.s-ptr .sub{position:absolute;left:99px;top:322px;width:420px;margin:0;font-size:18.5px;line-height:1.3;color:var(--grey)}
+.s-ptr .go{position:absolute;left:99px;top:392px;display:inline-block;padding:11px 20px;border-radius:24px;background:var(--teal);color:#fff;
+  font-size:16px;font-weight:700;text-decoration:none;box-shadow:0 4px 10px rgba(29,110,115,.35)}
+.s-ptr .go:hover{background:#185d61}
+.s-ptr .tease{position:absolute;left:600px;top:118px;width:304px;padding:0;overflow:hidden}
+.s-ptr .tease img{display:block;width:100%;height:190px;object-fit:cover}
+.s-ptr .tease .txt{padding:14px 18px}
+.s-ptr .tease .q{margin:0;font-size:16.5px;line-height:1.35;font-style:italic;font-weight:700;color:var(--ink)}
+.s-ptr .tease .chain{margin:10px 0 0;font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.s-ptr .tease .chain b{color:var(--teal)}
+.s-ptr .tease.museum{top:150px}
+.s-ptr .tease.museum .txt{padding:22px 22px}
+
+/* ===== deep looking at a place ===== */
+.s-place .grid{top:124px;grid-template-columns:repeat(3,1fr);grid-auto-rows:150px}
+.s-place .tile{padding:16px 18px}
+.s-place .hdr{display:flex;align-items:center;gap:10px}
+.s-place .b{width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:15px;font-weight:700}
+.s-place .tile.h .b{background:var(--amber)}
+.s-place .hdr span:last-child{font-size:17px;font-weight:700}
+.s-place .tile p{margin-top:12px;font-size:16px}
+.s-place .line{top:478px;font-size:18px;font-weight:700;color:var(--teal)}
+
+/* ===== Rob Walker ===== */
+.s-walker .yt{left:55px;top:124px;width:540px;height:304px}
+.s-walker .yt .play{background:rgba(204,0,0,.9)}
+.s-walker .side{position:absolute;left:620px;top:124px;width:284px;padding:16px 20px}
+.s-walker .side .k{font-size:12px;font-weight:700;letter-spacing:.04em;color:var(--amber)}
+.s-walker .side .t{margin:6px 0 0;font-size:17px;font-weight:700;line-height:1.5;color:var(--ink)}
+.s-walker .side p{margin:12px 0 0;font-size:15.5px;line-height:1.35;color:var(--ink-2)}
+.s-walker .side a{display:block;margin-top:12px;font-size:13px;color:var(--teal)}
+.s-walker .line{top:470px;font-size:17px;font-weight:700;letter-spacing:.06em;color:var(--teal)}
+
+/* ===== resources ===== */
+.s-res .grid{top:122px;grid-template-columns:repeat(3,1fr);gap:18px}
+.s-res .tile{height:470px;padding:16px 18px}
+.s-res h4{margin:0 0 10px;font-size:13px;font-weight:700;letter-spacing:.04em;color:var(--amber)}
+.s-res ul{margin:0;padding:0;list-style:none}
+.s-res li{margin:0 0 10px;font-size:14.5px;line-height:1.3;color:var(--ink)}
+.s-res li a{color:var(--teal);font-weight:700;text-decoration:none}
+.s-res li a:hover{text-decoration:underline}
+.s-res li span{display:block;font-size:12.5px;color:var(--grey)}
 </style>
 </head>
 <body data-footer="Deep Looking · Week 4">
@@ -236,6 +402,314 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
     <p>The six lenses, each a question. Each click reveals what that lens found in the worm stone — a preview of the walk-through that follows.</p>
     <p>Threads gather on the stone as the lenses accumulate. Hover a lens to light its thread.</p>
   </aside>
+</section>
+
+<!-- ============================================================ language -->
+<section class="slide s-lang">
+  <div class="page">
+    <header class="hd"><h2>Language</h2><div class="kicker">Words change what becomes visible</div></header>
+    <div class="frame"><img src="img/wormstone.jpg" alt="The worm stone"><span class="word"></span></div>
+    <div class="tile words"><h4>Start with the words you already have</h4>
+      <div class="chips">
+        <button data-z="1" data-o="50% 50%">Stone</button><button data-z="1.15" data-o="50% 50%">Rock</button>
+        <button data-z="1.7" data-o="45% 42%">Brain</button><button data-z="2.6" data-o="38% 58%">Critters</button>
+        <button data-z="3.2" data-o="56% 48%">Worms</button><button data-z="3.6" data-o="62% 40%">Burrows</button>
+        <button data-z="2.2" data-o="48% 52%">Honeycomb</button>
+      </div></div>
+    <div class="tile wash ainu" data-b="2"><div class="tag">Then step outside your vocabulary · Ainu · Hokkaido, Japan</div>
+      <div class="big">upopoy<span>ウポポイ</span></div>
+      <p>A phrase associated with singing together, in large numbers.</p></div>
+    <p class="line l1" data-b="1">Naming is an act of attention: each word selects a different feature.</p>
+    <p class="line l2" data-b="3">Different languages can invite different questions — not just different labels.</p>
+  </div>
+  <aside class="notes">
+    <p>Ask the room for words first. Click a word to see what it makes you look at — the photo zooms to that feature.</p>
+    <p>[build 1] Naming is attention. [build 2] Ainu <i>upopoy</i>: singing together. [build 3] A new language invites new questions.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ poem -->
+<section class="slide s-poem">
+  <div class="page">
+    <header class="hd"><h2>Poem</h2><div class="kicker">Language becomes voice</div></header>
+    <div class="bg"><div class="card">
+      <div class="mark">“</div>
+      <p class="stanza">Many voices under the sea<br>An Ainu choir you see<br>Bodies bending, shaping<br>Hair, thick and floating</p>
+      <p class="stanza" data-b="1">We build from the water<br>Our houses in stone, mortar<br>We pass on and leave<br>On the beach, you will retrieve</p>
+      <div class="by">— Paul Fishwick</div>
+    </div></div>
+  </div>
+  <aside class="notes">
+    <p>From <i>upopoy</i> — singing together — to a choir of worms building under the sea.</p>
+    <p>[build] The second stanza: the stone on the beach is what they leave behind.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ songs -->
+<section class="slide s-songs">
+  <div class="page">
+    <header class="hd"><h2>Jazz Echoes</h2><div class="kicker">Voices Under the Sea</div></header>
+    <div class="yt v1" data-yt="" style="background-image:url(img/voices1.jpg)"><span class="play"></span><span class="soon">YouTube link coming</span></div>
+    <div class="yt v2" data-yt="" style="background-image:url(img/voices2.jpg)"><span class="play"></span><span class="soon">YouTube link coming</span></div>
+    <div class="cap" style="left:70px">Voices Under the Sea 1<span>2:39</span></div>
+    <div class="cap" style="left:315px">Voices Under the Sea 2<span>3:04</span></div>
+    <div class="side">
+      <p>The poem, sung. Two takes on the same words — the language lens turned into voice and rhythm.</p>
+      <p>Which one sounds more like the stone?</p>
+      <p class="credit">Music by Metaphorz, made with Google Flow Music.</p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>Play one or both (click the cover). Ask which feels closer to the stone and why.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ art -->
+<section class="slide s-art">
+  <div class="page">
+    <header class="hd"><h2>Art</h2><div class="kicker">Reimagine what the object could be</div></header>
+    <figure class="from"><img src="img/wormstone.jpg" alt="The worm stone"><figcaption>worm-built stone</figcaption></figure>
+    <div class="arrow">→</div>
+    <div class="yt" data-yt="" style="background-image:url(img/reef.jpg)"><span class="play"></span><span class="soon">YouTube link coming</span></div>
+    <p class="line l1">From worm-built stone → imagined reef</p>
+    <p class="line l2">Video created with generative AI (Google Gemini)</p>
+  </div>
+  <aside class="notes">
+    <p>The art lens asks how we might re-see it. The stone becomes the living reef it once was part of.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ mathematics / CS -->
+<section class="slide s-fsm">
+  <div class="page">
+    <header class="hd"><h2>Mathematics / CS</h2><div class="kicker">Structure, sequence and process</div></header>
+    <svg class="machine" viewBox="0 0 560 540" role="img" aria-label="State machine of how a worm adds one sand grain to its tube">
+      <defs><marker id="fa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8C97A6"/></marker></defs>
+      <rect class="group" x="40" y="262" width="380" height="90" rx="12"/><text class="gl" x="52" y="279">4. BIOCEMENT SECRETION</text>
+      <rect class="group" x="40" y="392" width="480" height="110" rx="12"/><text class="gl" x="52" y="409">5. CROSS-LINKING &amp; CURING</text>
+      <circle cx="230" cy="14" r="6" fill="#20252B"/>
+      <path class="ed" d="M230,20 L230,40" marker-end="url(#fa)"/><text class="el" x="240" y="32">worm extends into flow</text>
+      <path class="ed" d="M160,74 C130,92 112,104 110,122" marker-end="url(#fa)"/><text class="el" x="28" y="100">grain in current</text>
+      <path class="ed" d="M150,124 C172,104 192,92 210,76" marker-end="url(#fa)"/><text class="el" x="186" y="104">rejected / washed away</text>
+      <path class="ed" d="M110,158 C110,186 160,196 196,202" marker-end="url(#fa)"/><text class="el" x="22" y="192">retained by tentacles</text>
+      <path class="ed" d="M330,202 C385,170 370,96 310,76" marker-end="url(#fa)"/><text class="el" x="366" y="142">unsuitable geometry</text>
+      <path class="ed" d="M250,236 L250,286" marker-end="url(#fa)"/><text class="el" x="258" y="252">fit approved at rim</text>
+      <path class="ed" d="M202,320 L262,320" marker-end="url(#fa)"/>
+      <path class="ed" d="M230,352 L230,428" marker-end="url(#fa)"/><text class="el" x="238" y="378">exposed to seawater</text>
+      <path class="ed" d="M192,460 L208,460" marker-end="url(#fa)"/><text class="el" x="150" y="492">Ca²⁺/Mg²⁺ binding</text>
+      <path class="ed" d="M354,460 L382,460" marker-end="url(#fa)"/><text class="el" x="300" y="492">DOPA cross-linking</text>
+      <path class="ed" d="M496,456 C548,440 548,70 318,58" marker-end="url(#fa)"/><text class="el" x="430" y="232">aperture +1 grain</text>
+      <g class="st" data-s="idle"><rect x="145" y="42" width="170" height="32" rx="9"/><text x="230" y="58">1. Idle / Emergence</text></g>
+      <g class="st" data-s="intercept"><rect x="22" y="124" width="176" height="32" rx="9"/><text x="110" y="140">2. Grain Interception</text></g>
+      <g class="st" data-s="position"><rect x="145" y="202" width="210" height="32" rx="9"/><text x="250" y="218">3. Positioning &amp; Assessment</text></g>
+      <g class="st" data-s="mix"><rect x="78" y="304" width="124" height="32" rx="9"/><text x="140" y="320">Mix granules</text></g>
+      <g class="st" data-s="wet"><rect x="264" y="304" width="112" height="32" rx="9"/><text x="320" y="320">Wetting</text></g>
+      <g class="st" data-s="cation"><rect x="60" y="444" width="132" height="32" rx="9"/><text x="126" y="460">Cation complex</text></g>
+      <g class="st" data-s="quinone"><rect x="210" y="444" width="144" height="32" rx="9"/><text x="282" y="460">Quinone tanning</text></g>
+      <g class="st" data-s="solid"><rect x="384" y="444" width="112" height="32" rx="9"/><text x="440" y="460">Solid bond</text></g>
+      <circle class="token" r="8" fill="#C9852F" stroke="#fff" stroke-width="2" cx="230" cy="58"/>
+    </svg>
+    <div class="tile panel">
+      <div class="k">Current state</div>
+      <h3 class="sn">Idle / Emergence</h3>
+      <p class="sd">Worm extends its tentacles into the flow.</p>
+      <svg class="tube" viewBox="0 0 253 120" aria-hidden="true"><g class="grains"></g></svg>
+      <div class="count">Grains in the tube wall: <b class="gc">0</b></div>
+      <div class="ctl"><button class="pp">❚❚ Pause</button><button class="stp">Step</button></div>
+    </div>
+    <p class="q">A computational lens asks: what is the process, and what are its states?</p>
+  </div>
+  <aside class="notes">
+    <p>The worm's building cycle as a state machine (your Neosabellaria upopoy diagram). The token walks the states; some grains are rejected or don't fit and go back to idle.</p>
+    <p>Every completed loop adds one grain to the tube wall — the counter. Pause / Step to talk through a state.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ mathematics / geometry -->
+<section class="slide s-geo">
+  <div class="page">
+    <header class="hd"><h2>Mathematics / Geometry</h2><div class="kicker">Representing form</div></header>
+    <figure class="shot"><img src="img/geometry.jpg" alt="Wormstone, a web tool for exploring a generated 3D model of the stone"></figure>
+    <p class="line">A geometric model lets us rotate, measure, compare, and transform the same object.</p>
+  </div>
+  <aside class="notes">
+    <p>Wormstone: a generated 3D form you can explore with parameters. Same object, now as numbers we can change.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ engineering -->
+<section class="slide s-eng">
+  <div class="page">
+    <header class="hd"><h2>Engineering</h2><div class="kicker">The worms are masons</div></header>
+    <p class="statement">They do not secrete a continuous mineral shell.</p>
+    <div class="grid">
+      <article class="tile" data-b="1">
+        <svg viewBox="0 0 269 140" aria-hidden="true">
+          <path d="M100,130 Q110,80 134,70 Q158,80 168,130" fill="none" stroke="#1D6E73" stroke-width="3"/>
+          <path d="M120,130 Q124,95 134,88 Q144,95 148,130" fill="none" stroke="#1D6E73" stroke-width="2" opacity=".6"/>
+          <polygon class="g1" points="128,70 138,66 142,74 132,78" fill="#CDBB98"/><polygon class="g2" points="148,74 156,70 160,78 150,80" fill="#B9A47E"/><polygon class="g3" points="116,76 124,72 126,80 118,82" fill="#D9C9A6"/>
+        </svg>
+        <div class="txt"><span class="step">1</span><h3>CATCH</h3><p>Suspended sand grains and shell fragments.</p></div></article>
+      <article class="tile" data-b="2">
+        <svg viewBox="0 0 269 140" aria-hidden="true">
+          <g fill="#CDBB98" stroke="#A8956F"><rect x="70" y="100" width="26" height="16" rx="4"/><rect x="98" y="100" width="24" height="16" rx="4"/><rect x="124" y="100" width="28" height="16" rx="4"/><rect x="154" y="100" width="24" height="16" rx="4"/><rect x="180" y="100" width="22" height="16" rx="4"/>
+          <rect x="84" y="82" width="26" height="16" rx="4"/><rect x="112" y="82" width="26" height="16" rx="4"/><rect x="140" y="82" width="26" height="16" rx="4"/></g>
+          <rect class="pl" x="168" y="82" width="26" height="16" rx="4" fill="#C9852F" stroke="#A86A1E" style="transform-box:fill-box;transform-origin:center"/>
+        </svg>
+        <div class="txt"><span class="step">2</span><h3>PLACE</h3><p>Particles are positioned with specialized building organs.</p></div></article>
+      <article class="tile" data-b="3">
+        <svg viewBox="0 0 269 140" aria-hidden="true">
+          <g fill="#CDBB98" stroke="#A8956F"><rect x="70" y="92" width="40" height="22" rx="5"/><rect x="114" y="92" width="40" height="22" rx="5"/><rect x="158" y="92" width="40" height="22" rx="5"/>
+          <rect x="92" y="66" width="40" height="22" rx="5"/><rect x="136" y="66" width="40" height="22" rx="5"/></g>
+          <g fill="#C9852F"><circle class="gl1" cx="112" cy="103" r="4"/><circle class="gl2" cx="156" cy="103" r="4"/><circle class="gl3" cx="134" cy="77" r="4"/><circle class="gl4" cx="134" cy="90" r="4"/></g>
+        </svg>
+        <div class="txt"><span class="step">3</span><h3>CEMENT</h3><p>A rapid-setting protein bio-adhesive locks the structure underwater.</p></div></article>
+    </div>
+    <div class="box ask" data-b="4"><b>Engineering question:</b> How can a structure be assembled, bonded, and maintained in moving seawater?</div>
+  </div>
+  <aside class="notes">
+    <p>Masons, not shell-makers: catch, place, cement. Each step is an engineering problem in moving water.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ science -->
+<section class="slide s-sci">
+  <div class="page">
+    <header class="hd"><h2>Science</h2><div class="kicker">A reef creates niches</div></header>
+    <figure class="pic"><img src="img/reef.jpg" alt="An imagined worm reef with fish"><figcaption>illustration · generative AI</figcaption></figure>
+    <div class="say"><h3>Structure changes ecology.</h3>
+      <p>Crevices, vertical relief, and surface roughness create microhabitats that can raise local biodiversity.</p></div>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">Shelter</div><p>places to hide</p></article>
+      <article class="tile" data-b="2"><div class="tag">Nursery</div><p>places to grow</p></article>
+      <article class="tile" data-b="3"><div class="tag">Grazing</div><p>places to feed</p></article>
+      <article class="tile wash" data-b="4"><div class="tag">Complexity</div><p>more surfaces + edges</p></article>
+    </div>
+    <p class="line" data-b="5">The object is no longer “just a stone.” It is habitat infrastructure.</p>
+  </div>
+  <aside class="notes">
+    <p>The science lens: what processes explain it? The reef's shape makes room for other life.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ humanities -->
+<section class="slide s-hum">
+  <div class="page">
+    <header class="hd"><h2>Humanities</h2><div class="kicker">Meaning changes the object again</div></header>
+    <div class="tile quote"><div class="mark">“</div>
+      <p>In Ainu cosmology, animals can be understood as <b>kamuy</b> — spirit-deities visiting the human realm. Stories and chants can place the nonhuman being at the center of the account, changing the relation between observer and observed.</p></div>
+    <svg class="ring" viewBox="0 0 330 330" aria-hidden="true">
+      <defs><clipPath id="hum-c"><circle cx="165" cy="165" r="66"/></clipPath></defs>
+      <g stroke="#C9BFAE" stroke-width="1.4" stroke-dasharray="4 4" data-b="2">
+        <line x1="165" y1="99" x2="165" y2="56"/><line x1="222" y1="132" x2="259" y2="111"/><line x1="222" y1="198" x2="259" y2="219"/>
+        <line x1="165" y1="231" x2="165" y2="274"/><line x1="108" y1="198" x2="71" y2="219"/><line x1="108" y1="132" x2="71" y2="111"/></g>
+      <circle cx="165" cy="165" r="70" fill="#fff"/>
+      <image href="img/wormstone.jpg" x="85" y="105" width="160" height="120" preserveAspectRatio="xMidYMid slice" clip-path="url(#hum-c)"/>
+      <g data-b="2"><text x="165" y="40">material</text><text x="278" y="102">habitat</text><text x="278" y="228">artifact</text>
+        <text x="165" y="290">metaphor</text><text x="52" y="228">memory</text><text x="52" y="102">gift</text></g>
+    </svg>
+    <p class="line l1" data-b="1">A humanities lens asks not only <b>“What is it?”</b> but <b>“What relationships and stories gather around it?”</b></p>
+    <p class="line l2" data-b="2">The same object can be material, habitat, artifact, metaphor, memory, or gift.</p>
+  </div>
+  <aside class="notes">
+    <p>Kamuy: the observed being at the centre of the story. Then the ring: six things the same stone can be.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ pointer: cycads -->
+<section class="slide s-ptr">
+  <div class="page">
+    <div class="bar"></div>
+    <div class="eyebrow">NEXT OBJECT</div>
+    <h1>Fun with<br>Cycads</h1>
+    <p class="sub">One object. Six lenses. Then research — and perhaps a model.</p>
+    <a class="go" href="cycad/" target="_blank" rel="noopener">Open the cycad notes →</a>
+    <div class="tile tease"><img src="img/cycad.jpg" alt="A sago cycad with its male cone">
+      <div class="txt"><p class="q">“The eye sees swords; chemistry sees molecular defenses.”</p>
+        <p class="chain"><b>cycad</b> → cycasin → MAM → DNA<br><b>cycad</b> → famine food → “cycad hell” in the Ryukyus<br><b>cycad</b> → Japan → Florida's nursery trade</p></div></div>
+  </div>
+  <aside class="notes">
+    <p>Pointer to the cycad conversation notes. Open them if there's time; otherwise leave it as homework.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ pointer: museum -->
+<section class="slide s-ptr">
+  <div class="page">
+    <div class="bar"></div>
+    <div class="eyebrow">NEXT PLACE</div>
+    <h1>Amelia Museum<br>of History</h1>
+    <p class="sub">One place. Six lenses. Then research — and perhaps a model.</p>
+    <a class="go" href="talks/MuseumOfHistory.pptx">Open the talk (PowerPoint) →</a>
+    <div class="tile wash tease museum"><div class="txt">
+      <p class="q">Deep Looking: Unpacking Amelia Island with AI</p>
+      <p class="chain">Nana Dune · the Williams House, 1856 · learning history by solving AI puzzles · a 3D mesh · a poem in the manner of Emily Dickinson</p></div></div>
+  </div>
+  <aside class="notes">
+    <p>Pointer to the earlier Amelia Island talk (downloads the PowerPoint).</p>
+  </aside>
+</section>
+
+<!-- ============================================================ deep looking at a place -->
+<section class="slide s-place">
+  <div class="page">
+    <header class="hd"><h2>Deep Looking at a Place</h2><div class="kicker">The same method — at a larger scale</div></header>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="hdr"><span class="b">L</span><span>Language</span></div><p>What names has this place carried?</p></article>
+      <article class="tile" data-b="2"><div class="hdr"><span class="b">A</span><span>Art</span></div><p>What is framed, displayed, or made visible?</p></article>
+      <article class="tile" data-b="3"><div class="hdr"><span class="b">M</span><span>Mathematics</span></div><p>What patterns appear in dates, maps, or collections?</p></article>
+      <article class="tile" data-b="4"><div class="hdr"><span class="b">E</span><span>Engineering</span></div><p>How was the place built, preserved, or adapted?</p></article>
+      <article class="tile" data-b="5"><div class="hdr"><span class="b">S</span><span>Science</span></div><p>What materials, climate, ecology, or decay shape it?</p></article>
+      <article class="tile h" data-b="6"><div class="hdr"><span class="b">H</span><span>Humanities</span></div><p>Whose stories are centered, missing, or contested?</p></article>
+    </div>
+    <p class="line" data-b="7">A place is an object with layers of time, people, materials, and systems.</p>
+  </div>
+  <aside class="notes">
+    <p>The same six lenses scaled up from an object to a scene or a place.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ Rob Walker -->
+<section class="slide s-walker">
+  <div class="page">
+    <header class="hd"><h2>Rob Walker · The Art of Noticing</h2><div class="kicker">Close with practice</div></header>
+    <div class="yt live" data-yt="H4fFD187b7A" data-start="210" data-end="1800" style="background-image:url(https://i.ytimg.com/vi/H4fFD187b7A/hqdefault.jpg)"><span class="play"></span></div>
+    <div class="tile side"><div class="k">WATCH</div>
+      <p class="t">Start at 3:30<br>Stop around 30:00</p>
+      <p>The goal: notice what your attention normally edits out.</p>
+      <a href="https://www.youtube.com/watch?v=H4fFD187b7A&amp;t=210s" target="_blank" rel="noopener">youtube.com/watch?v=H4fFD187b7A</a></div>
+    <p class="line">LOOK LONGER · TRY ANOTHER LENS · ASK ONE MORE QUESTION</p>
+  </div>
+  <aside class="notes">
+    <p>The embedded player starts at 3:30 and stops at 30:00.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ resources -->
+<section class="slide s-res">
+  <div class="page">
+    <header class="hd"><h2>Resources</h2><div class="kicker">For looking further</div></header>
+    <div class="grid">
+      <article class="tile"><h4>WEB</h4><ul>
+        <li><a href="https://vtshome.org/" target="_blank" rel="noopener">Visual Thinking Strategies</a></li>
+        <li><a href="https://pz.harvard.edu/" target="_blank" rel="noopener">Project Zero (Harvard)</a></li>
+        <li><a href="https://www.nytimes.com/section/learning" target="_blank" rel="noopener">NYT · The Learning Network</a></li>
+        <li><a href="https://www.nytimes.com/column/learning-whats-going-on-in-this-picture" target="_blank" rel="noopener">NYT · What's Going On in This Picture?</a></li>
+        <li><a href="https://www.nytimes.com/spotlight/10-minute-challenge" target="_blank" rel="noopener">NYT · 10-Minute Challenge</a></li>
+        <li><a href="https://www.slowartday.com/" target="_blank" rel="noopener">Slow Art Day</a></li>
+        <li><a href="https://studio.nwp.org/discovery" target="_blank" rel="noopener">National Writing Project</a></li></ul></article>
+      <article class="tile"><h4>VIDEO</h4><ul>
+        <li><a href="https://www.youtube.com/watch?v=xdTTfZ0EZcc&amp;t=5s" target="_blank" rel="noopener">Art of Looking</a></li>
+        <li><a href="https://www.youtube.com/watch?v=H4fFD187b7A&amp;t=1326s" target="_blank" rel="noopener">Art of Noticing</a><span>Walker begins at 3:15</span></li>
+        <li><a href="https://www.youtube.com/watch?v=YFpJHMXZDXw" target="_blank" rel="noopener">On Looking</a><span>Horowitz begins at 1:06</span></li></ul></article>
+      <article class="tile"><h4>BOOKS</h4><ul>
+        <li><b>The Art of Noticing</b> (2019), Rob Walker<span><a href="https://robwalker.substack.com/" target="_blank" rel="noopener">robwalker.substack.com</a></span></li>
+        <li><b>On Looking: Eleven Walks with Expert Eyes</b> (2013), Alexandra Horowitz</li>
+        <li><b>Slow Looking: The Art and Practice of Learning Through Observation</b> (2017), Shari Tishman</li>
+        <li><b>Deep Listening: A Composer's Sound Practice</b> (2005), Pauline Oliveros</li></ul></article>
+    </div>
+  </div>
+  <aside class="notes"><p>From resources.md.</p></aside>
 </section>
 
 <!-- ============================================================ the app -->
@@ -418,6 +892,87 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
       b.closest('.pop').querySelector('.d').textContent=text[+b.getAttribute('data-tab')];
     });
   });
+})();
+// Language: each word zooms the photo to the feature it names
+(function(){
+  var sl=document.querySelector('#stage .s-lang'); if(!sl) return;
+  var img=sl.querySelector('.frame img'), lab=sl.querySelector('.frame .word');
+  [].forEach.call(sl.querySelectorAll('.chips button'),function(b){
+    b.addEventListener('click',function(){
+      [].forEach.call(b.parentNode.children,function(x){x.classList.toggle('on',x===b);});
+      img.style.setProperty('--z',b.getAttribute('data-z')); img.style.setProperty('--o',b.getAttribute('data-o'));
+      lab.textContent=b.textContent; lab.style.opacity=1;
+    });
+  });
+})();
+
+// YouTube: load the player only when clicked; remove it when the slide is left
+(function(){
+  [].forEach.call(document.querySelectorAll('#stage .yt'),function(v){
+    var id=v.getAttribute('data-yt'); if(id) v.classList.add('live');
+    var slide=v.closest('.slide');
+    v.addEventListener('click',function(){
+      id=v.getAttribute('data-yt'); if(!id||v.querySelector('iframe')) return;
+      var q='autoplay=1&rel=0&modestbranding=1'+(v.dataset.start?'&start='+v.dataset.start:'')+(v.dataset.end?'&end='+v.dataset.end:'');
+      var f=document.createElement('iframe');
+      f.src='https://www.youtube-nocookie.com/embed/'+id+'?'+q;
+      f.allow='autoplay; encrypted-media; picture-in-picture; fullscreen'; f.allowFullscreen=true;
+      v.appendChild(f);
+    });
+    new MutationObserver(function(){ if(!slide.classList.contains('on')){ var f=v.querySelector('iframe'); if(f) f.remove(); } })
+      .observe(slide,{attributes:true,attributeFilter:['class']});
+  });
+})();
+
+// Mathematics / CS: walk the worm's building cycle as a state machine
+(function(){
+  var sl=document.querySelector('#stage .s-fsm'); if(!sl) return;
+  var P={idle:[230,58],intercept:[110,140],position:[250,218],mix:[140,320],wet:[320,320],cation:[126,460],quinone:[282,460],solid:[440,460]};
+  var INFO={idle:['Idle / Emergence','Worm extends its tentacles into the flow.'],
+    intercept:['Grain Interception','A sand grain suspended in the current is caught.'],
+    position:['Positioning & Assessment','The grain is turned and tested for fit at the tube rim.'],
+    mix:['Mix granules','Two types of cement granules are released and mixed.'],
+    wet:['Wetting','An acidic liquid coacervate coats the grain’s facet.'],
+    cation:['Cation complex','In seawater (pH ≈ 8.2), Ca²⁺/Mg²⁺ ions bind.'],
+    quinone:['Quinone tanning','DOPA oxidative cross-linking hardens the cement.'],
+    solid:['Solid bond','A permanent, hardened matrix: the grain is set.']};
+  var token=sl.querySelector('.token'), sn=sl.querySelector('.sn'), sd=sl.querySelector('.sd'), gc=sl.querySelector('.gc'), gg=sl.querySelector('.grains');
+  var cur='idle', grains=0, playing=true, busy=false, timer=0, seed=5;
+  function rnd(){seed=(seed*16807)%2147483647;return (seed-1)/2147483646;}
+  function next(s){
+    if(s==='idle') return ['intercept'];
+    if(s==='intercept') return rnd()<.3?['idle','Grain rejected or washed away — back to waiting.']:['position'];
+    if(s==='position') return rnd()<.25?['idle','Unsuitable geometry — the grain is discarded.']:['mix'];
+    return [{mix:'wet',wet:'cation',cation:'quinone',quinone:'solid',solid:'idle'}[s]];
+  }
+  function show(s,msg){
+    [].forEach.call(sl.querySelectorAll('.st'),function(g){g.classList.toggle('on',g.getAttribute('data-s')===s);});
+    sn.textContent=INFO[s][0]; sd.textContent=msg||INFO[s][1];
+  }
+  function addGrain(){
+    var i=grains%84, col=i%14, row=Math.floor(i/14);
+    if(i===0) while(gg.firstChild) gg.removeChild(gg.firstChild);
+    var x=14+col*16.5+(row%2?8:0), y=104-row*16, c=['#CDBB98','#B9A47E','#D9C9A6','#C4AE88'][Math.floor(rnd()*4)];
+    var e=document.createElementNS('http://www.w3.org/2000/svg','rect');
+    e.setAttribute('x',x-7);e.setAttribute('y',y-6);e.setAttribute('width',14);e.setAttribute('height',12);e.setAttribute('rx',3.5);
+    e.setAttribute('fill',c);e.setAttribute('stroke','#A8956F');gg.appendChild(e);
+    grains++; gc.textContent=grains;
+  }
+  function move(to,msg,done){
+    var a=P[cur], b=P[to], t0=performance.now(), D=to==='idle'&&cur!=='intercept'&&cur!=='position'?900:480;
+    busy=true; sl.querySelectorAll('.st').forEach(function(g){g.classList.remove('on');});
+    (function f(t){ var u=Math.min(1,(t-t0)/D), e=u*u*(3-2*u), x=a[0]+(b[0]-a[0])*e, y=a[1]+(b[1]-a[1])*e;
+      if(to==='idle'&&cur==='solid'){ x=a[0]+(545-a[0])*Math.sin(e*Math.PI)*.9+(b[0]-a[0])*e; }
+      token.setAttribute('cx',x.toFixed(1)); token.setAttribute('cy',y.toFixed(1));
+      if(u<1) requestAnimationFrame(f); else { if(cur==='solid'&&to==='idle') addGrain(); cur=to; show(to,msg); busy=false; if(done) done(); } })(t0);
+  }
+  function step(){ if(busy) return; var n=next(cur); move(n[0],n[1]); }
+  function loop(){ clearTimeout(timer); if(!playing||!sl.classList.contains('on')) return; step(); timer=setTimeout(loop,1350); }
+  sl.querySelector('.pp').addEventListener('click',function(){ playing=!playing; this.textContent=playing?'❚❚ Pause':'▶ Play'; loop(); });
+  sl.querySelector('.stp').addEventListener('click',function(){ playing=false; sl.querySelector('.pp').textContent='▶ Play'; clearTimeout(timer); step(); });
+  new MutationObserver(function(){ if(sl.classList.contains('on')){ clearTimeout(timer); timer=setTimeout(loop,700); } else clearTimeout(timer); })
+    .observe(sl,{attributes:true,attributeFilter:['class']});
+  show('idle');
 })();
 </script>
 </body>

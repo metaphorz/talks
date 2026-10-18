@@ -2,6 +2,8 @@
 # each deck keeps its originals (pptx, pdf, full-size photos) in <deck>/source/
 source/
 *.pptx
+# …except talks deliberately shared for download from a deck
+!*/talks/*.pptx
 *.pdf
 *.webloc
 .DS_Store
