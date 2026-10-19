@@ -71,6 +71,25 @@
 .slide.on.s-title .sub.anim{animation:rise .8s var(--ease) .6s both}
 .slide.on.s-title .by.anim{animation:rise .8s var(--ease) .8s both}
 
+/* ===== 2 · don't stop looking ===== */
+.s-look .motto{position:absolute;left:55px;top:134px;width:849px;margin:0;text-align:center;font-size:27px;font-style:italic;font-weight:400;color:var(--ink-2)}
+.s-look .motto b{font-weight:700;color:var(--teal)}
+.s-look .step{position:absolute;top:214px;width:378px;height:310px;padding:24px 26px}
+.s-look .step.first{left:55px}
+.s-look .step.then{left:526px}
+.s-look .step svg{display:block;width:84px;height:56px;margin:12px 0 2px;fill:none;stroke:var(--teal);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round}
+.s-look .step.then svg{stroke:var(--amber)}
+.s-look .step h3{font-size:24px}
+.s-look .step ul{margin:12px 0 0;padding-left:18px;font-size:15.5px;line-height:1.48;color:var(--ink)}
+.s-look .lid{transform-box:fill-box;transform-origin:center}
+.s-look.on .lid{animation:blinkeye 6s ease-in-out infinite}
+.s-look .pupil{fill:var(--teal);stroke:none}
+.s-look.on .pupil{animation:gaze 9s ease-in-out infinite}
+@keyframes blinkeye{0%,46%,54%,100%{transform:scaleY(1)}50%{transform:scaleY(.08)}}
+@keyframes gaze{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}65%{transform:translateX(7px)}}
+.s-look .arrow{position:absolute;left:441px;top:341px;width:78px;height:56px;fill:none;stroke:var(--amber);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.s-look .line{top:566px}
+
 /* ===== 2 · openness ===== */
 .s-open .orbit{position:absolute;left:55px;top:122px;width:440px;height:480px}
 .s-open .orbit svg{position:absolute;inset:0;width:440px;height:480px;overflow:visible}
@@ -418,6 +437,43 @@
     <p>Click the music button (or press M) before you start; the music fades out when you move to slide 2.</p>
     <p>The animation is a small neural network: signals flow left to right, and the five outputs are today's five elements.</p>
     <p>[build] The five elements: Prompt, Level, Writing, Knowledge Graph, Roleplay.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 · don't stop looking -->
+<section class="slide s-look">
+  <div class="page">
+    <header class="hd"><h2>Don’t Stop Looking</h2><div class="kicker">Human first · Technology second</div></header>
+    <p class="motto"><i>explore <b>humanity</b> first and <b>technology</b> afterward</i></p>
+    <article class="tile step first">
+      <div class="tag">First · look</div>
+      <svg viewBox="0 0 84 56" aria-hidden="true"><g class="lid"><path d="M6 28 Q42 -6 78 28 Q42 62 6 28 Z"/><g class="pupil"><circle cx="42" cy="28" r="10"/></g></g></svg>
+      <h3>People, places, things</h3>
+      <ul>
+        <li>Notice the world before you describe it</li>
+        <li>Talk with people; hear what matters</li>
+        <li>Read, walk, sketch, listen — slowly</li>
+        <li>Find the question that is worth asking</li>
+      </ul>
+    </article>
+    <svg class="arrow" viewBox="0 0 78 56" aria-hidden="true"><path d="M8 28 H66 M52 14 L68 28 L52 42"/></svg>
+    <article class="tile step then" data-b="1">
+      <div class="tag">Then · build</div>
+      <svg viewBox="0 0 84 56" aria-hidden="true"><rect x="22" y="8" width="40" height="40" rx="6"/><rect x="33" y="19" width="18" height="18" rx="2"/><path d="M30 2 v6 M42 2 v6 M54 2 v6 M30 48 v6 M42 48 v6 M54 48 v6 M16 18 h6 M16 28 h6 M16 38 h6 M62 18 h6 M62 28 h6 M62 38 h6"/></svg>
+      <h3>Bring in the machine</h3>
+      <ul>
+        <li>Use AI to extend what you have seen</li>
+        <li>Let it draft, sketch, compose, code</li>
+        <li>Judge the result against the real thing</li>
+        <li>Then go back and look again</li>
+      </ul>
+    </article>
+    <p class="line" data-b="2">The tool can make almost anything. What is worth making comes from looking.</p>
+  </div>
+  <aside class="notes">
+    <p>Before any tool: be human first. Look at people, nature, art, history — the material that gives a prompt something to say.</p>
+    <p>[build] Then bring in the technology, and use what you have seen to judge what it gives you.</p>
+    <p>[build] The loop never closes: after the machine, go back and look again.</p>
   </aside>
 </section>
 
