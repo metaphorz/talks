@@ -474,4 +474,16 @@
     var raf=0; function frame(){ step(); raf=requestAnimationFrame(frame); }
     watch(slide,function(on){ if(on){ if(!chat.children.length) reset(); if(!raf) raf=requestAnimationFrame(frame); } else { cancelAnimationFrame(raf); raf=0; } });
   })();
+
+  // ================= 15 · Egans Creek: the live site in a frame, loaded the first time the slide is shown =================
+  (function(){
+    var slide=slideOf('.s-egan'), site=$('#egan-site'); if(!slide||!site) return;
+    var URL='https://metaphorz.github.io/eganscreek/', f=null;
+    function load(p){
+      if(!f){ f=document.createElement('iframe'); f.title='Egans Creek atlas'; f.referrerPolicy='strict-origin-when-cross-origin'; site.appendChild(f); }
+      f.src=URL+'#page='+p;
+    }
+    group($('#egan-pages'),'data-p',function(p){ load(p); });
+    watch(slide,function(on){ if(on&&!f&&!presenter) load('map'); });
+  })();
 })();

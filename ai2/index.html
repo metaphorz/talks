@@ -286,7 +286,21 @@
 .s-how .tile p{font-size:14.5px}
 .s-how .line{top:592px}
 
-/* ===== 15 · guidelines ===== */
+/* ===== 15 · Egans Creek ===== */
+.s-egan .win{position:absolute;left:55px;top:122px;width:666px;height:446px;border-radius:12px;overflow:hidden;background:#F3F1EA;box-shadow:0 6px 14px rgba(40,30,10,.3)}
+.s-egan .win .bar{height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;background:#EDE6D8;font:600 11.5px var(--sans);color:var(--grey)}
+.s-egan .win .bar i{width:10px;height:10px;border-radius:50%;background:#D9CFBE}
+.s-egan .win .bar span{margin-left:8px}
+.s-egan .win .site{position:absolute;left:0;top:30px;width:666px;height:416px;background:#F3F1EA url(img/eganscreek.jpg) top left/666px auto no-repeat}
+.s-egan .win iframe{position:absolute;left:0;top:0;width:1280px;height:800px;border:0;transform:scale(.5203);transform-origin:0 0}
+.s-egan .pages{position:absolute;left:55px;top:582px;width:666px}
+.s-egan .side{position:absolute;left:746px;top:122px;width:158px}
+.s-egan .side .tag{display:block;margin-top:14px;font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--amber)}
+.s-egan .side .tag:first-child{margin-top:0}
+.s-egan .side p{margin:4px 0 0;font-size:13.5px;line-height:1.38}
+.s-egan .side a{color:var(--teal);font-weight:600;text-decoration:none}
+
+/* ===== 16 · guidelines ===== */
 .s-guide .grid{top:124px;grid-template-columns:repeat(3,1fr)}
 .s-guide .grid .tile{height:230px}
 .s-guide .grid .tile h3{font-size:21px}
@@ -298,7 +312,7 @@
 .s-guide .cred b{display:block;font-size:15px}
 .s-guide .cred a{color:var(--teal);font-weight:600;text-decoration:none}
 
-/* ===== 16 · resources ===== */
+/* ===== 17 · resources ===== */
 .s-res .grid{top:124px;grid-template-columns:1fr 1fr;gap:14px 21px}
 .s-res .tile{padding:14px 18px}
 .s-res .tile h3{font-size:17px;margin:0}
@@ -589,7 +603,30 @@
   <aside class="notes"><p>[builds] Six steps. The last one: these slides, including the 3D renders, were built with Claude Code.</p></aside>
 </section>
 
-<!-- ============================================================ 15 · guidelines -->
+<!-- ============================================================ 15 · Egans Creek -->
+<section class="slide s-egan">
+  <div class="page">
+    <header class="hd"><h2>A Real Project: Egans Creek</h2><div class="kicker">2H · Code · a whole website made by AI coding</div></header>
+    <div class="win"><div class="bar"><i></i><i></i><i></i><span>metaphorz.github.io/eganscreek</span></div>
+      <div class="site" id="egan-site"></div></div>
+    <div class="row pages" id="egan-pages" data-noadvance><span class="lbl">Go to</span>
+      <button class="btn on" data-p="map">Map</button><button class="btn" data-p="tides">Tides</button><button class="btn" data-p="formation">Formation</button>
+      <button class="btn" data-p="marsh">The marsh</button><button class="btn" data-p="animals">Animals</button><button class="btn" data-p="history">History</button></div>
+    <div class="side">
+      <span class="tag">What it is</span><p>An interactive atlas of the Ron Sapp Egans Creek Greenway on Amelia Island.</p>
+      <span class="tag">What it does</span><p>A zoomable map, live NOAA tide readings, deep time, and a field guide to the animals.</p>
+      <span class="tag">Who made it</span><p>Paul Fishwick, with OpenAI Codex writing the code.</p>
+      <span class="tag">Try it</span><p><a href="https://metaphorz.github.io/eganscreek/" target="_blank" rel="noopener">Open the site ↗</a></p>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The same workflow as the bouncing ball, scaled up to a whole website: describe, run, look, ask for one change, many times over.</p>
+    <p>The site is live inside the frame: scroll it, zoom the map, open a bird. Use the buttons below to jump between its pages.</p>
+    <p>After clicking inside the site, click the slide background before using the arrow keys again.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 16 · guidelines -->
 <section class="slide s-guide">
   <div class="page">
     <header class="hd"><h2>Guidelines for Media</h2><div class="kicker">Using AI honestly</div></header>
@@ -608,7 +645,7 @@
   <aside class="notes"><p>[builds] Same three rules as Part 1, now for media. [build] The credits for this talk, as an example.</p></aside>
 </section>
 
-<!-- ============================================================ 16 · resources -->
+<!-- ============================================================ 17 · resources -->
 <section class="slide s-res">
   <div class="page">
     <header class="hd"><h2>Resources</h2><div class="kicker">For trying things this week</div></header>
@@ -621,6 +658,7 @@
       <article class="tile"><h3>Blender</h3><p><a href="https://www.blender.org" target="_blank" rel="noopener">blender.org</a> — free 3D software for rendering</p></article>
       <article class="tile"><h3>Claude</h3><p><a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> — code and artifacts; Claude Code for projects</p></article>
       <article class="tile"><h3>Videos in this talk</h3><p><a href="https://www.youtube.com/shorts/SJ2c_XipT9A" target="_blank" rel="noopener">Voices Under the Sea</a> · <a href="https://www.youtube.com/watch?v=YdXNJ1K3Dso" target="_blank" rel="noopener">Marble Statue</a> · <a href="https://www.youtube.com/watch?v=encz3oT7Amk" target="_blank" rel="noopener">Fort Clinch</a></p></article>
+      <article class="tile"><h3>Egans Creek atlas</h3><p><a href="https://metaphorz.github.io/eganscreek/" target="_blank" rel="noopener">metaphorz.github.io/eganscreek</a> — made with OpenAI Codex</p></article>
       <article class="tile"><h3>Part 1 · Elements</h3><p><a href="../ai1/" target="_blank" rel="noopener">Prompt, level, writing, knowledge graphs, roleplay</a></p></article>
     </div>
   </div>
