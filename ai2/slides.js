@@ -486,4 +486,49 @@
     group($('#egan-pages'),'data-p',function(p){ load(p); });
     watch(slide,function(on){ if(on&&!f&&!presenter) load('map'); });
   })();
+
+  // ================= 13 · code is a modeling material: the world on one side, the model on the other =================
+  (function(){
+    var slide=slideOf('.s-model'); if(!slide) return;
+    var X={
+      ball:{w:[['A red ball','x, y and a radius r'],['It moves across the box','a velocity vx, vy, added every frame'],
+               ['It falls faster and faster','gravity: vy += g'],['Each bounce is a little lower','a bounce loses energy: vy *= −0.88']],
+            out:'<b>Left out:</b> spin, air, squash, the sound it makes.'},
+      egan:{w:[['A creek winding through the marsh','USGS flowlines drawn on a map'],['The tide rising and falling','a live NOAA gauge reading'],
+               ['Old sand under younger sand','a cross-section, height exaggerated'],['Herons, egrets and ibises','a field guide: birds, photos, filters']],
+            out:'<b>Left out:</b> the smell of the marsh, the mud, the heat, the season.'}
+    };
+    function ballWorld(){
+      var svg='<svg viewBox="0 0 364 120"><rect width="364" height="120" fill="#F4EFE5"/><path d="M8 110 H356" stroke="#C9BFAE" stroke-width="2"/>';
+      var x=20,y=24,vx=2.1,vy=0,n=0,pts=[];
+      var path='M'+x+' '+y;
+      for(var i=0;i<160;i++){ vy+=.35; x+=vx; y+=vy; if(y>100){y=100;vy*=-.88;} path+=' L'+x.toFixed(1)+' '+y.toFixed(1); if(i%8===0) pts.push([x,y]); }
+      svg+='<path d="'+path+'" fill="none" stroke="#C0392B" stroke-opacity=".35" stroke-width="1.5" stroke-dasharray="3 4"/>';
+      pts.forEach(function(p,k){ var a=(.12+.88*k/pts.length).toFixed(2), last=k===pts.length-1;
+        svg+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="9" fill="#C0392B" opacity="'+(last?1:a*.4)+'"/>'; });
+      return svg+'</svg>';
+    }
+    function marshWorld(){
+      return '<svg viewBox="0 0 364 120"><defs><linearGradient id="mdl-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6E3C2"/><stop offset="1" stop-color="#E9EEE6"/></linearGradient></defs>'+
+        '<rect width="364" height="120" fill="url(#mdl-sky)"/><circle cx="292" cy="34" r="15" fill="#F4C27A"/>'+
+        '<path d="M0 62 q30-14 60-4 q26-12 52 0 q34-14 70-2 q40-10 80 0 q50-12 102 0 V74 H0z" fill="#9BAA8E"/>'+
+        '<g class="tide"><path d="M0 92 C70 80 120 104 190 90 S300 80 364 92 V120 H0z" fill="#7FA9B5"/></g>'+
+        '<path d="M0 82 C60 76 110 96 180 84 C250 74 300 82 364 80 V88 C300 90 250 84 180 94 C110 104 60 86 0 92z" fill="#B7B98A"/>'+
+        '<g stroke="#6F7F55" stroke-width="1.6" stroke-linecap="round">'+(function(){var g='';for(var i=0;i<46;i++){var x=4+i*7.9,h=8+((i*37)%9);g+='<path d="M'+x+' 88 l'+(((i*13)%5)-2)+' -'+h+'"/>';}return g;})()+'</g>'+
+        
+        '</svg>';
+    }
+    function ballModel(){ return '<pre>x, y, r = 120, 90, 16\nvx, vy  = 2.5, -1\n<b>vy += g</b>          // gravity\nx += vx;  y += vy\nif (y > H - r) <b>vy *= -0.88</b></pre>'; }
+    function eganModel(){ return '<img src="img/eganscreek.jpg" alt="The Egans Creek atlas, map page">'; }
+    function show(k){
+      var d=X[k];
+      $('#mdl-wv').innerHTML=k==='ball'?ballWorld():marshWorld();
+      $('#mdl-mv').innerHTML=k==='ball'?ballModel():eganModel();
+      $('#mdl-w').innerHTML=d.w.map(function(r,i){return '<li data-lens="'+k+i+'">'+r[0]+'</li>';}).join('');
+      $('#mdl-m').innerHTML=d.w.map(function(r,i){return '<li data-lens="'+k+i+'">'+r[1]+'</li>';}).join('');
+      $('#mdl-out').innerHTML=d.out;
+    }
+    group($('#mdl-ex'),'data-x',show);
+    show('ball');
+  })();
 })();

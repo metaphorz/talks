@@ -261,7 +261,36 @@
 .s-3d .models button.on{border-color:var(--amber);background:#FBF4E8}
 .s-3d .models .ctl{margin-top:8px}
 
-/* ===== 13 · code demo ===== */
+/* ===== 13 · code is a modeling material ===== */
+.s-model .loop{position:absolute;left:55px;top:124px;width:849px;display:flex;align-items:center;gap:8px}
+.s-model .loop span{padding:6px 15px;border-radius:999px;background:#fff;border:1.5px solid var(--rule);font-size:14px;font-weight:700;color:var(--ink)}
+.s-model .loop i{font-style:normal;color:var(--grey);font-weight:700}
+.s-model.on .loop span{animation:loopstep 10s infinite}
+.s-model.on .loop span:nth-of-type(2){animation-delay:2s}.s-model.on .loop span:nth-of-type(3){animation-delay:4s}
+.s-model.on .loop span:nth-of-type(4){animation-delay:6s}.s-model.on .loop span:nth-of-type(5){animation-delay:8s}
+@keyframes loopstep{0%,18%{background:var(--amber);border-color:var(--amber);color:#fff}22%,100%{background:#fff;border-color:var(--rule);color:var(--ink)}}
+.s-model .loop .say{margin-left:auto;white-space:nowrap;font-size:13.5px;font-weight:700;color:var(--teal)}
+.s-model .ex{position:absolute;left:55px;top:176px}
+.s-model .pane{position:absolute;top:218px;width:400px;height:352px;padding:16px 18px}
+.s-model .pane.w{left:55px}.s-model .pane.m{left:504px}
+.s-model .arrow{position:absolute;left:463px;top:376px;width:34px;text-align:center;font-size:26px;font-weight:700;color:var(--amber)}
+.s-model .arrow small{display:block;font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey)}
+.s-model .vis{position:relative;height:120px;margin:8px 0 10px;border-radius:10px;overflow:hidden;background:#F4EFE5}
+.s-model .vis svg{position:absolute;inset:0;width:100%;height:100%}
+.s-model .vis img{width:100%;height:100%;object-fit:cover;object-position:top left;display:block}
+.s-model .vis pre{margin:0;padding:12px 14px;font:13px/1.55 var(--mono);color:#DCEBE8;background:var(--night);height:100%;box-sizing:border-box}
+.s-model .vis pre b{color:#F4C27A;font-weight:600}
+.s-model ul{margin:0;padding:0;list-style:none}
+.s-model li{padding:7px 10px;margin-bottom:5px;border-radius:9px;font-size:14.5px;line-height:1.3;background:#F7F3EA;border:1.5px solid transparent;transition:background .2s,border-color .2s}
+.s-model .m li{font-family:var(--mono);font-size:13px}
+.s-model li.hot{background:#FBF4E8;border-color:var(--amber)}
+.s-model .out{margin-top:8px;font-size:12.5px;color:var(--grey)}
+.s-model .out b{color:var(--sand-ink)}
+.s-model .tide{animation:tide 6s ease-in-out infinite}
+@keyframes tide{0%,100%{transform:translateY(5px)}50%{transform:translateY(-5px)}}
+.s-model .line{top:592px}
+
+/* ===== 14 · code demo ===== */
 .s-code .chat{position:absolute;left:55px;top:122px;width:390px;height:440px;padding:16px;overflow:hidden}
 .s-code .msg{margin-bottom:10px;padding:10px 13px;border-radius:12px;font-size:14px;line-height:1.38;animation:rise .4s var(--ease) both}
 .s-code .msg.u{margin-left:40px;background:var(--teal);color:#fff}
@@ -279,14 +308,14 @@
 .s-code .grav.off{opacity:.25;pointer-events:none}
 .s-code .line{top:590px}
 
-/* ===== 14 · code how-to ===== */
+/* ===== 15 · code how-to ===== */
 .s-how .grid{top:124px;grid-template-columns:repeat(3,1fr);gap:16px 21px}
 .s-how .tile{height:200px}
 .s-how .tile .n{position:absolute;right:16px;bottom:10px;font-size:34px;font-weight:700;color:var(--sand)}
 .s-how .tile p{font-size:14.5px}
 .s-how .line{top:592px}
 
-/* ===== 15 · Egans Creek ===== */
+/* ===== 16 · Egans Creek ===== */
 .s-egan .win{position:absolute;left:55px;top:122px;width:666px;height:446px;border-radius:12px;overflow:hidden;background:#F3F1EA;box-shadow:0 6px 14px rgba(40,30,10,.3)}
 .s-egan .win .bar{height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;background:#EDE6D8;font:600 11.5px var(--sans);color:var(--grey)}
 .s-egan .win .bar i{width:10px;height:10px;border-radius:50%;background:#D9CFBE}
@@ -300,7 +329,7 @@
 .s-egan .side p{margin:4px 0 0;font-size:13.5px;line-height:1.38}
 .s-egan .side a{color:var(--teal);font-weight:600;text-decoration:none}
 
-/* ===== 16 · guidelines ===== */
+/* ===== 17 · guidelines ===== */
 .s-guide .grid{top:124px;grid-template-columns:repeat(3,1fr)}
 .s-guide .grid .tile{height:230px}
 .s-guide .grid .tile h3{font-size:21px}
@@ -312,7 +341,7 @@
 .s-guide .cred b{display:block;font-size:15px}
 .s-guide .cred a{color:var(--teal);font-weight:600;text-decoration:none}
 
-/* ===== 17 · resources ===== */
+/* ===== 18 · resources ===== */
 .s-res .grid{top:124px;grid-template-columns:1fr 1fr;gap:14px 21px}
 .s-res .tile{padding:14px 18px}
 .s-res .tile h3{font-size:17px;margin:0}
@@ -568,7 +597,26 @@
   </aside>
 </section>
 
-<!-- ============================================================ 13 · code demo -->
+<!-- ============================================================ 13 · code is a modeling material -->
+<section class="slide s-model">
+  <div class="page">
+    <header class="hd"><h2>Code Is a Modeling Material</h2><div class="kicker">2H · Code · see something, make a model</div></header>
+    <div class="loop"><span>See</span><i>→</i><span>Abstract</span><i>→</i><span>Code</span><i>→</i><span>Run</span><i>→</i><span>Compare</span><i>↺</i>
+      <span class="say" style="border:0;background:none;padding:0;animation:none">The material is code. The modeling is AI coding.</span></div>
+    <div class="row ex" id="mdl-ex"><span class="lbl">Example</span><button class="btn on" data-x="ball">Bouncing ball</button><button class="btn" data-x="egan">Egans Creek</button></div>
+    <article class="tile pane w"><div class="tag">The world · what you see</div><div class="vis" id="mdl-wv"></div><ul id="mdl-w"></ul></article>
+    <div class="arrow">→<small>model</small></div>
+    <article class="tile wash pane m"><div class="tag">The model · what the code keeps</div><div class="vis" id="mdl-mv"></div><ul id="mdl-m"></ul><div class="out" id="mdl-out"></div></article>
+    <p class="line">Every model leaves things out. Choosing what to keep is the human part.</p>
+  </div>
+  <aside class="notes">
+    <p>Most AI coding is really modeling. We see something — a bouncing ball, a creek — and make a model of it. The material for the model is code; the modeling is done by AI coding.</p>
+    <p>Hover a line on either side to see what in the world it stands for, or how the model keeps it. Switch to Egans Creek: the same move, at the scale of a whole place.</p>
+    <p>Point at "left out": the model is useful because it is simpler than the world.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 14 · code demo -->
 <section class="slide s-code">
   <div class="page">
     <header class="hd"><h2>Code in Conversation</h2><div class="kicker">2H · Code · building a program by asking</div></header>
@@ -586,7 +634,7 @@
   </aside>
 </section>
 
-<!-- ============================================================ 14 · code how-to -->
+<!-- ============================================================ 15 · code how-to -->
 <section class="slide s-how">
   <div class="page">
     <header class="hd"><h2>Coding with Claude</h2><div class="kicker">2H · Code · the workflow</div></header>
@@ -603,10 +651,10 @@
   <aside class="notes"><p>[builds] Six steps. The last one: these slides, including the 3D renders, were built with Claude Code.</p></aside>
 </section>
 
-<!-- ============================================================ 15 · Egans Creek -->
+<!-- ============================================================ 16 · Egans Creek -->
 <section class="slide s-egan">
   <div class="page">
-    <header class="hd"><h2>A Real Project: Egans Creek</h2><div class="kicker">2H · Code · a whole website made by AI coding</div></header>
+    <header class="hd"><h2>A Real Project: Egans Creek</h2><div class="kicker">2H · Code · a model of a place, made by AI coding</div></header>
     <div class="win"><div class="bar"><i></i><i></i><i></i><span>metaphorz.github.io/eganscreek</span></div>
       <div class="site" id="egan-site"></div></div>
     <div class="row pages" id="egan-pages" data-noadvance><span class="lbl">Go to</span>
@@ -620,13 +668,13 @@
     </div>
   </div>
   <aside class="notes">
-    <p>The same workflow as the bouncing ball, scaled up to a whole website: describe, run, look, ask for one change, many times over.</p>
+    <p>A model of a place: the creek, its tides, its geology and its animals, with code as the material. The same workflow as the bouncing ball, scaled up to a whole website: describe, run, look, ask for one change, many times over.</p>
     <p>The site is live inside the frame: scroll it, zoom the map, open a bird. Use the buttons below to jump between its pages.</p>
     <p>After clicking inside the site, click the slide background before using the arrow keys again.</p>
   </aside>
 </section>
 
-<!-- ============================================================ 16 · guidelines -->
+<!-- ============================================================ 17 · guidelines -->
 <section class="slide s-guide">
   <div class="page">
     <header class="hd"><h2>Guidelines for Media</h2><div class="kicker">Using AI honestly</div></header>
@@ -645,7 +693,7 @@
   <aside class="notes"><p>[builds] Same three rules as Part 1, now for media. [build] The credits for this talk, as an example.</p></aside>
 </section>
 
-<!-- ============================================================ 17 · resources -->
+<!-- ============================================================ 18 · resources -->
 <section class="slide s-res">
   <div class="page">
     <header class="hd"><h2>Resources</h2><div class="kicker">For trying things this week</div></header>
