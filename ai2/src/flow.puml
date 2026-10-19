@@ -1,0 +1,28 @@
+@startuml
+skinparam backgroundColor transparent
+skinparam defaultFontName "Noto Sans"
+skinparam defaultFontSize 15
+skinparam ActivityBackgroundColor #FFFFFF
+skinparam ActivityBorderColor #1D6E73
+skinparam ActivityBorderThickness 2
+skinparam ActivityDiamondBackgroundColor #FBF4E8
+skinparam ActivityDiamondBorderColor #C9852F
+skinparam ArrowColor #5B636B
+skinparam ArrowThickness 1.6
+skinparam ActivityStartColor #1D6E73
+skinparam ActivityEndColor #1D6E73
+start
+:Describe the picture;
+repeat
+  :Generate an image;
+  :Look closely;
+  if (Is it what I meant?) then (no)
+    :Change one thing in the prompt;
+  else (close)
+    :Edit by hand;
+  endif
+repeat while (Keep going?) is (yes)
+->no;
+:Save, credit, share;
+stop
+@enduml
