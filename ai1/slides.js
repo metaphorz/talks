@@ -119,6 +119,31 @@
     watch(slide,function(on){ if(on) start(); else if(!audio.paused) stop(5000); });
   })();
 
+  // ================= 5 · story dice: tumble, then land on bird, house, person =================
+  (function(){
+    var slide=slideOf('.s-dice'); if(!slide) return;
+    var cubes=$$('.cube',slide), btn=$('#dice-roll'), timer=0;
+    btn.setAttribute('data-noadvance','');
+    function rest(i){return 'rotateX(-16deg) rotateY('+(14-i*14)+'deg)';}
+    function roll(){
+      clearTimeout(timer); slide.classList.remove('landed');
+      cubes.forEach(function(c,i){c.style.transform=rest(i);});
+      if(reduce||!cubes[0].animate){ slide.classList.add('landed'); return; }
+      var last=0;
+      cubes.forEach(function(c,i){
+        var x=360*(2+Math.floor(Math.random()*2))+Math.random()*90, y=360*(2+Math.floor(Math.random()*2))+Math.random()*90, z=Math.random()*120-60, d=1300+i*220;
+        c.animate([{transform:'translateY(-150px) rotateX('+x+'deg) rotateY('+y+'deg) rotateZ('+z+'deg)'},
+                   {transform:'translateY(0) rotateX('+(x*.25)+'deg) rotateY('+(y*.25)+'deg)',offset:.55},
+                   {transform:'translateY(-22px) rotateX(-30deg) rotateY('+(30-i*14)+'deg)',offset:.75},
+                   {transform:'translateY(0) '+rest(i)}],{duration:d,easing:'cubic-bezier(.3,.6,.4,1)'});
+        last=Math.max(last,d);
+      });
+      timer=setTimeout(function(){slide.classList.add('landed');},last-100);
+    }
+    btn.addEventListener('click',function(e){e.stopPropagation();roll();});
+    watch(slide,function(on){ if(on) roll(); });
+  })();
+
   // ================= 2 · openness =================
   (function(){
     var slide=slideOf('.s-open'); if(!slide) return;
