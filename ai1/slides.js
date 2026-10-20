@@ -477,6 +477,45 @@
     group($('#pform'),'data-f',show); show('h');
   })();
 
+  // ================= 1C · expand and condense =================
+  (function(){
+    var slide=slideOf('.s-ec'); if(!slide) return;
+    var NOTES=['live oak, Spanish moss barely moving','mockingbird: three songs, then repeats','coffee steam','boards still wet, cool under bare feet','a truck downshifts, far off','light through the moss in pieces'];
+    var E=[
+      ['Condense · abstraction','Condense my notes to <b>one word</b> that captures them.','word','Stillness'],
+      ['Condense · abstraction','Abstract my notes into <b>one sentence</b>: what are they about?','one','A calm morning, noticed through every sense: sight, sound, touch and smell.'],
+      ['Condense · summarization','<b>Summarize</b> my notes in two sentences. Keep every detail that matters.','sum',
+       'At 7:10 a.m. on the back steps the air is calm: Spanish moss barely moves on the live oak, and the light comes through it in pieces. A mockingbird cycles through three songs, coffee steams, the wet boards are cool underfoot, and a truck downshifts in the distance.'],
+      ['The source','My notes · back steps, 7:10 a.m.','src',null],
+      ['Expand · explanation','<b>Expand</b> my notes into a short <b>explanation</b> for a curious reader: what is going on, and why?','',
+       'These notes describe an early morning in the coastal South, and almost every detail has a reason behind it. The boards are wet because of dew: on a clear night, surfaces cool below the dew point and water condenses on them. The Spanish moss barely moves because the air is calm — and it is not a moss at all, but a flowering plant in the pineapple family that lives on the oak without feeding on it. The mockingbird sings a phrase, repeats it, then moves on: that is how it shows off a repertoire of songs borrowed from other birds. And the far-off truck sounds close because cool, still morning air lets sound carry farther.'],
+      ['Expand · report','<b>Expand</b> my notes into a one-page <b>field report</b> with headings.','rep',
+       '<span class="doc">Field Report · Back Steps, 7:10 a.m.</span><div class="cols">'+
+       '<p><b>Purpose.</b> Record one place, through the senses, at the start of the day.</p>'+
+       '<p><b>Setting.</b> Back steps under a live oak hung with Spanish moss. Early light, calm air.</p>'+
+       '<p><b>Sight.</b> Moss barely moving; light falling through it in pieces.</p>'+
+       '<p><b>Sound.</b> A mockingbird cycling three songs; a truck downshifting far off.</p>'+
+       '<p><b>Touch and smell.</b> Wet, cool boards under bare feet; steam from coffee.</p>'+
+       '<p><b>Interpretation.</b> Dew on the boards points to a clear, cool night. Calm air explains both the still moss and the far-carrying sound.</p>'+
+       '<p><b>Questions.</b> Which birds did the mockingbird borrow its songs from? How does this scene change by noon?</p>'+
+       '<p><b>Next steps.</b> Return at the same time each day for a week; record the sounds; compare the notes.</p></div>']
+    ];
+    function words(s){return s.replace(/<[^>]+>/g,' ').trim().split(/\s+/).length;}
+    var nw=words(NOTES.join(' ')), MAXW=400;  // the full one-page report
+    function show(i){
+      var e=E[i], b=$('#ec-b'), h, n;
+      if(i===3){ h='<ul>'+NOTES.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>'; n=nw; }
+      else { h=e[3]; n=words(h); }
+      var full=i===5;
+      $('#ec-p').innerHTML=e[1]; $('#ec-m1').textContent=e[0];
+      $('#ec-meta').className='meta'+(i>3?' x':''); $('#ec-m2').textContent=full?'one page · shown in brief':n+(n===1?' word':' words');
+      $('#ec-bar').style.width=(full?100:Math.max(1.5,100*n/MAXW))+'%';
+      $$('#ec-steps .btn').forEach(function(x,k){x.classList.toggle('x',k>3);});
+      b.style.opacity=0; setTimeout(function(){b.className='body '+e[2];b.innerHTML=h;b.style.opacity=1;},120);
+    }
+    group($('#ec-steps'),'data-e',function(v){show(+v);}); show(3);
+  })();
+
   // ================= 18 · honeybee: one set of concepts, three structures =================
   (function(){
     var slide=slideOf('.s-graph'); if(!slide) return;
