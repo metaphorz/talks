@@ -90,6 +90,43 @@
 .s-look .arrow{position:absolute;left:441px;top:341px;width:78px;height:56px;fill:none;stroke:var(--amber);stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
 .s-look .line{top:566px}
 
+/* ===== 3 · we learn by modeling ===== */
+.s-kid .kids{top:126px;grid-template-columns:repeat(3,1fr)}
+.s-kid .kids .tile{padding:0 0 18px;overflow:hidden}
+.s-kid .kids img{display:block;width:100%;height:250px;object-fit:cover}
+.s-kid .kids .tag,.s-kid .kids h3,.s-kid .kids p{padding:0 20px}
+.s-kid .kids .tag{display:block;margin-top:16px}
+.s-kid .kids h3{font-size:22px}
+.s-kid .line{top:566px;font-size:17.5px}
+.s-kid .ai-note a{color:inherit}
+
+/* ===== 4 · writing is modeling ===== */
+.s-wm .motto{position:absolute;left:55px;top:128px;width:849px;margin:0;text-align:center;font-size:21px;font-style:italic;color:var(--ink-2)}
+.s-wm .kit{position:absolute;left:55px;top:186px;width:370px;height:384px;padding:20px 22px}
+.s-wm .kit table{width:100%;margin-top:12px;border-collapse:collapse;font-size:15px}
+.s-wm .kit th{font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;text-align:left;color:var(--grey);padding:0 0 6px}
+.s-wm .kit td{padding:12px 0;border-top:1px solid var(--rule);vertical-align:top;line-height:1.3}
+.s-wm .kit td:first-child{width:46%;color:var(--ink-2)}
+.s-wm .kit td:nth-child(2){width:24px;color:var(--amber);font-weight:700}
+.s-wm .kit td:last-child{font-weight:700;color:var(--teal)}
+.s-wm .wall{position:absolute;left:446px;top:186px;width:458px;height:384px;padding:20px 22px}
+.s-wm .course{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+.s-wm .course:first-of-type{margin-top:18px}
+.s-wm .course.o{padding-left:26px}
+.s-wm .brk{position:relative;display:inline-block;padding:12px 16px 10px;border-radius:5px;font-size:19px;font-weight:700;color:#fff;
+  box-shadow:inset 0 -3px 0 rgba(0,0,0,.18);opacity:0;transform:translateY(-26px)}
+.s-wm .brk::before{content:"";position:absolute;left:8px;right:8px;top:-5px;height:5px;
+  background:radial-gradient(circle at 50% 100%,currentColor 0 4px,transparent 4.5px) 0 0/16px 5px repeat-x}
+.s-wm .brk.n{background:var(--teal);color:#fff}.s-wm .brk.n::before{color:var(--teal)}
+.s-wm .brk.v{background:var(--amber)}.s-wm .brk.v::before{color:var(--amber)}
+.s-wm .brk.d{background:#B49A6E}.s-wm .brk.d::before{color:#B49A6E}
+.s-wm .brk.s{background:#8C949B}.s-wm .brk.s::before{color:#8C949B}
+.s-wm.on .brk{animation:drop .5s var(--ease) forwards;animation-delay:calc(.4s + var(--i) * .16s)}
+@keyframes drop{70%{opacity:1;transform:translateY(2px)}100%{opacity:1;transform:none}}
+.s-wm .legend{position:absolute;left:22px;bottom:18px;display:flex;gap:14px;font-size:12px;color:var(--grey)}
+.s-wm .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.s-wm .line{top:592px}
+
 /* ===== 2 · openness ===== */
 .s-open .orbit{position:absolute;left:55px;top:122px;width:440px;height:480px}
 .s-open .orbit svg{position:absolute;inset:0;width:440px;height:480px;overflow:visible}
@@ -502,6 +539,60 @@
     <p>Before any tool: be human first. Look at people, nature, art, history — the material that gives a prompt something to say.</p>
     <p>[build] Then bring in the technology, and use what you have seen to judge what it gives you.</p>
     <p>[build] The loop never closes: after the machine, go back and look again.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 · we learn by modeling -->
+<section class="slide s-kid">
+  <div class="page">
+    <header class="hd"><h2>We Learn by Modeling</h2><div class="kicker">Childhood · our first models</div></header>
+    <div class="grid kids">
+      <article class="tile"><img src="img/child-sandbox.jpg" alt="Two young children digging with a bucket and shovel in a sandbox"><span class="tag">Sandbox</span><h3>Shape the land</h3><p>Roads, rivers, castles: a whole world at small scale.</p></article>
+      <article class="tile"><img src="img/child-tinkertoy.jpg" alt="Children around a table building large structures from Tinkertoys"><span class="tag">Tinkertoys</span><h3>Connect the parts</h3><p>Hubs and sticks: a structure you can hold and turn.</p></article>
+      <article class="tile"><img src="img/child-lego.jpg" alt="Hands snapping a LEGO brick onto a small vehicle model"><span class="tag">LEGO</span><h3>Build from units</h3><p>Small pieces, endless combinations, rebuilt again and again.</p></article>
+    </div>
+    <p class="line" data-b="1">Modeling is fundamental to learning: we understand the world by building small versions of it.</p>
+    <p class="ai-note">Photos via Wikimedia Commons: <a href="https://commons.wikimedia.org/wiki/File:Sandbox_Lawn_Jam_Our_Community_Place_Harrisonburg_VA_June_2008.jpg" target="_blank" rel="noopener">Artaxerxes</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">CC BY-SA 3.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Tinkertoys_in_Laos.jpg" target="_blank" rel="noopener">Blue Plover</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">CC BY-SA 3.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Playing_with_Lego_bricks.jpg" target="_blank" rel="noopener">Nenad Stojkovic</a>, <a href="https://creativecommons.org/licenses/by/2.0" target="_blank" rel="noopener">CC BY 2.0</a></p>
+  </div>
+  <aside class="notes">
+    <p>Ask: who had a sandbox? Tinkertoys? LEGO? What did you build?</p>
+    <p>Each one is a model: a small, simplified version of something bigger, made from parts, that you can change and test.</p>
+    <p>[build] Modeling is how children learn the world, and it never stops being how we learn.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 · writing is modeling -->
+<section class="slide s-wm">
+  <div class="page">
+    <header class="hd"><h2>Writing Is Modeling</h2><div class="kicker">Pay attention, then build it in words</div></header>
+    <p class="motto">Look closely at something, then build a model of it: not with bricks, but with words.</p>
+    <article class="tile kit">
+      <div class="tag">Same kit, new material</div>
+      <table>
+        <tr><th>With bricks</th><th></th><th>With words</th></tr>
+        <tr><td>A brick</td><td>→</td><td>A word</td></tr>
+        <tr><td>How the bricks snap together</td><td>→</td><td>Grammar</td></tr>
+        <tr><td>A wall, a tower</td><td>→</td><td>A sentence</td></tr>
+        <tr><td>The finished model</td><td>→</td><td>A paragraph, a poem, an essay</td></tr>
+        <tr><td>Hold it up to the real thing</td><td>→</td><td>Reread it against what you saw</td></tr>
+      </table>
+    </article>
+    <article class="tile wall">
+      <div class="tag">A model of the back steps, 7:10 a.m.</div>
+      <div class="course"><span class="brk s" style="--i:0">Under</span><span class="brk s" style="--i:1">the</span><span class="brk n" style="--i:2">live oak</span></div>
+      <div class="course o"><span class="brk s" style="--i:3">the</span><span class="brk n" style="--i:4">moss</span><span class="brk d" style="--i:5">barely</span><span class="brk v" style="--i:6">moves.</span></div>
+      <div class="course"><span class="brk s" style="--i:7">A</span><span class="brk n" style="--i:8">mockingbird</span><span class="brk v" style="--i:9">tries</span></div>
+      <div class="course o"><span class="brk d" style="--i:10">three</span><span class="brk n" style="--i:11">songs,</span></div>
+      <div class="course"><span class="brk d" style="--i:12">then</span><span class="brk v" style="--i:13">starts</span><span class="brk d" style="--i:14">again.</span></div>
+      <div class="legend"><span><i style="background:var(--teal)"></i>things</span><span><i style="background:var(--amber)"></i>actions</span><span><i style="background:#B49A6E"></i>details</span><span><i style="background:#8C949B"></i>joiners</span></div>
+    </article>
+    <p class="line" data-b="1">A sandbox model is made of sand. A written model is made of words. Both begin with paying attention.</p>
+  </div>
+  <aside class="notes">
+    <p>The same idea as the sandbox and the LEGO: a small version of something real, built from parts.</p>
+    <p>The bricks drop in one at a time: a sentence from the back-steps notes we'll use later in 1C. Things, actions, details and the small joining words that hold them together.</p>
+    <p>The last row of the table matters most: a model is only good if you check it against the real thing. That needs attention first, writing second.</p>
+    <p>[build] Both begin with paying attention.</p>
   </aside>
 </section>
 
