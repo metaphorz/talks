@@ -137,7 +137,7 @@
   </div>
   <aside class="notes">
     <p>Last week: the six LAMESH lenses, one at a time. Today, before we use them on things, we put the lenses next to each other.</p>
-    <p>Watch the hexagon: six subjects, and every pair joined. Fifteen lines.</p>
+    <p>Watch the hexagon: six subjects, and every pair joined. Fifteen lines. Then one connector lights at a time, with the idea in its middle: Art ↔ Science through observation, Humanities ↔ Engineering through purpose, then the other thirteen.</p>
     <p>[build] Our two examples today. [build] The question for the session.</p>
   </aside>
 </section>
@@ -374,10 +374,59 @@ function buildHex(svg,r){
     g.innerHTML='<circle cx="'+pos[c][0]+'" cy="'+pos[c][1]+'" r="'+(r>140?34:28)+'"/><text x="'+pos[c][0]+'" y="'+pos[c][1]+'">'+c+'</text>';
     svg.appendChild(g); nodes[c]=g;
   });
-  return {edges:edges,nodes:nodes};
+  return {edges:edges,nodes:nodes,pos:pos};
 }
+
+// Title: once the hexagon has drawn in, light one connector at a time, with the idea in its middle
 (function(){
-  var t=document.getElementById('hex-title'); if(t) buildHex(t,130);
+  var svg=document.getElementById('hex-title'); if(!svg) return;
+  var slide=svg.closest('.slide'), NS='http://www.w3.org/2000/svg', h=buildHex(svg,130);
+  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function el(tag,attrs){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);return e;}
+  // today's two pairs first, then the other thirteen
+  var pairs=[['AS','observation'],['EH','purpose'],['LM','rules'],['MS','measurement'],['AH','witness'],['LE','code'],
+             ['AM','perspective'],['SH','who we are'],['LA','letterforms'],['ME','load'],['LH','translation'],
+             ['AE','form'],['MH','statistics'],['LS','naming'],['ES','instruments']];
+  var first=svg.querySelector('.nd');
+  var path=el('path',{fill:'none',stroke:'#C9852F','stroke-width':5,'stroke-linecap':'round'});
+  var halo=el('circle',{r:13,fill:'#C9852F',opacity:0}), spark=el('circle',{r:6.5,fill:'#C9852F',opacity:0});
+  svg.insertBefore(path,first); svg.insertBefore(halo,first); svg.insertBefore(spark,first);
+  var label=el('text',{'font-size':15,'font-weight':700,'font-style':'italic','font-family':'Noto Sans, Arial',fill:'#A86A1E','text-anchor':'middle',
+    stroke:'#F7F3EA','stroke-width':5,'paint-order':'stroke',opacity:0});
+  svg.appendChild(label);
+  var START=3.2, CYCLE=3.4, k=-1, A=null, B=null;
+  function ease(u){return u<0?0:u>1?1:u*u*(3-2*u);}
+  function mark(on){ [A,B].forEach(function(c){ var n=h.nodes[c].querySelector('circle');
+    n.setAttribute('r',on?34:28); n.style.stroke=on?(c==='H'?'#1D6E73':'#C9852F'):''; n.style.strokeWidth=on?'4':''; }); }
+  function render(t){
+    if(t<START){ [path,spark,halo,label].forEach(function(e){e.setAttribute('opacity',0);}); return; }
+    var tt=t-START, kk=Math.floor(tt/CYCLE), u=(tt%CYCLE)/CYCLE;
+    if(kk!==k){ if(A) mark(false); k=kk; var p=pairs[k%pairs.length]; A=p[0][0]; B=p[0][1]; label.textContent=p[1]; mark(true);
+      var a=h.pos[A], b=h.pos[B]; path.setAttribute('d','M'+a[0]+','+a[1]+' L'+b[0]+','+b[1]); }
+    var L=path.getTotalLength(), draw=ease(u/.32), fade=1-ease((u-.82)/.18);
+    path.setAttribute('stroke-dasharray',L); path.setAttribute('stroke-dashoffset',(L*(1-draw)).toFixed(1));
+    path.setAttribute('opacity',fade.toFixed(2));
+    var s=u<.32?draw:1-.5*ease((u-.32)/.16);      // spark runs the connector, then settles at its middle
+    var pt=path.getPointAtLength(L*s);
+    spark.setAttribute('cx',pt.x.toFixed(1)); spark.setAttribute('cy',pt.y.toFixed(1)); spark.setAttribute('opacity',fade.toFixed(2));
+    halo.setAttribute('cx',pt.x.toFixed(1)); halo.setAttribute('cy',pt.y.toFixed(1));
+    halo.setAttribute('r',(13+5*Math.sin(t*5)).toFixed(1)); halo.setAttribute('opacity',(.2*fade).toFixed(2));
+    label.setAttribute('x',pt.x.toFixed(1)); label.setAttribute('y',(pt.y-16).toFixed(1));
+    label.setAttribute('opacity',(ease((u-.42)/.12)*fade).toFixed(2));
+    if(u>.97) mark(false);
+  }
+  if(reduce){ render(START+CYCLE*.6); return; }
+  // animate only while the title slide is showing; restart from the draw-in each time it is shown
+  var t0=null, raf=0;
+  function frame(ts){ if(t0===null) t0=ts; render((ts-t0)/1000); raf=requestAnimationFrame(frame); }
+  function sync(){ var on=slide.classList.contains('on');
+    if(on&&!raf){ t0=null; k=-1; if(A) mark(false); raf=requestAnimationFrame(frame); }
+    if(!on&&raf){ cancelAnimationFrame(raf); raf=0; } }
+  new MutationObserver(sync).observe(slide,{attributes:true,attributeFilter:['class']});
+  sync();
+})();
+
+(function(){
   var p=document.getElementById('hex-pairs'); if(!p) return;
   p.setAttribute('data-noadvance','');
   var h=buildHex(p,165), first=null;
