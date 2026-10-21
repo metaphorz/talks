@@ -1,0 +1,420 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Subjects Meet Subjects — Deep Looking, Week 2.5</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck.css">
+<style>
+/* ===== shared pieces ===== */
+.tile{position:relative;background:var(--card);border-radius:18px;padding:18px 18px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.tile.wash{background:var(--teal-wash)}
+.tile .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--amber)}
+.tile h3{margin:9px 0 0;font-size:20px;line-height:1.2;font-weight:700;color:var(--ink)}
+.tile p{margin:10px 0 0;font-size:15.5px;line-height:1.32;color:var(--ink)}
+.grid{position:absolute;left:55px;width:849px;display:grid;gap:21px}
+.line{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:16.5px;font-weight:700;color:var(--teal)}
+.statement{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:21px;line-height:1.32;font-weight:700;color:var(--ink)}
+.btn{font:600 13.5px var(--sans);color:#fff;background:var(--amber);border:1.5px solid var(--amber);border-radius:999px;
+  padding:7px 14px;cursor:pointer;white-space:nowrap}
+.btn:hover{box-shadow:0 0 0 3px rgba(201,133,47,.25)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{opacity:0;transform:scale(.3)}70%{opacity:1;transform:scale(1.06)}100%{opacity:1;transform:scale(1)}}
+@keyframes draw{from{stroke-dashoffset:1}to{stroke-dashoffset:0}}
+@keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+
+/* the LAMESH hexagon (title and slide 3) */
+.hex .edge{stroke:var(--spoke);stroke-width:1.5;stroke-dasharray:1;stroke-dashoffset:0}
+.hex .edge.lit{stroke:var(--amber);stroke-width:4}
+.hex .nd circle{fill:var(--teal)}
+.hex .nd text{fill:#fff;font:700 22px var(--sans);text-anchor:middle;dominant-baseline:central}
+.hex .nd.h circle{fill:var(--amber)}
+
+/* ===== 1 · title ===== */
+.s-title .bar{position:absolute;left:65px;top:120px;width:9px;height:308px;background:var(--amber);box-shadow:2px 3px 4px rgba(0,0,0,.3)}
+.s-title .eyebrow{position:absolute;left:99px;top:139px;font-size:12.5px;font-weight:700;color:var(--teal);letter-spacing:.01em}
+.s-title h1{position:absolute;left:97px;top:170px;margin:0;font-size:56px;line-height:1.14;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+.s-title .sub{position:absolute;left:99px;top:358px;width:420px;margin:0;font-size:19.5px;line-height:1.25;color:var(--grey)}
+.s-title .pairs{position:absolute;left:99px;top:492px;margin:0;font-size:17.5px;font-weight:700;color:var(--ink)}
+.s-title .q{position:absolute;left:99px;top:516px;width:760px;margin:0;font-size:17px;color:var(--grey)}
+.s-title svg.hex{position:absolute;left:560px;top:120px;width:340px;height:340px;overflow:visible}
+.s-title.on .bar{transform-origin:top;animation:growbar .7s var(--ease) both}
+.s-title.on .eyebrow{animation:rise .6s var(--ease) .15s both}
+.s-title.on h1{animation:rise .7s var(--ease) .25s both}
+.s-title.on .sub{animation:rise .7s var(--ease) .45s both}
+.s-title .nd{transform-box:fill-box;transform-origin:center}
+.s-title.on .nd{animation:pop .5s var(--ease) both;animation-delay:calc(.5s + var(--i) * .12s)}
+.s-title.on .edge{animation:draw .6s var(--ease) both;animation-delay:calc(1.3s + var(--i) * .11s)}
+
+/* ===== 2 · three kinds ===== */
+.s-kinds .grid{top:200px;grid-template-columns:repeat(3,1fr)}
+.s-kinds .tile{height:330px;padding:20px 22px}
+.s-kinds .tile.now{background:var(--teal-wash);outline:3px solid var(--teal);outline-offset:-3px}
+.s-kinds svg{display:block;width:100%;height:110px;margin:12px 0 4px}
+.s-kinds .wk{font-size:30px;font-weight:700;color:var(--teal);line-height:1}
+.s-kinds .tile h3{font-size:21px}
+.s-kinds .ex{margin-top:8px;font-size:14px;font-weight:700;color:var(--ink-2)}
+.s-kinds .line{top:566px}
+
+/* ===== 3 · fifteen pairs ===== */
+.s-pairs svg.hex{position:absolute;left:55px;top:140px;width:420px;height:420px;overflow:visible}
+.s-pairs .nd{cursor:pointer}
+.s-pairs .nd.sel circle{stroke:var(--amber);stroke-width:5}
+.s-pairs .nd:hover circle{filter:brightness(1.15)}
+.s-pairs .panel{position:absolute;left:520px;top:140px;width:384px;height:420px;padding:22px 24px}
+.s-pairs .panel ul{list-style:none;margin:10px 0 0;padding:0}
+.s-pairs .panel li{display:flex;gap:10px;align-items:baseline;padding:5px 0;border-top:1px solid var(--rule);font-size:15px}
+.s-pairs .panel li b{width:16px;color:var(--teal)}
+.s-pairs .panel li .n{width:104px;font-weight:700}
+.s-pairs .panel li .qq{color:var(--grey);font-size:13.5px}
+.s-pairs .panel li.h b,.s-pairs .panel li.h .n{color:var(--amber)}
+.s-pairs .pick{margin-top:16px;padding:12px 14px;border-radius:12px;background:#FBF4E8;min-height:86px}
+.s-pairs .pick .pn{font-size:16px;font-weight:700;color:var(--amber)}
+.s-pairs .pick .px{margin:4px 0 0;font-size:14.5px;line-height:1.3;color:var(--ink)}
+.s-pairs .line{top:592px}
+
+/* ===== 4, 5 · one pair, both ways ===== */
+.s-pair .grid{top:184px;grid-template-columns:1fr 1fr;gap:18px 21px}
+.s-pair .who{position:absolute;left:55px;top:124px;width:849px;margin:0;text-align:center;font-size:17px;font-style:italic;color:var(--ink-2)}
+.s-pair .tile{height:172px;padding:16px 20px}
+.s-pair .tile h3{font-size:18.5px;margin-top:6px}
+.s-pair .tile p{font-size:14.5px;margin-top:7px}
+.s-pair .tag .dir{color:var(--teal)}
+.s-pair .line{top:578px}
+.s-pair .line b{color:var(--ink)}
+
+/* ===== 6 · zwicky box ===== */
+.s-zw .who{position:absolute;left:55px;top:122px;width:849px;margin:0;text-align:center;font-size:16.5px;font-style:italic;color:var(--ink-2)}
+.s-zw .who b{font-style:normal;color:var(--teal)}
+.s-zw .axis{position:absolute;display:flex;align-items:center;justify-content:center;border-radius:12px;
+  background:var(--teal-wash);font-size:15px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--teal)}
+.s-zw .axis.col{top:160px;width:359px;height:40px}
+.s-zw .axis.row{left:55px;width:96px;height:180px;background:#F6EBDA;color:var(--amber);text-align:center}
+.s-zw .corner{position:absolute;left:55px;top:160px;width:96px;height:40px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey)}
+.s-zw .cell{position:absolute;width:359px;height:180px;padding:13px 18px}
+.s-zw .cell.diag{outline:3px solid var(--teal);outline-offset:-3px}
+.s-zw .cell .tag{display:block;margin-bottom:2px}
+.s-zw .qa{margin:7px 0 0;font-size:14px;line-height:1.3}
+.s-zw .qa .q{display:block;font-weight:700;color:var(--ink)}
+.s-zw .qa .a{display:block;color:var(--ink-2)}
+.s-zw .c1{left:163px;top:210px}.s-zw .c2{left:545px;top:210px}
+.s-zw .c3{left:163px;top:400px}.s-zw .c4{left:545px;top:400px}
+.s-zw .line{top:596px}
+
+/* ===== 7 · your turn ===== */
+.s-try .draws{position:absolute;left:150px;top:140px;width:660px;display:grid;grid-template-columns:1fr 60px 1fr;align-items:center}
+.s-try .draw{height:120px;border:0;font:inherit;text-align:center;cursor:pointer;padding:22px 10px}
+.s-try .draw:hover{transform:translateY(-2px)}
+.s-try .draw .val{display:block;margin-top:12px;font-size:24px;font-weight:700;color:var(--ink);transition:opacity .07s}
+.s-try .draw.rolling .val{opacity:.55}
+.s-try .link{text-align:center;font-size:30px;font-weight:700;color:var(--amber)}
+.s-try .line.how{top:282px;font-size:16px;font-weight:700;color:var(--grey)}
+.s-try .grid{top:328px;left:71px;width:818px;grid-template-columns:repeat(3,1fr)}
+.s-try .grid .tile{height:220px;padding:22px 22px}
+.s-try .grid .n{display:inline-grid;place-items:center;width:32px;height:32px;border-radius:50%;background:var(--amber);color:#fff;font-weight:700;font-size:14px}
+.s-try .grid h3{font-size:19px}
+.s-try .line{top:584px}
+</style>
+</head>
+<body data-footer="Deep Looking · Week 2.5">
+<div id="viewport"><div id="stage">
+
+<!-- ============================================================ 1 -->
+<section class="slide s-title" data-nonum>
+  <div class="page">
+    <div class="bar"></div>
+    <div class="eyebrow">DEEP LOOKING · WEEK 2.5</div>
+    <h1>Subjects Meet<br>Subjects</h1>
+    <p class="sub">Before we connect things, connect the ways of knowing them.</p>
+    <svg class="hex" id="hex-title" viewBox="-170 -170 340 340" aria-hidden="true"></svg>
+    <p class="pairs" data-b="1">Art ↔ Science.&nbsp; Humanities ↔ Engineering.</p>
+    <p class="q" data-b="2">Six subjects, fifteen pairs. Where do two ways of knowing meet?</p>
+  </div>
+  <aside class="notes">
+    <p>Last week: the six LAMESH lenses, one at a time. Today, before we use them on things, we put the lenses next to each other.</p>
+    <p>Watch the hexagon: six subjects, and every pair joined. Fifteen lines.</p>
+    <p>[build] Our two examples today. [build] The question for the session.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 -->
+<section class="slide s-kinds">
+  <div class="page">
+    <header class="hd"><h2>Three Kinds of Connection</h2><div class="kicker">The plan for the next three sessions</div></header>
+    <p class="statement" style="top:130px">A connection has two ends. Each end is a <span style="color:var(--teal)">subject</span> or an <span style="color:var(--sand-ink)">object</span>.</p>
+    <div class="grid">
+      <article class="tile now">
+        <div class="wk">2.5</div><div class="tag" style="margin-top:6px">Today</div>
+        <svg viewBox="0 0 240 110" aria-hidden="true">
+          <line x1="60" y1="55" x2="180" y2="55" stroke="#1D6E73" stroke-width="2.5" stroke-dasharray="7 6"/>
+          <circle cx="60" cy="55" r="32" fill="#1D6E73"/><text x="60" y="56" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="700" fill="#fff" font-family="Noto Sans, Arial">A</text>
+          <circle cx="180" cy="55" r="32" fill="#1D6E73"/><text x="180" y="56" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="700" fill="#fff" font-family="Noto Sans, Arial">S</text>
+          <circle cx="120" cy="55" r="9" fill="#C9852F"/>
+        </svg>
+        <h3>Subject ↔ Subject</h3>
+        <p>Two ways of knowing meet.</p>
+        <div class="ex">Art ↔ Science</div>
+      </article>
+      <article class="tile">
+        <div class="wk">3</div><div class="tag" style="margin-top:6px">Next</div>
+        <svg viewBox="0 0 240 110" aria-hidden="true">
+          <defs><clipPath id="k-rav"><circle cx="60" cy="55" r="32"/></clipPath></defs>
+          <line x1="60" y1="55" x2="180" y2="55" stroke="#8A6236" stroke-width="2.5" stroke-dasharray="7 6"/>
+          <circle cx="60" cy="55" r="33" fill="#E9DDC7"/><image href="img/raven.jpg" x="20" y="23" width="80" height="64" preserveAspectRatio="xMidYMid slice" clip-path="url(#k-rav)"/>
+          <circle cx="180" cy="55" r="32" fill="#E9DDC7"/><text x="180" y="56" text-anchor="middle" dominant-baseline="central" font-size="13" font-weight="700" fill="#8A6236" font-family="Noto Sans, Arial">desk</text>
+          <circle cx="120" cy="55" r="9" fill="#C9852F"/>
+        </svg>
+        <h3>Object ↔ Object</h3>
+        <p>Two things meet, through an idea.</p>
+        <div class="ex">Raven ↔ writing-desk</div>
+      </article>
+      <article class="tile">
+        <div class="wk">4</div><div class="tag" style="margin-top:6px">After that</div>
+        <svg viewBox="0 0 240 110" aria-hidden="true">
+          <defs><clipPath id="k-cyc"><circle cx="180" cy="55" r="32"/></clipPath></defs>
+          <line x1="60" y1="55" x2="180" y2="55" stroke="#C9852F" stroke-width="2.5" stroke-dasharray="7 6"/>
+          <circle cx="60" cy="55" r="32" fill="#1D6E73"/><text x="60" y="56" text-anchor="middle" dominant-baseline="central" font-size="24" font-weight="700" fill="#fff" font-family="Noto Sans, Arial">S</text>
+          <circle cx="180" cy="55" r="33" fill="#E9DDC7"/><image href="img/cycad.jpg" x="140" y="23" width="80" height="64" preserveAspectRatio="xMidYMid slice" clip-path="url(#k-cyc)"/>
+        </svg>
+        <h3>Subject ↔ Object</h3>
+        <p>A way of knowing opens a thing.</p>
+        <div class="ex">Science ↔ sago cycad</div>
+      </article>
+    </div>
+    <p class="line" data-b="1">Today we connect the lenses themselves, before pointing them at anything.</p>
+  </div>
+  <aside class="notes">
+    <p>The map for three sessions. Every connection has two ends; each end is either a subject (a way of knowing, one of the LAMESH lenses) or an object (a thing).</p>
+    <p>Today, 2.5: subject to subject. Week 3: object to object, the raven and the writing-desk. Week 4: subject to object, science opening the cycad.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 -->
+<section class="slide s-pairs">
+  <div class="page">
+    <header class="hd"><h2>Six Subjects, Fifteen Pairs</h2><div class="kicker">LAMESH · every lens can meet every other</div></header>
+    <svg class="hex" id="hex-pairs" viewBox="-210 -210 420 420" role="img" aria-label="The six LAMESH subjects in a hexagon, every pair joined by a line"></svg>
+    <article class="tile panel">
+      <div class="tag">The six subjects</div>
+      <ul>
+        <li><b>L</b><span class="n">Language</span><span class="qq">What do we call it?</span></li>
+        <li><b>A</b><span class="n">Art</span><span class="qq">How might we re-see it?</span></li>
+        <li><b>M</b><span class="n">Mathematics</span><span class="qq">What can we measure?</span></li>
+        <li><b>E</b><span class="n">Engineering</span><span class="qq">How is it made?</span></li>
+        <li><b>S</b><span class="n">Science</span><span class="qq">What explains it?</span></li>
+        <li class="h"><b>H</b><span class="n">Humanities</span><span class="qq">What does it mean to people?</span></li>
+      </ul>
+      <div class="pick"><div class="pn" id="pair-name">Click two letters</div><p class="px" id="pair-text">Each line is a place where two ways of knowing meet.</p></div>
+    </article>
+    <p class="line" data-b="1">H is now Humanities, not just History: philosophy, religion, literature, ethics and history together.</p>
+  </div>
+  <aside class="notes">
+    <p>Six subjects make fifteen pairs. Click any two letters to light their line and show one place they meet.</p>
+    <p>Try a few from the room: which pair seems furthest apart? (Often Mathematics and Humanities: then show Nightingale.)</p>
+    <p>[build] H has grown from History to Humanities: history is still in it, alongside philosophy, religion, literature and ethics.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 -->
+<section class="slide s-pair s-as">
+  <div class="page">
+    <header class="hd"><h2>Art ↔ Science</h2><div class="kicker">Subject ↔ subject · each one feeds the other</div></header>
+    <p class="who">C. P. Snow called them “two cultures” that no longer talk (1959). They never stopped trading.</p>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">Art <span class="dir">→</span> Science</div><h3>Galileo’s Moon, 1609</h3>
+        <p>Thomas Harriot saw the Moon through a telescope first, and drew blotches. Galileo, trained in drawing light and shadow, saw mountains.</p></article>
+      <article class="tile" data-b="2"><div class="tag">Science <span class="dir">→</span> Art</div><h3>Seurat’s dots, 1884</h3>
+        <p>Chevreul’s science of colour contrast (1839) taught Seurat to set pure colours side by side and let the eye mix them.</p></article>
+      <article class="tile" data-b="3"><div class="tag">Art <span class="dir">↔</span> Science</div><h3>Anna Atkins, 1843</h3>
+        <p>Laid seaweed on light-sensitive paper to make cyanotypes: the first book illustrated with photographs, and a botanical record.</p></article>
+      <article class="tile" data-b="4"><div class="tag">Art <span class="dir">↔</span> Science</div><h3>Haeckel’s <i>Art Forms in Nature</i>, 1904</h3>
+        <p>A zoologist’s plates of radiolarians and jellyfish became pattern books for Art Nouveau designers.</p></article>
+    </div>
+    <p class="line" data-b="5">The idea in the middle: <b>close observation.</b> Both begin by looking hard at the world.</p>
+  </div>
+  <aside class="notes">
+    <p>Snow's lecture, The Two Cultures (1959): scientists and literary intellectuals no longer understood each other. The history says otherwise.</p>
+    <p>[1] Galileo and Harriot looked at the same Moon in 1609. Harriot's drawing is blotchy; Galileo, who had trained in drawing, read the shifting shadows as mountains and craters. Art taught science to see.</p>
+    <p>[2] Seurat read Chevreul and the colour scientists. Science taught art to see.</p>
+    <p>[3] [4] Some work is both at once.</p>
+    <p>[5] Last week's form: A ↔ B through an idea. Here the idea in the middle is observation.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 5 -->
+<section class="slide s-pair s-he">
+  <div class="page">
+    <header class="hd"><h2>Humanities ↔ Engineering</h2><div class="kicker">Subject ↔ subject · what it is for, and how it stands up</div></header>
+    <p class="who">Engineering asks <i>how</i>. The humanities ask <i>why</i>, and <i>for whom</i>.</p>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">Humanities <span class="dir">→</span> Engineering</div><h3>Vitruvius, c. 20 BC</h3>
+        <p>A building must have three things: firmness, usefulness and delight. Only the first is purely engineering.</p></article>
+      <article class="tile" data-b="2"><div class="tag">Engineering <span class="dir">→</span> Humanities</div><h3>The Brooklyn Bridge, 1883</h3>
+        <p>Finished under Emily Warren Roebling after her husband fell ill. Hart Crane made it the centre of a book-length poem, <i>The Bridge</i> (1930).</p></article>
+      <article class="tile" data-b="3"><div class="tag">Humanities <span class="dir">→</span> Engineering</div><h3>“Do Artifacts Have Politics?”, 1980</h3>
+        <p>Langdon Winner argued that machines and roads carry values: who they let in, and who they keep out.</p></article>
+      <article class="tile" data-b="4"><div class="tag">Humanities <span class="dir">↔</span> Engineering</div><h3>Technology with the liberal arts, 2011</h3>
+        <p>Steve Jobs: “technology alone is not enough — it’s technology married with liberal arts, married with the humanities.”</p></article>
+    </div>
+    <p class="line" data-b="5">The idea in the middle: <b>human purpose.</b> What we build says what we value.</p>
+  </div>
+  <aside class="notes">
+    <p>[1] Vitruvius' three requirements: firmitas, utilitas, venustas. Firmness is engineering; usefulness and delight are about people.</p>
+    <p>[2] The Brooklyn Bridge: an engineering story that became a human one: Emily Warren Roebling running the work, then a poet's epic.</p>
+    <p>[3] Winner's essay: design decisions are value decisions.</p>
+    <p>[4] Jobs at the iPad 2 launch, March 2011.</p>
+    <p>[5] The idea in the middle here: purpose.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 6 -->
+<section class="slide s-zw">
+  <div class="page">
+    <header class="hd"><h2>Open the Box</h2><div class="kicker">Fritz Zwicky’s morphological box · subject × subject</div></header>
+    <p class="who"><b>Fritz Zwicky</b> (1898–1974), Caltech astronomer: name the dimensions, then visit every cell where they cross.</p>
+    <div class="corner">Zwicky box</div>
+    <div class="axis col" style="left:163px">Science</div>
+    <div class="axis col" style="left:545px">Engineering</div>
+    <div class="axis row" style="top:210px">Art</div>
+    <div class="axis row" style="top:400px">Human&shy;ities</div>
+    <article class="tile cell c1 diag">
+      <span class="tag">Art × Science</span>
+      <p class="qa"><span class="q">Can a drawing be evidence?</span><span class="a" data-b="1">Cajal drew neurons by hand; his drawings helped win a Nobel Prize (1906).</span></p>
+      <p class="qa"><span class="q">Can a lab make a colour?</span><span class="a" data-b="1">Prussian blue (c. 1706), the first modern synthetic pigment, came out of a Berlin lab.</span></p>
+    </article>
+    <article class="tile cell c2">
+      <span class="tag">Art × Engineering</span>
+      <p class="qa"><span class="q">Who chose the Golden Gate’s colour?</span><span class="a" data-b="2">Architect Irving Morrow: International Orange, to sit with the hills and show in fog.</span></p>
+      <p class="qa"><span class="q">Can a machine be a sculpture?</span><span class="a" data-b="2">Theo Jansen’s Strandbeests: plastic tubes that walk the beach on the wind.</span></p>
+    </article>
+    <article class="tile cell c3">
+      <span class="tag">Humanities × Science</span>
+      <p class="qa"><span class="q">Who gets asked for consent?</span><span class="a" data-b="3">Henrietta Lacks’s cells (1951) were taken without it, and fed decades of research.</span></p>
+      <p class="qa"><span class="q">Can a theory change who we think we are?</span><span class="a" data-b="3">Darwin’s <i>Origin of Species</i> (1859) did, in religion, philosophy and fiction.</span></p>
+    </article>
+    <article class="tile cell c4 diag">
+      <span class="tag">Humanities × Engineering</span>
+      <p class="qa"><span class="q">Who is a design for?</span><span class="a" data-b="4">Curb cuts were won by wheelchair users; now strollers and suitcases use them too.</span></p>
+      <p class="qa"><span class="q">Can a machine change how we think?</span><span class="a" data-b="4">The printing press made reading private, and spread the Reformation.</span></p>
+    </article>
+    <p class="line" data-b="5">Our two examples sit on the diagonal. The other two cells are pairs you might not have tried.</p>
+  </div>
+  <aside class="notes">
+    <p>Fritz Zwicky: Swiss astronomer at Caltech, who also named dark matter and, with Walter Baade, supernovae. He developed the morphological box for jet-engine design in the 1940s: write down every dimension of a problem, list the options on each, and look at every combination, especially the ones nobody has tried.</p>
+    <p>Here both dimensions are subjects. Rows: Art, Humanities. Columns: Science, Engineering. The outlined diagonal holds today's two pairs; the box hands us two more.</p>
+    <p>Ask the room for answers to each cell's questions before revealing them. [1] Art × Science, [2] Art × Engineering, [3] Humanities × Science, [4] Humanities × Engineering.</p>
+    <p>[5] Then ask: what would a third dimension be? Add Language or Mathematics and the box grows.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7 -->
+<section class="slide s-try">
+  <div class="page">
+    <header class="hd"><h2>Your Turn</h2><div class="kicker">Deal two subjects · find where they meet</div></header>
+    <div class="draws">
+      <button class="tile draw" data-pool="0" type="button"><span class="tag">Subject</span><span class="val">Mathematics</span></button>
+      <div class="link">↔</div>
+      <button class="tile draw" data-pool="1" type="button"><span class="tag">Subject</span><span class="val">Humanities</span></button>
+    </div>
+    <p class="line how">Click a card (or press D) to deal a new pair.</p>
+    <div class="grid">
+      <article class="tile"><span class="n">1</span><h3>Find a meeting</h3><p>A person, a work or an invention that lives where the two subjects cross.</p></article>
+      <article class="tile"><span class="n">2</span><h3>Trace both ways</h3><p>What did the first subject give the second? What came back the other way?</p></article>
+      <article class="tile"><span class="n">3</span><h3>Name the idea</h3><p>What sits in the middle of the connection: observation, purpose, pattern, scale?</p></article>
+    </div>
+    <p class="line">Next week the ends become things: object ↔ object.</p>
+  </div>
+  <aside class="notes">
+    <p>In pairs, two minutes. Deal two subjects; if the room gets stuck, Mathematics ↔ Humanities has Florence Nightingale's rose diagram (1858).</p>
+    <p>Next week: object to object, starting with the Mad Hatter's riddle.</p>
+  </aside>
+</section>
+
+</div></div>
+<script src="deck.js"></script>
+<script>
+// LAMESH hexagon: six subjects, fifteen pairs
+var LAMESH=['L','A','M','E','S','H'];
+var NAMES={L:'Language',A:'Art',M:'Mathematics',E:'Engineering',S:'Science',H:'Humanities'};
+var MEETS={
+  LA:'Calligraphy and concrete poetry: words that become pictures.',
+  LM:'Chomsky’s formal grammars (1957): the rules of language, written as mathematics.',
+  LE:'Morse code (1838): language engineered into dots and dashes.',
+  LS:'Linnaeus’s two-word names (1753): science needs a language.',
+  LH:'The Rosetta Stone: one decree in three scripts unlocked Egyptian history.',
+  AM:'Brunelleschi’s perspective (c. 1415): geometry gives a painting depth.',
+  AE:'Gothic cathedrals: flying buttresses let walls become stained glass.',
+  AS:'Galileo’s Moon (1609): an eye trained in drawing saw mountains.',
+  AH:'Picasso’s <i>Guernica</i> (1937): a painting as witness to history.',
+  ME:'Finite elements: a bridge broken into thousands of small solvable pieces.',
+  MS:'Kepler’s ellipses (1609): years of planet sightings fit one curve.',
+  MH:'Florence Nightingale’s rose diagram (1858): statistics that changed how hospitals care for people.',
+  ES:'The telescope: an engineered instrument that opened a new science.',
+  EH:'The Brooklyn Bridge (1883): an engineering feat that became a poem.',
+  SH:'Darwin’s <i>Origin of Species</i> (1859): science changed what it means to be human.'
+};
+function buildHex(svg,r){
+  var NS='http://www.w3.org/2000/svg', pos={}, edges={}, k=0;
+  LAMESH.forEach(function(c,i){var a=(-90+60*i)*Math.PI/180; pos[c]=[r*Math.cos(a),r*Math.sin(a)];});
+  for(var i=0;i<6;i++) for(var j=i+1;j<6;j++){
+    var a=LAMESH[i], b=LAMESH[j], l=document.createElementNS(NS,'line');
+    l.setAttribute('x1',pos[a][0]);l.setAttribute('y1',pos[a][1]);l.setAttribute('x2',pos[b][0]);l.setAttribute('y2',pos[b][1]);
+    l.setAttribute('class','edge');l.setAttribute('pathLength','1');l.style.setProperty('--i',k++);
+    svg.appendChild(l); edges[a+b]=l;
+  }
+  var nodes={};
+  LAMESH.forEach(function(c,i){
+    var g=document.createElementNS(NS,'g'); g.setAttribute('class','nd'+(c==='H'?' h':'')); g.setAttribute('data-k',c);
+    g.style.setProperty('--i',i);
+    g.innerHTML='<circle cx="'+pos[c][0]+'" cy="'+pos[c][1]+'" r="'+(r>140?34:28)+'"/><text x="'+pos[c][0]+'" y="'+pos[c][1]+'">'+c+'</text>';
+    svg.appendChild(g); nodes[c]=g;
+  });
+  return {edges:edges,nodes:nodes};
+}
+(function(){
+  var t=document.getElementById('hex-title'); if(t) buildHex(t,130);
+  var p=document.getElementById('hex-pairs'); if(!p) return;
+  p.setAttribute('data-noadvance','');
+  var h=buildHex(p,165), first=null;
+  function key(a,b){return LAMESH.indexOf(a)<LAMESH.indexOf(b)?a+b:b+a;}
+  function show(a,b){
+    var k=key(a,b);
+    Object.keys(h.edges).forEach(function(e){h.edges[e].classList.toggle('lit',e===k);});
+    document.getElementById('pair-name').textContent=NAMES[k[0]]+' ↔ '+NAMES[k[1]];
+    document.getElementById('pair-text').innerHTML=MEETS[k];
+  }
+  Object.keys(h.nodes).forEach(function(c){
+    h.nodes[c].addEventListener('click',function(){
+      if(!first||first===c){ first=c; Object.keys(h.nodes).forEach(function(x){h.nodes[x].classList.toggle('sel',x===c);}); return; }
+      h.nodes[c].classList.add('sel'); show(first,c); var f=first; first=null;
+      setTimeout(function(){h.nodes[f].classList.remove('sel');h.nodes[c].classList.remove('sel');},600);
+    });
+  });
+})();
+
+// Slide 7: deal two different subjects (click a card, or press D on that slide)
+(function(){
+  var cards=[].slice.call(document.querySelectorAll('#stage .s-try .draw'));
+  function deal(){
+    var vals=cards.map(function(c){return c.querySelector('.val');}), n=0, a, b;
+    do{ a=LAMESH[Math.floor(Math.random()*6)]; b=LAMESH[Math.floor(Math.random()*6)]; }
+    while(a===b||(NAMES[a]===vals[0].textContent&&NAMES[b]===vals[1].textContent));
+    cards.forEach(function(c){c.classList.add('rolling');});
+    var t=setInterval(function(){
+      vals.forEach(function(v){v.textContent=NAMES[LAMESH[Math.floor(Math.random()*6)]];});
+      if(++n>8){clearInterval(t);vals[0].textContent=NAMES[a];vals[1].textContent=NAMES[b];cards.forEach(function(c){c.classList.remove('rolling');});}
+    },70);
+  }
+  cards.forEach(function(c){c.addEventListener('click',deal);});
+  document.addEventListener('keydown',function(e){
+    if((e.key==='d'||e.key==='D')&&!e.metaKey&&!e.ctrlKey&&document.querySelector('#stage .s-try.on')) deal();
+  });
+})();
+</script>
+</body>
+</html>
