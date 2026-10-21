@@ -150,6 +150,26 @@
 .s-dice .story mark{background:none;color:var(--teal);font-weight:700}
 .s-dice .line{top:592px}
 
+/* ===== 6 · zwicky box ===== */
+.s-zw .who{position:absolute;left:55px;top:122px;width:849px;margin:0;text-align:center;font-size:16.5px;font-style:italic;color:var(--ink-2)}
+.s-zw .who b{font-style:normal;color:var(--teal)}
+.s-zw .axis{position:absolute;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:12px;
+  background:var(--teal-wash);font-size:15px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--teal)}
+.s-zw .axis svg{width:26px;height:26px;fill:none;stroke:var(--teal);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.s-zw .axis .dot{fill:var(--teal);stroke:none}
+.s-zw .axis.col{top:160px;width:359px;height:40px}
+.s-zw .axis.row{left:55px;width:96px;height:180px;background:#F6EBDA;color:var(--amber)}
+.s-zw .corner{position:absolute;left:55px;top:160px;width:96px;height:40px;display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey)}
+.s-zw .cell{position:absolute;width:359px;height:180px;padding:13px 18px}
+.s-zw .cell .tag{display:block;margin-bottom:2px}
+.s-zw .qa{margin:7px 0 0;font-size:14px;line-height:1.3}
+.s-zw .qa .q{display:block;font-weight:700;color:var(--ink)}
+.s-zw .qa .a{display:block;color:var(--ink-2)}
+.s-zw .c1{left:163px;top:210px}.s-zw .c2{left:545px;top:210px}
+.s-zw .c3{left:163px;top:400px}.s-zw .c4{left:545px;top:400px}
+.s-zw .line{top:596px}
+
 /* ===== 2 · openness ===== */
 .s-open .orbit{position:absolute;left:55px;top:122px;width:440px;height:480px}
 .s-open .orbit svg{position:absolute;inset:0;width:440px;height:480px;overflow:visible}
@@ -663,6 +683,48 @@
     <p>This follows the word bricks: the dice give you the parts, and the writer chooses the joins. Bird, house, person could become a hundred different stories.</p>
     <p>Try it: ask the room for a different story from the same three dice, then ask an AI for one and compare. Whose story noticed more?</p>
     <p>[build] The dice hand you the bricks.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 6 · zwicky box -->
+<section class="slide s-zw">
+  <div class="page">
+    <header class="hd"><h2>Open the Box</h2><div class="kicker">Fritz Zwicky’s morphological box · two dimensions, four cells</div></header>
+    <p class="who"><b>Fritz Zwicky</b> (1898–1974), Caltech astronomer: name the dimensions, then visit every cell where they cross.</p>
+    <div class="corner">Zwicky box</div>
+    <div class="axis col" style="left:163px"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 38 Q20 18 40 24 L54 18 L48 30 Q44 46 26 46 Q16 46 10 38Z"/><circle class="dot" cx="44" cy="26" r="2.6"/><path d="M26 46 l-3 9 M33 46 v9"/></svg>Bird</div>
+    <div class="axis col" style="left:545px"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 58 V36"/><circle cx="32" cy="23" r="16"/><path d="M32 42 l-7-6 M32 46 l7-6"/></svg>Tree</div>
+    <div class="axis row" style="top:210px">Art</div>
+    <div class="axis row" style="top:400px">Science</div>
+    <article class="tile cell c1">
+      <span class="tag">Art × Bird</span>
+      <p class="qa"><span class="q">How have artists shown birds?</span><span class="a" data-b="1">Audubon painted every one life-size; Brancusi’s <i>Bird in Space</i> shows only the flight.</span></p>
+      <p class="qa"><span class="q">Can a bird become music?</span><span class="a" data-b="1">Messiaen wrote down birdsong in the field and made a piano cycle of it.</span></p>
+    </article>
+    <article class="tile cell c2">
+      <span class="tag">Art × Tree</span>
+      <p class="qa"><span class="q">What if you paint one tree for years?</span><span class="a" data-b="2">Mondrian did (1908–12). Branch by branch, his tree became a grid.</span></p>
+      <p class="qa"><span class="q">Can a tree be a work of art?</span><span class="a" data-b="2">A bonsai is a whole tree kept small: a model, grown rather than built.</span></p>
+    </article>
+    <article class="tile cell c3">
+      <span class="tag">Science × Bird</span>
+      <p class="qa"><span class="q">How does a bird stay up?</span><span class="a" data-b="3">Hollow bones, curved wings. The Wright brothers copied a buzzard twisting its wingtips.</span></p>
+      <p class="qa"><span class="q">Where did birds come from?</span><span class="a" data-b="3">They are dinosaurs: the last living branch of the theropods.</span></p>
+    </article>
+    <article class="tile cell c4">
+      <span class="tag">Science × Tree</span>
+      <p class="qa"><span class="q">How does water reach the top of a redwood?</span><span class="a" data-b="4">It is pulled, not pumped: water evaporating from the leaves draws the column up.</span></p>
+      <p class="qa"><span class="q">How old is it?</span><span class="a" data-b="4">Count the rings. Each one is a year, and a wide ring was a wet one.</span></p>
+    </article>
+    <p class="line" data-b="5">Every cell is a question you might not have asked. Add a third dimension and four cells become eight.</p>
+  </div>
+  <aside class="notes">
+    <p>Fritz Zwicky: Swiss astronomer at Caltech, who also named dark matter and, with Walter Baade, supernovae. He developed the morphological box for jet-engine design in the 1940s: write down every dimension of a problem, list the options on each, and look at every combination, especially the ones nobody has tried.</p>
+    <p>Here are two dimensions. One is a way of looking: art or science. The other is what we look at: bird or tree, back to the raven and the writing-desk, where the tree was one of the bridges.</p>
+    <p>Ask the room for answers to each cell's questions before revealing them. Each build shows one cell: [1] Art × Bird, [2] Art × Tree, [3] Science × Bird, [4] Science × Tree.</p>
+    <p>Then ask: what would a third dimension be? Then / Now, Inside / Outside, Small / Large. And let them pick their own pair instead of bird and tree.</p>
+    <p>Link back to the dice: the dice pick one combination at random; the box makes you visit them all.</p>
+    <p>[5] Every cell is a question you might not have asked.</p>
   </aside>
 </section>
 
