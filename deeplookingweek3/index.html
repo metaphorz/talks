@@ -102,7 +102,9 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
 .s-zw .axis svg{width:26px;height:26px;fill:none;stroke:var(--teal);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
 .s-zw .axis .dot{fill:var(--teal);stroke:none}
 .s-zw .axis.col{top:160px;width:359px;height:40px}
-.s-zw .axis.row{left:55px;width:96px;height:180px;background:#F6EBDA;color:var(--amber)}
+.s-zw .axis.row{left:55px;width:96px;height:180px;flex-direction:column;background:#F6EBDA;color:var(--amber)}
+.s-zw .axis.row svg{stroke:var(--amber)}
+.s-zw .axis.row .dot{fill:var(--amber)}
 .s-zw .corner{position:absolute;left:55px;top:160px;width:96px;height:40px;display:flex;align-items:center;justify-content:center;
   font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey)}
 .s-zw .cell{position:absolute;width:359px;height:180px;padding:13px 18px}
@@ -409,41 +411,40 @@ svg.full{position:absolute;inset:0;width:1280px;height:720px;overflow:visible}
 <!-- ============================================================ 6 -->
 <section class="slide s-zw">
   <div class="page">
-    <header class="hd"><h2>Open the Box</h2><div class="kicker">Fritz Zwicky’s morphological box · two dimensions, four cells</div></header>
+    <header class="hd"><h2>Open the Box</h2><div class="kicker">Fritz Zwicky’s morphological box · object × object</div></header>
     <p class="who"><b>Fritz Zwicky</b> (1898–1974), Caltech astronomer: name the dimensions, then visit every cell where they cross.</p>
     <div class="corner">Zwicky box</div>
-    <div class="axis col" style="left:163px"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 38 Q20 18 40 24 L54 18 L48 30 Q44 46 26 46 Q16 46 10 38Z"/><circle class="dot" cx="44" cy="26" r="2.6"/><path d="M26 46 l-3 9 M33 46 v9"/></svg>Bird</div>
-    <div class="axis col" style="left:545px"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M32 58 V36"/><circle cx="32" cy="23" r="16"/><path d="M32 42 l-7-6 M32 46 l7-6"/></svg>Tree</div>
-    <div class="axis row" style="top:210px">Art</div>
-    <div class="axis row" style="top:400px">Science</div>
+    <div class="axis col" style="left:163px"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M9 32 L32 12 L55 32"/><path d="M15 27 V53 H49 V27"/><path d="M27 53 V39 H37 V53"/></svg>House</div>
+    <div class="axis col" style="left:545px"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M8 56 H56"/><path d="M14 56 Q14 34 8 20 M22 56 Q22 30 30 12 M32 56 Q30 36 22 24 M40 56 Q42 32 52 18 M48 56 Q48 40 56 32"/></svg>Grass</div>
+    <div class="axis row" style="top:210px"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M10 38 Q20 18 40 24 L54 18 L48 30 Q44 46 26 46 Q16 46 10 38Z"/><circle class="dot" cx="44" cy="26" r="2.6"/><path d="M26 46 l-3 9 M33 46 v9"/></svg>Bird</div>
+    <div class="axis row" style="top:400px"><svg viewBox="0 0 64 64" aria-hidden="true"><path d="M4 30 H60"/><path d="M10 54 V30 M54 54 V30"/><path d="M10 54 Q32 22 54 54"/></svg>Bridge</div>
     <article class="tile cell c1">
-      <span class="tag">Art × Bird</span>
-      <p class="qa"><span class="q">How have artists shown birds?</span><span class="a" data-b="1">Audubon painted every one life-size; Brancusi’s <i>Bird in Space</i> shows only the flight.</span></p>
-      <p class="qa"><span class="q">Can a bird become music?</span><span class="a" data-b="1">Messiaen wrote down birdsong in the field and made a piano cycle of it.</span></p>
+      <span class="tag">Bird × House</span>
+      <p class="qa"><span class="q">Do birds build houses?</span><span class="a" data-b="1">Sociable weavers thatch one giant nest with up to a hundred rooms, home to a whole colony.</span></p>
+      <p class="qa"><span class="q">Do we build houses for birds?</span><span class="a" data-b="1">Native Americans hung hollow gourds for purple martins. Most now nest in houses we put up.</span></p>
     </article>
     <article class="tile cell c2">
-      <span class="tag">Art × Tree</span>
-      <p class="qa"><span class="q">What if you paint one tree for years?</span><span class="a" data-b="2">Mondrian did (1908–12). Branch by branch, his tree became a grid.</span></p>
-      <p class="qa"><span class="q">Can a tree be a work of art?</span><span class="a" data-b="2">A bonsai is a whole tree kept small: a model, grown rather than built.</span></p>
+      <span class="tag">Bird × Grass</span>
+      <p class="qa"><span class="q">What can a bird make from grass?</span><span class="a" data-b="2">A weaverbird ties real knots in grass blades, with its beak, to hang its nest.</span></p>
+      <p class="qa"><span class="q">Why do robins love a lawn?</span><span class="a" data-b="2">Short grass lets them hunt by sight: the head-cock is a robin watching for worms.</span></p>
     </article>
     <article class="tile cell c3">
-      <span class="tag">Science × Bird</span>
-      <p class="qa"><span class="q">How does a bird stay up?</span><span class="a" data-b="3">Hollow bones, curved wings. The Wright brothers copied a buzzard twisting its wingtips.</span></p>
-      <p class="qa"><span class="q">Where did birds come from?</span><span class="a" data-b="3">They are dinosaurs: the last living branch of the theropods.</span></p>
+      <span class="tag">Bridge × House</span>
+      <p class="qa"><span class="q">Can a bridge be a street of houses?</span><span class="a" data-b="3">Old London Bridge carried houses and shops for centuries; Florence’s Ponte Vecchio still does.</span></p>
+      <p class="qa"><span class="q">Why put a roof on a bridge?</span><span class="a" data-b="3">Covered bridges keep rain off their wooden trusses, so they last many times longer.</span></p>
     </article>
     <article class="tile cell c4">
-      <span class="tag">Science × Tree</span>
-      <p class="qa"><span class="q">How does water reach the top of a redwood?</span><span class="a" data-b="4">It is pulled, not pumped: water evaporating from the leaves draws the column up.</span></p>
-      <p class="qa"><span class="q">How old is it?</span><span class="a" data-b="4">Count the rings. Each one is a year, and a wide ring was a wet one.</span></p>
+      <span class="tag">Bridge × Grass</span>
+      <p class="qa"><span class="q">Can a bridge be made of grass?</span><span class="a" data-b="4">Q’eswachaka in Peru: an Inca bridge of twisted grass rope, rewoven by the villages every year.</span></p>
+      <p class="qa"><span class="q">Can grass cross a bridge?</span><span class="a" data-b="4">Wildlife overpasses carry a strip of meadow over a highway, so deer and bears can cross.</span></p>
     </article>
-    <p class="line" data-b="5">Every cell is a connection you might not have made. Add a third dimension and four cells become eight.</p>
+    <p class="line" data-b="5">Every cell is a connection you might not have made: shelter, weaving, crossing.</p>
   </div>
   <aside class="notes">
     <p>Fritz Zwicky: Swiss astronomer at Caltech, who also named dark matter and, with Walter Baade, supernovae. He developed the morphological box for jet-engine design in the 1940s: write down every dimension of a problem, list the options on each, and look at every combination, especially the ones nobody has tried.</p>
-    <p>A way to make connections on purpose. Two dimensions here: a way of looking (art or science) and what we look at (bird or tree). Bird and tree come from the raven and the writing-desk: ravens nest in trees, and desks are made from them.</p>
-    <p>Each cell is A ↔ B through some idea. Ask the room for answers to each cell's questions before revealing them. Each build shows one cell: [1] Art × Bird, [2] Art × Tree, [3] Science × Bird, [4] Science × Tree.</p>
-    <p>Then ask: what would a third dimension be? Then / Now, Inside / Outside, Small / Large. And let them pick their own pair instead of bird and tree.</p>
-    <p>[5] Every cell is a connection you might not have made.</p>
+    <p>A way to make object ↔ object connections on purpose. Both dimensions are things: bird or bridge, house or grass. Bird and bridge preview a pair coming up in a few slides (bridge ↔ wading bird); here the box pushes each one against two new objects.</p>
+    <p>Each cell is A ↔ B through some idea. Ask the room for answers to each cell's questions before revealing them. [1] Bird × House, [2] Bird × Grass, [3] Bridge × House, [4] Bridge × Grass.</p>
+    <p>[5] Name the ideas in the middle: shelter, weaving, crossing. Then ask: what would a third dimension be? Add Tree or River and four cells become eight. Let them pick their own objects.</p>
   </aside>
 </section>
 
