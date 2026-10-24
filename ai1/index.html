@@ -269,6 +269,44 @@
 .s-next .knobs p{margin:8px 0 0;font-size:14px;line-height:1.35;color:var(--ink-2)}
 .s-next .line{top:600px}
 
+/* ---- 7c embeddings: words as points ---- */
+.s-emb .board,.s-dir .board{position:absolute;left:55px;top:122px;width:540px;height:440px;padding:0;overflow:hidden}
+.s-emb .board svg{width:540px;height:440px;display:block}
+.s-emb .clab{font:italic 700 13px var(--sans);fill:#B9AE9A;letter-spacing:.06em;text-transform:uppercase;text-anchor:middle}
+.s-emb .wd{cursor:pointer}
+.s-emb .wd circle{fill:var(--teal);transition:fill .25s,r .25s}
+.s-emb .wd text{font:600 14px var(--sans);fill:var(--ink);transition:fill .25s,opacity .25s}
+.s-emb .wd:hover text{fill:var(--amber)}
+.s-emb .wd.sel circle{fill:var(--amber);r:8}.s-emb .wd.sel text{font-weight:700;fill:var(--amber)}
+.s-emb .wd.nb text{fill:var(--teal);font-weight:700}
+.s-emb .wd.dim text{opacity:.45}
+.s-emb .lk{stroke:var(--amber);stroke-width:2;stroke-dasharray:4 4;opacity:.8}
+.s-emb .side{position:absolute;left:615px;top:122px;width:289px;height:440px;padding:16px 18px;box-sizing:border-box}
+.s-emb .v{margin-top:12px}
+.s-emb .v .nm{display:flex;justify-content:space-between;align-items:baseline;font-size:16px;font-weight:700;color:var(--ink)}
+.s-emb .v .nm span{font-size:11.5px;font-weight:600;color:var(--grey)}
+.s-emb .v .nums{margin:2px 0 5px;font-size:11.5px;color:var(--grey);white-space:nowrap;overflow:hidden}
+.s-emb .strip{display:grid;grid-template-columns:repeat(24,1fr);gap:1.5px;height:18px}
+.s-emb .strip i{border-radius:2px}
+.s-emb .side .hint{margin:14px 0 0;font-size:13.5px;line-height:1.35;color:var(--ink-2)}
+.s-emb .line{top:584px}
+
+/* ---- 7d embeddings: directions ---- */
+.s-dir .views{position:absolute;left:55px;top:122px;width:540px}
+.s-dir .board{top:166px;height:396px}
+.s-dir .board svg{width:540px;height:396px;display:block}
+.s-dir .pt circle{fill:var(--teal)}.s-dir .pt text{font:600 15px var(--sans);fill:var(--ink)}
+.s-dir .pt.ans circle{fill:var(--amber)}.s-dir .pt.ans text{fill:var(--amber);font-weight:700}
+.s-dir .dust{fill:#D9CFBC}
+.s-dir .eq{font:600 19px var(--mono);fill:var(--ink)}
+.s-dir .rel{font:italic 600 13px var(--sans);fill:var(--amber);paint-order:stroke;stroke:#fff;stroke-width:4px}
+.s-dir .bank{position:absolute;left:615px;top:122px;width:289px;height:440px;padding:16px 18px;box-sizing:border-box}
+.s-dir .bank svg{width:253px;height:180px;display:block;margin:10px 0 8px;background:var(--teal-wash);border-radius:12px}
+.s-dir .bank .w{font:600 12.5px var(--sans);fill:var(--ink-2)}
+.s-dir .bank .b circle{fill:var(--amber)}.s-dir .bank .b text{font:700 14px var(--sans);fill:var(--amber)}
+.s-dir .bank p{font-size:14px}
+.s-dir .line{top:584px}
+
 /* ---- 7b tutorial video ---- */
 .s-tut .vid{position:absolute;left:55px;top:118px;width:849px;height:478px;padding:0;overflow:hidden;background:#000}
 .s-tut .vid video{width:100%;height:100%;display:block;object-fit:contain}
@@ -877,6 +915,52 @@
     <p>Ask the room to guess the next word before pressing. Then switch temperature to High and run it again.</p>
     <p>The probabilities here are illustrative, not from a real model.</p>
     <p>[build] The key caution: likely-sounding is not the same as correct.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7c · embeddings: words as points -->
+<section class="slide s-emb">
+  <div class="page">
+    <header class="hd"><h2>Words as Points</h2><div class="kicker">An embedding turns each word into a list of numbers: a place on a map of meaning</div></header>
+    <div class="tile board" data-noadvance><svg id="embmap" viewBox="0 0 540 440" aria-label="Words placed on a map of meaning"></svg></div>
+    <article class="tile side">
+      <div class="tag">A word is a list of numbers</div>
+      <div id="vecs"></div>
+      <p class="hint">Click any word. Teal = positive, amber = negative. Neighbours have similar patterns; distant words don't.</p>
+    </article>
+    <p class="line" data-b="1">Close together means similar in meaning. Nobody placed them: the model learned where they go.</p>
+    <p class="ai-note">Illustrative positions and numbers. Real models use hundreds to thousands of numbers per token; this map squeezes them into two.</p>
+  </div>
+  <aside class="notes">
+    <p>Click cat: kitten and lion are its neighbours; pizza is far away. Click Paris, then king.</p>
+    <p>The model learns these positions from text: words used in similar sentences end up near each other.</p>
+    <p>[build] Real embeddings have hundreds to thousands of dimensions. We can only draw two.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7d · embeddings: directions -->
+<section class="slide s-dir">
+  <div class="page">
+    <header class="hd"><h2>Directions Mean Something</h2><div class="kicker">The same step through the map means the same change in meaning</div></header>
+    <div class="row views" id="dirs">
+      <button class="btn on" data-d="g">king − man + woman</button>
+      <button class="btn" data-d="c">Paris − France + Italy</button>
+      <button class="btn" data-d="t">walked − walk + swim</button>
+    </div>
+    <div class="tile board" data-noadvance><svg id="dirmap" viewBox="0 0 540 396" aria-label="Analogies as arrows between word points"></svg></div>
+    <article class="tile bank" data-b="1">
+      <div class="tag">Same word, different meaning</div>
+      <svg id="banksvg" viewBox="0 0 253 180" data-noadvance></svg>
+      <div class="row" id="banks"><button class="btn" data-k="river">the river bank</button><button class="btn" data-k="money">the bank loan</button></div>
+      <p>Every “bank” starts at the same point. The model's layers then move it using the words around it: that is attention at work.</p>
+    </article>
+    <p class="line" data-b="2">The model never sees words, only these points and the directions between them.</p>
+    <p class="ai-note">Illustrative. In real embeddings these analogies hold only approximately, but the effect is real.</p>
+  </div>
+  <aside class="notes">
+    <p>The arrow from man to woman, added to king, lands near queen. Try the capital and past-tense examples: one arrow, one relationship.</p>
+    <p>[build] The bank example: context moves a word's point. This is what the layers do, and it connects back to attention on slide 7.</p>
+    <p>[build] Next, the video shows the whole trip: tokens in, points, layers, next token out.</p>
   </aside>
 </section>
 
