@@ -22,6 +22,8 @@
   }
   // keep clicks on SVG controls from advancing the slide
   ['#neuron','.s-router .hub','.s-graph .board'].forEach(function(s){var e=$(s);if(e)e.setAttribute('data-noadvance','');});
+  // the tutorial video stops when its slide is left
+  (function(){var v=slideOf('.s-tut video'); if(v) watch(v.closest('.slide'),function(on){if(!on) v.pause();});})();
 
   // ================= 1 · title: a neural network that fires into the five elements =================
   (function(){

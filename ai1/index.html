@@ -269,6 +269,11 @@
 .s-next .knobs p{margin:8px 0 0;font-size:14px;line-height:1.35;color:var(--ink-2)}
 .s-next .line{top:600px}
 
+/* ---- 7b tutorial video ---- */
+.s-tut .vid{position:absolute;left:55px;top:118px;width:849px;height:478px;padding:0;overflow:hidden;background:#000}
+.s-tut .vid video{width:100%;height:100%;display:block;object-fit:contain}
+.s-tut .credit{position:absolute;left:57px;top:610px;width:849px;margin:0;font-size:13px;color:var(--grey)}
+
 /* ===== 8 · models ===== */
 .s-models .grid{top:126px;grid-template-columns:repeat(3,1fr)}
 .s-models .tile{height:378px;padding:20px 22px}
@@ -872,6 +877,20 @@
     <p>Ask the room to guess the next word before pressing. Then switch temperature to High and run it again.</p>
     <p>The probabilities here are illustrative, not from a real model.</p>
     <p>[build] The key caution: likely-sounding is not the same as correct.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7b · tutorial video -->
+<section class="slide s-tut">
+  <div class="page">
+    <header class="hd"><h2>Deep Dive into LLMs</h2><div class="kicker">How LLM inference works · a ten-minute tutorial</div></header>
+    <div class="tile vid" data-noadvance>
+      <video src="video/tutorial.mp4" poster="video/tutorial-poster.jpg" controls playsinline preload="metadata"></video>
+    </div>
+    <p class="credit">Credit: Jing Yang, Oracle</p>
+  </div>
+  <aside class="notes">
+    <p>Tutorial by Jing Yang (Oracle): tokenize, prefill, then generate one token at a time — the machinery behind the previous slide. About 10 minutes; play part or all.</p>
   </aside>
 </section>
 
