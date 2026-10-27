@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Amelia Island Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&family=Noto+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Amelia Island Models — one-page poster. A fixed 1800×2700 sheet (2:3, prints as 24×36 in),
+   scaled to fit the window on screen. Same palette as the deck (index.html). */
+:root{
+  --ink:#20252B;--ink-2:#3A4148;--grey:#5B636B;--teal:#1D6E73;--teal-wash:#DCEBE8;--amber:#C9852F;--amber-2:#F4C27A;
+  --rule:#E3D9C6;--paper:#F7F3EA;--night:#151B21;--sans:"Noto Sans","Helvetica Neue",Helvetica,Arial,sans-serif;--mono:"Noto Sans Mono",ui-monospace,Menlo,monospace;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{color-scheme:light}
+body{margin:0;background:#1b1b1b;font-family:var(--sans);color:var(--ink);-webkit-font-smoothing:antialiased}
+#wrap{position:relative;width:100vw;overflow:hidden}
+#sheet{position:absolute;left:0;top:0;width:1800px;height:2700px;transform-origin:0 0;background:var(--paper) url(img/paper.jpg) center/cover;overflow:hidden}
+#sheet::before{content:"";position:absolute;inset:0;background:rgba(247,243,234,.86)}
+
+/* ---- header ---- */
+.head{position:absolute;left:0;top:0;width:1800px;height:640px;background:radial-gradient(ellipse at 76% 50%,#1C3340 0%,var(--night) 62%,#0E1216 100%);color:#F7F3EA}
+.head .bar{position:absolute;left:96px;top:120px;width:14px;height:316px;background:var(--amber)}
+.head .eyebrow{position:absolute;left:144px;top:128px;font-size:24px;font-weight:700;letter-spacing:.1em;color:#7FC4C0}
+.head h1{position:absolute;left:140px;top:170px;margin:0;font-size:132px;line-height:1.0;font-weight:700;letter-spacing:-.015em}
+.head h1 span{color:var(--amber)}
+.head .sub{position:absolute;left:144px;top:458px;width:900px;margin:0;font-size:31px;line-height:1.35;color:#B9C2C8}
+.head .sub b{color:#F7F3EA;font-weight:600}
+.head svg{position:absolute;left:1180px;top:24px;width:580px;height:592px}
+.head .pin circle{fill:#151B21;stroke:var(--amber-2);stroke-width:110}
+.head .pin text{font:700 820px var(--sans);fill:var(--amber-2);text-anchor:middle;dominant-baseline:central}
+.head .lead{stroke:rgba(127,196,192,.45);stroke-width:40;fill:none}
+.head .nm{font:600 640px var(--sans);fill:#DCEBE8}
+.head .wave{stroke:rgba(127,196,192,.16);stroke-width:55}
+
+/* ---- the 3 × 3 grid ---- */
+.grid{position:absolute;left:96px;top:700px;width:1608px;display:grid;grid-template-columns:repeat(3,1fr);gap:34px 42px}
+.cell{position:relative;height:552px;background:#fff;border-radius:26px;overflow:hidden;box-shadow:0 2px 0 #ece4d4,0 10px 22px rgba(40,30,10,.22)}
+.cell .im{position:relative;height:304px;background:#15202A center/cover no-repeat}
+.cell .n{position:absolute;left:20px;top:18px;width:54px;height:54px;border-radius:50%;background:var(--amber);color:#fff;font:700 27px/54px var(--sans);text-align:center;box-shadow:0 3px 8px rgba(0,0,0,.35)}
+.cell .kind{position:absolute;right:18px;top:20px;padding:6px 14px;border-radius:999px;background:rgba(21,27,33,.74);color:#DCEBE8;font:700 15px var(--sans);letter-spacing:.08em;text-transform:uppercase}
+.cell .tx{padding:22px 28px 0}
+.cell h2{margin:0;font-size:39px;line-height:1.1;font-weight:700;color:var(--ink)}
+.cell h3{margin:8px 0 0;font-size:24px;line-height:1.25;font-weight:600;font-style:italic;color:var(--teal)}
+.cell p{margin:14px 0 0;font-size:19.5px;line-height:1.42;color:var(--ink-2)}
+.cell .by{position:absolute;left:28px;right:28px;bottom:18px;padding-top:12px;border-top:1.5px solid var(--rule);font:600 15px var(--mono);color:var(--grey);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ---- footer ---- */
+.foot{position:absolute;left:96px;top:2516px;width:1608px;height:130px;display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:start}
+.foot .who{font-size:27px;font-weight:700;color:var(--ink)}
+.foot .who span{display:block;margin-top:8px;font-size:19px;font-weight:400;line-height:1.45;color:var(--ink-2)}
+.foot .links{font:600 17px/1.75 var(--mono);color:var(--teal)}
+.foot .links b{font-family:var(--sans);font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:var(--amber);display:block}
+.ribbon{position:absolute;left:96px;top:2480px;width:1608px;height:4px;border-radius:2px;background:linear-gradient(90deg,var(--teal),var(--amber))}
+
+/* ---- print: the sheet at its own size, one page ---- */
+@page{size:1800px 2700px;margin:0}
+@media print{
+  html,body{background:none;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  #wrap{width:auto;height:auto!important}
+  #sheet{position:relative;transform:none!important}
+  /* PDF engines rasterize soft shadows into grey boxes: use a hairline instead */
+  .cell{box-shadow:0 0 0 2px #E3D9C6}
+  .cell .n{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<div id="wrap"><div id="sheet">
+
+  <header class="head">
+    <div class="bar"></div>
+    <div class="eyebrow">ONE ISLAND · NINE WEB MODELS · FERNANDINA BEACH, FLORIDA</div>
+    <h1>Amelia Island<br>Models<span>.</span></h1>
+    <p class="sub">Sand, sea, marsh, trees, stone, water and houses, each built as a model you can change in a browser. Together they span <b>15 cm to 130 km</b> and <b>seconds to 125,000 years</b>.</p>
+    <svg id="isle" viewBox="0 0 1 1" aria-label="Amelia Island with the nine models pinned to where they live"></svg>
+  </header>
+
+  <section class="grid">
+    <article class="cell"><div class="im" style="background-image:url(img/geo-weld.jpg);background-position:left top"><span class="n">1</span><span class="kind">Deep time</span></div>
+      <div class="tx"><h2>Geomorphology</h2><h3>125,000 years of sea level on one slider</h3>
+      <p>A Pleistocene core, an offshore sandbar, and the weld 5,000 years ago that trapped Egans Creek, after Dr. Frank Hopf’s lectures.</p></div>
+      <div class="by">Leaflet · Hawkes 2016 sea level · NOAA jetty charts</div></article>
+
+    <article class="cell"><div class="im" style="background-image:url(img/drum-overlay.jpg)"><span class="n">2</span><span class="kind">Physics</span></div>
+      <div class="tx"><h2>Drumstick</h2><h3>An island grown from waves and sand</h3>
+      <p>The Ashton–Murray shoreline model run from 8000 BCE: CERC longshore flux, overwash and rising sea, set against Amelia’s outline.</p></div>
+      <div class="by">HTML canvas · validated against Ashton–Murray 2006</div></article>
+
+    <article class="cell"><div class="im" style="background-image:url(img/dune-field.jpg)"><span class="n">3</span><span class="kind">Wind</span></div>
+      <div class="tx"><h2>Dunes</h2><h3>Wind sorting sand into dunes</h3>
+      <p>Werner’s slab automaton, ported from Jim Elder’s C#, beside AeoLiS and real-time continuum models on WebGPU.</p></div>
+      <div class="by">Cellular automaton · WebGPU · AeoLiS</div></article>
+
+    <article class="cell"><div class="im" style="background-image:url(img/eganscreek.jpg);background-position:left top"><span class="n">4</span><span class="kind">Wetland</span></div>
+      <div class="tx"><h2>Egans Creek</h2><h3>Tides, marsh and birds behind the dunes</h3>
+      <p>A six-chapter field atlas: USGS channels, live NOAA tides, the marsh’s formation, cordgrass and 32 animals, each claim labelled.</p></div>
+      <div class="by">Codex &amp; Claude Code · Vite · Leaflet</div></article>
+
+    <article class="cell"><div class="im" style="background-image:url(img/trees-map.jpg);background-position:center 26%"><span class="n">5</span><span class="kind">Inventory</span></div>
+      <div class="tx"><h2>Tree Atlas</h2><h3>15,386 tree records on one map</h3>
+      <p>City, county, Omni, iNaturalist and planting inventories merged. Live oak alone is 4,519 of the city’s 14,034 records.</p></div>
+      <div class="by">Codex &amp; Claude Code · Leaflet · ArcGIS REST</div></article>
+
+    <article class="cell"><div class="im" style="background-image:url(video/oak-unreal.jpg)"><span class="n">6</span><span class="kind">Organism</span></div>
+      <div class="tx"><h2>Live Oak</h2><h3>A crown pruned by salt wind</h3>
+      <p>One coastal live oak grown from a skeleton: shear surface, wind training, root buttressing, Spanish moss and light seeking.</p></div>
+      <div class="by">Claude Code · Three.js · Blender 5.1 · Unreal 5.8</div></article>
+
+    <article class="cell"><div class="im" style="background-image:url(img/worm-final.jpg);background-size:150%;background-position:48% 52%"><span class="n">7</span><span class="kind">Object</span></div>
+      <div class="tx"><h2>Wormstone</h2><h3>A beach stone with 2,400 borings</h3>
+      <p>A seeded Fourier profile and deep, wandering bores carved from a field by marching cubes, matched to one photograph.</p></div>
+      <div class="by">OpenAI Codex · Three.js · marching cubes</div></article>
+
+    <article class="cell"><div class="im" style="background-image:url(img/water-after.jpg);background-size:135%;background-position:center 58%"><span class="n">8</span><span class="kind">Light</span></div>
+      <div class="tx"><h2>Water</h2><h3>Caustics and black vortex discs</h3>
+      <p>Nozzles on the pool walls make waves and vortices; a million photons a frame are refracted onto the floor.</p></div>
+      <div class="by">WebGL2 · after Evan Wallace’s WebGL Water</div></article>
+
+    <article class="cell"><div class="im" style="background-image:url(img/vic-overview.jpg);background-size:150%;background-position:50% 55%"><span class="n">9</span><span class="kind">Architecture</span></div>
+      <div class="tx"><h2>Victorian</h2><h3>Houses bred from DNA</h3>
+      <p>Procedural 3D houses from a genome, with breeding, crossover and gene locks. The odds come from 53 analysed photographs.</p></div>
+      <div class="by">Three.js · genetic algorithm · CC0 textures</div></article>
+  </section>
+
+  <div class="ribbon"></div>
+  <footer class="foot">
+    <div class="who">Paul Fishwick<span>Built with AI coding agents (Claude Code, OpenAI Codex), each with a written plan, screenshot-driven tests and a document of its own. October 2026.</span></div>
+    <div class="links"><b>Explore online</b>metaphorz.github.io/ameliageomorphology<br>metaphorz.github.io/eganscreek · metaphorz.github.io/ameliaislandtrees</div>
+  </footer>
+
+</div></div>
+
+<script src="data.js"></script>
+<script>
+// Draw the island from the geomorphology model's polygons, pin the nine models, then fit the sheet to the window.
+(function(){
+  var NS='http://www.w3.org/2000/svg', A=window.AMELIA, svg=document.getElementById('isle');
+  function el(tag,attrs,parent){var e=document.createElementNS(NS,tag);for(var k in attrs)e.setAttribute(k,attrs[k]);parent.appendChild(e);return e;}
+  function d(id){ var f=A&&A.island[id]; if(!f) return ''; return f.rings.map(function(r){return 'M'+r.map(function(p){return p[0]+' '+p[1];}).join('L')+'Z';}).join(''); }
+  function ll(lon,lat){return [(lon+81.52)*95795,(30.72-lat)*110540];}
+  if(A){
+    svg.setAttribute('viewBox','-4000 -2600 21000 28600');
+    // wave crests from the northeast, behind the island
+    for(var k=0;k<15;k++){ var c=9000+k*1500; el('line',{'class':'wave',x1:c-14000,y1:-3000+k*1800,x2:c+16000,y2:26000+k*1800},svg); }
+    [['holocene-modern','#E6CE98'],['pleistocene-core','#9C7A4E'],['egans-creek','#6A8F4D']].forEach(function(q){ el('path',{d:d(q[0]),fill:q[1]},svg); });
+    // east shore for the beach-side models
+    var east={}; ['holocene-modern','pleistocene-core'].forEach(function(id){ A.island[id].rings.forEach(function(r){ r.forEach(function(p){ var b=Math.round(p[1]/250); east[b]=Math.max(east[b]||-1e9,p[0]); }); }); });
+    function E(y){ var b=Math.round(y/250); for(var i=0;i<8;i++){ if(east[b+i]!=null) return east[b+i]; if(east[b-i]!=null) return east[b-i]; } return 9000; }
+    var P=[['Geomorphology',ll(-81.457,30.625)],['Drumstick',ll(-81.445,30.700)],['Dunes',null,ll(0,30.600)[1],-150],['Egans Creek',ll(-81.446,30.655)],
+      ['Tree Atlas',ll(-81.452,30.672)],['Live Oak',ll(-81.452,30.585)],['Wormstone',null,ll(0,30.545)[1],-120],['Water',ll(-81.444,30.560)],['Victorian',ll(-81.463,30.670)]];
+    P.forEach(function(p){ if(!p[1]) p[1]=[E(p[2])+p[3],p[2]]; });
+    P.forEach(function(p,i){ var g=el('g',{'class':'pin'},svg); el('circle',{cx:p[1][0],cy:p[1][1],r:640},g); var t=el('text',{x:p[1][0],y:p[1][1]+40},g); t.textContent=i+1; });
+  }
+  var wrap=document.getElementById('wrap'), sheet=document.getElementById('sheet');
+  function fit(){ var s=Math.min(window.innerWidth/1800,1); sheet.style.transform='scale('+s+')'; wrap.style.height=(2700*s)+'px'; }
+  window.addEventListener('resize',fit); window.addEventListener('beforeprint',function(){sheet.style.transform='none';wrap.style.height='auto';}); window.addEventListener('afterprint',fit);
+  fit();
+})();
+</script>
+</body>
+</html>

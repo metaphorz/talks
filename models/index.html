@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Models of Amelia Island</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Noto+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck.css">
+<style>
+/* ===== shared pieces (same vocabulary as AI Parts 1 and 2) ===== */
+:root{--mono:"Noto Sans Mono",ui-monospace,Menlo,monospace;--night:#151B21;--night-2:#1E262E;
+  --sea:#7FA9B5;--sea-deep:#1F6FB5;--pleist:#9C7A4E;--holo:#E6CE98;--marsh:#6A8F4D;--ridge:#C9A66B;--red:#B5452F}
+.tile{position:relative;background:var(--card);border-radius:18px;padding:18px 18px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.tile.wash{background:var(--teal-wash)}
+.tile .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--amber)}
+.tile h3{margin:9px 0 0;font-size:20px;line-height:1.2;font-weight:700;color:var(--ink)}
+.tile p{margin:10px 0 0;font-size:15.5px;line-height:1.34;color:var(--ink)}
+.grid{position:absolute;left:55px;width:849px;display:grid;gap:21px}
+.line{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:16.5px;font-weight:700;color:var(--teal)}
+.box{position:absolute;background:var(--teal-wash);border-radius:18px;box-shadow:0 5px 10px rgba(40,30,10,.25)}
+.btn{font:600 13.5px var(--sans);color:var(--ink);background:#fff;border:1.5px solid var(--rule);border-radius:999px;
+  padding:7px 14px;cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.btn:hover{border-color:var(--teal)}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.go{background:var(--amber);border-color:var(--amber);color:#fff}
+.btn.go:hover{box-shadow:0 0 0 3px rgba(201,133,47,.25)}
+.btn.sm{font-size:12px;padding:5px 11px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row .lbl,.lbl{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey);margin-right:4px}
+.mono{font-family:var(--mono)}
+.panel{position:absolute;border-radius:14px;overflow:hidden;box-shadow:0 6px 14px rgba(40,30,10,.3);background:#fff}
+.panel canvas,.panel svg{display:block}
+.cap{position:absolute;margin:0;font-size:11px;color:var(--grey);line-height:1.35}
+.badge{display:inline-block;padding:3px 9px;border-radius:999px;font:700 10.5px var(--sans);letter-spacing:.04em;text-transform:uppercase;
+  background:rgba(21,27,33,.72);color:#DCEBE8}
+.sl{display:grid;grid-template-columns:96px 1fr 46px;gap:8px;align-items:center;font-size:12.5px;font-weight:600;color:var(--ink-2);margin-bottom:5px}
+.sl input{width:100%;accent-color:var(--amber)}
+.sl output{font:600 12px var(--mono);color:var(--ink);text-align:right}
+.stat{font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.stat b{color:var(--ink);font-variant-numeric:tabular-nums}
+.made{position:absolute;left:57px;top:654px;width:849px;font-size:10px;color:var(--grey)}
+.made b{color:var(--sand-ink)}
+.hot{outline:2.5px solid var(--amber);outline-offset:1px}
+svg .hot{outline:none}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes flow{to{stroke-dashoffset:-24}}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ===== 1 · title ===== */
+.s-title .page{background:radial-gradient(ellipse at 72% 45%,#1C3340 0%,var(--night) 64%,#0E1216 100%)}
+.s-title canvas{position:absolute;left:0;top:0;width:960px;height:720px}
+.s-title .veil{position:absolute;left:0;top:0;width:520px;height:720px;
+  background:linear-gradient(90deg,rgba(14,18,22,.94) 0%,rgba(14,18,22,.78) 62%,rgba(14,18,22,0) 100%)}
+.s-title .bar{position:absolute;left:65px;top:142px;width:9px;height:236px;background:var(--amber);box-shadow:2px 3px 6px rgba(0,0,0,.5)}
+.s-title .eyebrow{position:absolute;left:99px;top:158px;font-size:12.5px;font-weight:700;color:#7FC4C0;letter-spacing:.08em}
+.s-title h1{position:absolute;left:97px;top:186px;margin:0;font-size:56px;line-height:1.06;font-weight:700;letter-spacing:-.01em;color:#F7F3EA}
+.s-title h1 span{color:var(--amber)}
+.s-title .sub{position:absolute;left:99px;top:322px;width:340px;margin:0;font-size:17.5px;line-height:1.32;color:#B9C2C8}
+.s-title .nine{position:absolute;left:99px;top:404px;width:350px;display:flex;flex-wrap:wrap;gap:7px}
+.s-title .nine span{padding:4px 11px;border-radius:999px;border:1.5px solid #3C5560;color:#DCEBE8;font-size:13px;font-weight:600;background:rgba(29,110,115,.18)}
+.s-title .nine span b{color:var(--amber);margin-right:5px}
+.s-title .by{position:absolute;left:99px;top:538px;font-size:15px;font-weight:700;color:#F7F3EA}
+.s-title .music{position:absolute;left:97px;top:572px;display:flex;align-items:center;gap:10px;padding:7px 14px 7px 10px;
+  border-radius:999px;border:1.5px solid #3C5560;background:rgba(14,18,22,.6);color:#DCEBE8;font:600 13px var(--sans);cursor:pointer}
+.s-title .music:hover{border-color:var(--amber)}
+.s-title .eq{display:flex;gap:2px;align-items:flex-end;height:14px;width:18px}
+.s-title .eq i{display:block;width:3px;height:4px;background:var(--amber);border-radius:1px}
+.s-title .music.playing .eq i{animation:eq 1s ease-in-out infinite}
+.s-title .music.playing .eq i:nth-child(2){animation-delay:-.3s}
+.s-title .music.playing .eq i:nth-child(3){animation-delay:-.6s}
+.s-title .music.playing .eq i:nth-child(4){animation-delay:-.15s}
+@keyframes eq{0%,100%{height:3px}50%{height:14px}}
+.s-title .music .state{color:#7F8A93;font-weight:400}
+.s-title .credit{position:absolute;left:99px;top:616px;width:340px;font-size:10.5px;line-height:1.45;color:#7F8A93}
+.s-title .foot{color:#5E6A73}
+.slide.on.s-title .bar.anim{transform-origin:top;animation:growbar .8s var(--ease) both}
+.slide.on.s-title .eyebrow.anim{animation:rise .6s var(--ease) .2s both}
+.slide.on.s-title h1.anim{animation:rise .8s var(--ease) .35s both}
+.slide.on.s-title .sub.anim{animation:rise .8s var(--ease) .6s both}
+.slide.on.s-title .by.anim{animation:rise .8s var(--ease) .8s both}
+
+/* ===== 2 · nine models ===== */
+.s-nine .nine{position:absolute;left:55px;top:124px;width:560px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.s-nine .mt{height:104px;padding:12px 14px;cursor:pointer;border:2px solid transparent;transition:border-color .25s,transform .25s var(--ease)}
+.s-nine .mt:hover{transform:translateY(-3px)}
+.s-nine .mt.on{border-color:var(--amber)}
+.s-nine .mt .tag{color:var(--teal);font-size:10.5px}
+.s-nine .mt h3{font-size:16.5px;margin-top:4px}
+.s-nine .mt small{display:block;margin-top:3px;font-size:12px;line-height:1.3;color:var(--grey)}
+.s-nine .mt svg{position:absolute;right:10px;bottom:9px;width:34px;height:34px;overflow:visible}
+.s-nine .mt svg *{fill:none;stroke:var(--teal);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.s-nine .mt.on svg *{stroke:var(--amber)}
+.s-nine .detail{left:55px;top:474px;width:560px;height:166px;padding:14px 20px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.s-nine .detail h4{margin:0 0 5px;font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-nine .detail p{margin:0;font-size:13.5px;line-height:1.36}
+.s-nine .map{position:absolute;left:640px;top:118px;width:264px;height:524px;background:#DDE8EA;border-radius:14px;box-shadow:0 6px 14px rgba(40,30,10,.25);overflow:hidden}
+.s-nine .map svg{width:100%;height:100%}
+.s-nine .pin circle{fill:#fff;stroke:var(--teal);stroke-width:60}
+.s-nine .pin text{font:700 520px var(--sans);fill:var(--teal);text-anchor:middle;dominant-baseline:central}
+.s-nine .pin.on circle{fill:var(--amber);stroke:#fff}
+.s-nine .pin.on text{fill:#fff}
+.s-nine .pin .ring{fill:none;stroke:var(--amber);stroke-width:70;opacity:0}
+.s-nine .pin.on .ring{animation:ping 1.8s ease-out infinite}
+@keyframes ping{0%{opacity:.9;r:330}100%{opacity:0;r:1100}}
+.s-nine .map .nm{position:absolute;left:10px;top:9px;font:700 10.5px var(--sans);letter-spacing:.06em;color:var(--grey)}
+
+/* ===== 3 · scale ===== */
+.s-scale .chart{position:absolute;left:55px;top:120px;width:849px;height:505px}
+.s-scale svg text{font-family:var(--sans)}
+.s-scale .ax{font-size:11px;fill:var(--grey)}
+.s-scale .axt{font-size:11.5px;font-weight:700;fill:var(--teal);letter-spacing:.04em}
+.s-scale .gl{stroke:var(--rule);stroke-width:1}
+.s-scale .m rect{fill:rgba(29,110,115,.16);stroke:var(--teal);stroke-width:1.6;rx:9}
+.s-scale .m text{font-size:13px;font-weight:700;fill:var(--ink)}
+.s-scale .m text.k{font-size:10.5px;font-weight:600;fill:var(--grey)}
+.s-scale .m.hot rect{fill:rgba(201,133,47,.25);stroke:var(--amber)}
+.s-scale .line{top:632px;font-size:15px}
+
+/* ===== 4 · geomorphology deep time ===== */
+.s-geo .map{position:absolute;left:55px;top:120px;width:250px;height:520px;border-radius:14px;overflow:hidden;box-shadow:0 6px 14px rgba(40,30,10,.3)}
+.s-geo .map svg{width:100%;height:100%;display:block}
+.s-geo .map .badge{position:absolute;left:8px;bottom:8px}
+.s-geo .map .n{position:absolute;right:9px;top:7px;font:700 12px var(--sans);color:#3A4148}
+.s-geo .era{position:absolute;left:330px;top:120px;width:574px;height:214px;padding:16px 20px}
+.s-geo .era .ka{font-size:40px;font-weight:700;color:var(--amber);line-height:1;font-variant-numeric:tabular-nums}
+.s-geo .era .ka small{font-size:15px;color:var(--grey);margin-left:6px}
+.s-geo .era .slv{position:absolute;right:20px;top:18px;text-align:right;font-size:12px;font-weight:700;color:var(--grey);letter-spacing:.03em;text-transform:uppercase}
+.s-geo .era .slv b{display:block;font-size:26px;color:var(--sea-deep);letter-spacing:0;text-transform:none}
+.s-geo .era h3{margin-top:8px;font-size:19px}
+.s-geo .era p{font-size:14px;margin-top:6px;line-height:1.38}
+.s-geo .era .src{position:absolute;left:20px;bottom:10px;font-size:10.5px;color:var(--grey)}
+.s-geo .curve{position:absolute;left:330px;top:350px;width:574px;height:200px;padding:0;background:#fff}
+.s-geo .curve svg{width:574px;height:200px}
+.s-geo .ctl{position:absolute;left:330px;top:566px;width:574px}
+.s-geo .ctl input{width:100%;accent-color:var(--amber);margin:2px 0 6px}
+.s-geo .leg{display:flex;gap:12px;margin-left:auto;font-size:11px;color:var(--ink-2);font-weight:600}
+.s-geo .leg i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+
+/* ===== 5 · weld ===== */
+.s-weld .rate{position:absolute;left:55px;top:120px;width:849px;height:208px}
+.s-weld .rate svg{width:849px;height:208px}
+.s-weld .xs{position:absolute;left:55px;top:344px;width:849px;height:230px}
+.s-weld .xs svg{width:849px;height:230px}
+.s-weld svg text{font-family:var(--sans)}
+.s-weld .tag2{position:absolute;left:68px;top:128px;z-index:2}
+.s-weld .tag3{position:absolute;left:68px;top:352px;z-index:2}
+.s-weld .line{top:592px}
+
+/* ===== 6 · drumstick live ===== */
+.s-drum .sim{position:absolute;left:55px;top:120px;width:584px;height:404px;background:#0F2F4A}
+.s-drum .sim canvas{width:584px;height:404px}
+.s-drum .sim .badge{position:absolute;left:10px;top:10px}
+.s-drum .sim .yr{position:absolute;right:12px;top:9px;font:600 12px var(--mono);color:#DCEBE8}
+.s-drum .side{position:absolute;left:660px;top:120px;width:244px}
+.s-drum .side .tile{padding:12px 14px;margin-bottom:10px}
+.s-drum .side .tile p{font-size:13px;margin-top:5px}
+.s-drum .rose{display:block;margin:2px auto 0;width:150px;height:150px}
+.s-drum .mu{font:700 22px var(--mono);color:var(--ink)}
+.s-drum .mu.neg{color:var(--red)}
+.s-drum .eq{position:absolute;left:55px;top:540px;width:584px;padding:10px 16px;font:12.5px/1.5 var(--mono);color:#DCEBE8;background:var(--night);border-radius:12px}
+.s-drum .eq b{color:#F4C27A;font-weight:600}
+.s-drum .presets{position:absolute;left:660px;top:470px;width:244px}
+.s-drum .presets .row{margin-bottom:7px}
+
+/* ===== 7 · origins ===== */
+.s-orig .grid{top:120px;grid-template-columns:repeat(3,1fr);gap:16px}
+.s-orig .tile{height:266px;padding:12px 15px}
+.s-orig .tile h3{font-size:17px;margin-top:5px}
+.s-orig .tile svg{display:block;width:100%;height:104px;margin-top:7px;border-radius:10px;background:#DDE8EA}
+.s-orig .tile p{font-size:13px;margin-top:7px;line-height:1.3}
+.s-orig .tile .in{display:block;margin-top:6px;font:600 11.5px var(--mono);color:var(--sand-ink)}
+.s-orig .res{position:absolute;left:55px;top:404px;width:849px;height:236px;display:grid;grid-template-columns:400px 1fr;gap:22px;padding:14px;}
+.s-orig .res .im{border-radius:10px;background:#0F2F4A url(img/drum-overlay.jpg) center/cover}
+.s-orig .res h4{margin:4px 0 6px;font-size:12px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-orig .res p{margin:0 0 8px;font-size:14px;line-height:1.4}
+.s-orig .res table{border-collapse:collapse;font-size:12.5px;width:100%}
+.s-orig .res td{padding:2px 6px;border-bottom:1px solid #c9dcd8}
+.s-orig .res td:last-child{text-align:right;font:600 12px var(--mono)}
+
+/* ===== 8 · tides ===== */
+.s-tide .scene{position:absolute;left:55px;top:120px;width:849px;height:278px;background:#EAF0EA}
+.s-tide .scene svg{width:849px;height:278px}
+.s-tide .scene .badge{position:absolute;left:10px;top:10px}
+.s-tide .chart{position:absolute;left:55px;top:412px;width:580px;height:170px;background:#fff}
+.s-tide .chart svg{width:580px;height:170px;cursor:ew-resize}
+.s-tide .read{position:absolute;left:656px;top:412px;width:248px;height:170px;padding:14px 16px}
+.s-tide .read .v{font-size:34px;font-weight:700;color:var(--sea-deep);line-height:1;font-variant-numeric:tabular-nums}
+.s-tide .read .v small{font-size:14px;color:var(--grey)}
+.s-tide .read p{font-size:13px;margin-top:8px}
+.s-tide .ctl{position:absolute;left:55px;top:596px;width:849px}
+.s-tide .ctl .note{margin-left:auto;font-size:11.5px;color:var(--grey)}
+
+/* ===== 9 · honest atlas ===== */
+.s-hon .three{position:absolute;left:55px;top:120px;width:849px;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.s-hon .lv{padding:12px 14px;height:122px}
+.s-hon .lv .tag{font-size:11px}
+.s-hon .lv p{font-size:13.5px;margin-top:6px}
+.s-hon .lv i{position:absolute;right:12px;top:12px;width:14px;height:14px;border-radius:50%}
+.s-hon .code{position:absolute;left:55px;top:258px;width:420px;height:228px;padding:12px 0;background:var(--night);border-radius:14px;box-shadow:0 5px 10px rgba(40,30,10,.3)}
+.s-hon .code .ttl{padding:0 16px 6px;font:700 10.5px var(--sans);letter-spacing:.06em;color:#7FC4C0}
+.s-hon .code pre{margin:0;padding:0 16px;font:12px/1.55 var(--mono);color:#B9C2C8;white-space:pre-wrap}
+.s-hon .code pre b{color:#F4C27A;font-weight:600}
+.s-hon .code pre em{color:#7FC4C0;font-style:normal}
+.s-hon .try{position:absolute;left:55px;top:498px;width:420px}
+.s-hon .try .out{margin-top:8px;font:12.5px/1.4 var(--mono);color:var(--ink);min-height:36px;padding:8px 12px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--rule)}
+.s-hon .try .out.err{color:var(--red)}
+.s-hon .vers{position:absolute;left:496px;top:258px;width:408px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.s-hon .ver{cursor:pointer}
+.s-hon .ver .im{height:96px;border-radius:9px;background:#ddd center/cover;box-shadow:0 3px 8px rgba(40,30,10,.3);border:2.5px solid transparent;transition:border-color .2s}
+.s-hon .ver.on .im{border-color:var(--amber)}
+.s-hon .ver b{display:block;margin-top:6px;font-size:13px}
+.s-hon .ver small{display:block;font-size:11px;color:var(--grey);line-height:1.3}
+.s-hon .vtxt{position:absolute;left:496px;top:440px;width:408px;height:196px;padding:12px 16px}
+.s-hon .vtxt p{font-size:13.5px;margin-top:6px}
+
+/* ===== 10 · trees ===== */
+.s-trees .map{position:absolute;left:55px;top:120px;width:384px;height:520px;background:#16232B}
+.s-trees .map canvas{width:384px;height:520px}
+.s-trees .map .badge{position:absolute;left:10px;bottom:10px}
+.s-trees .map .n{position:absolute;right:10px;top:8px;font:600 12px var(--mono);color:#DCEBE8;text-align:right}
+.s-trees .bars{position:absolute;left:462px;top:120px;width:442px}
+.s-trees .br{display:grid;grid-template-columns:118px 1fr 52px;gap:10px;align-items:center;margin-bottom:6px;font-size:13.5px;cursor:default;padding:2px 4px;border-radius:7px}
+.s-trees .br.hot{outline:none;background:#FBF4E8}
+.s-trees .br .nm{font-weight:700;white-space:nowrap}
+.s-trees .br .nm i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.s-trees .br .tr{height:16px;border-radius:5px;background:#fff;overflow:hidden}
+.s-trees .br .tr span{display:block;height:100%;width:0;border-radius:5px;transition:width 1.1s var(--ease)}
+.s-trees .br .val{font:600 12px var(--mono);text-align:right}
+.s-trees .cond{position:absolute;left:462px;top:446px;width:442px;height:122px;padding:12px 16px}
+.s-trees .cond .st{display:flex;height:22px;border-radius:6px;overflow:hidden;margin-top:8px}
+.s-trees .cond .st span{height:100%}
+.s-trees .cond .lg{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font-size:11.5px;color:var(--ink-2)}
+.s-trees .cond .lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px}
+.s-trees .ctl{position:absolute;left:462px;top:584px;width:442px}
+.s-trees .ctl p{margin:6px 0 0;font-size:11.5px;color:var(--grey);line-height:1.35}
+
+/* ===== 11 · oak salt pruning ===== */
+.s-oak .view{position:absolute;left:55px;top:120px;width:584px;height:440px;background:linear-gradient(#DCE7EC,#F2EEE3 70%,#E2D3B0 70.1%,#D8C59C)}
+.s-oak .view svg{width:584px;height:440px}
+.s-oak .view .badge{position:absolute;left:10px;top:10px}
+.s-oak .side{position:absolute;left:660px;top:120px;width:244px}
+.s-oak .dial{display:block;width:120px;height:120px;margin:0 auto 6px;cursor:grab}
+.s-oak .side .tile{padding:12px 14px;margin-bottom:10px}
+.s-oak .side .tile p{font-size:13px;margin-top:5px}
+.s-oak .rules{position:absolute;left:55px;top:574px;width:584px;font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.s-oak .rules b{color:var(--ink)}
+
+/* ===== 12 · renderers ===== */
+.s-ren .vid{position:absolute;left:55px;top:120px;width:560px;height:315px;background:#111}
+.s-ren .vid video{width:100%;height:100%;object-fit:cover;display:block}
+.s-ren .vid .badge{position:absolute;left:10px;top:10px}
+.s-ren .pick{position:absolute;left:55px;top:448px;width:560px}
+.s-ren .pipe{position:absolute;left:640px;top:120px;width:264px}
+.s-ren .pipe .st{position:relative;padding:9px 12px;margin-bottom:8px;border-radius:11px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--rule);font-size:12.5px;line-height:1.35}
+.s-ren .pipe .st b{display:block;font-size:13.5px}
+.s-ren .pipe .st code{font:11px var(--mono);color:var(--sand-ink)}
+.s-ren .pipe .st.src{background:var(--teal-wash);box-shadow:none}
+.s-ren .pipe .st.hot{outline:none;box-shadow:inset 0 0 0 2px var(--amber);background:#FBF4E8}
+.s-ren .light{position:absolute;left:55px;top:496px;width:560px;height:142px;padding:12px 16px}
+.s-ren .light h4{margin:0 0 8px;font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-ren .lb{display:grid;grid-template-columns:150px 1fr 60px;gap:10px;align-items:center;margin-bottom:5px;font-size:12.5px}
+.s-ren .lb .tr{height:14px;border-radius:4px;background:#fff;overflow:hidden}
+.s-ren .lb .tr span{display:block;height:100%;width:0;background:var(--teal);border-radius:4px;transition:width 1.2s var(--ease)}
+.s-ren .lb .tr span.b{background:var(--amber)}
+.s-ren .lb .val{font:600 12px var(--mono);text-align:right}
+.s-ren .stills{position:absolute;left:640px;top:470px;width:264px;display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.s-ren .stills div{height:78px;border-radius:9px;background:#ddd center/cover;box-shadow:0 3px 8px rgba(40,30,10,.3)}
+.s-ren .stills small{grid-column:span 2;font-size:10.5px;color:var(--grey);line-height:1.3}
+
+/* ===== 13 · wormstone ===== */
+.s-worm .photo{position:absolute;left:55px;top:120px;width:250px;height:200px;background:#ddd url(img/worm-photo.jpg) center/cover}
+.s-worm .model{position:absolute;left:55px;top:332px;width:250px;height:200px;background:#eee url(img/worm-final.jpg) center/cover}
+.s-worm .photo .badge,.s-worm .model .badge{position:absolute;left:8px;bottom:8px}
+.s-worm .curve{position:absolute;left:326px;top:120px;width:300px;height:300px;background:#F4EFE5}
+.s-worm .curve svg{width:300px;height:300px}
+.s-worm .curve .badge{position:absolute;left:8px;top:8px}
+.s-worm .ctl{position:absolute;left:326px;top:432px;width:300px}
+.s-worm .side{position:absolute;left:648px;top:120px;width:256px}
+.s-worm .side .tile{padding:12px 14px;margin-bottom:10px}
+.s-worm .side .tile p{font-size:13px;margin-top:5px}
+.s-worm .side .tile .big{font-size:28px;font-weight:700;color:var(--amber);line-height:1}
+.s-worm .passes{position:absolute;left:55px;top:552px;width:849px;display:grid;grid-template-columns:repeat(8,1fr);gap:8px}
+.s-worm .passes div{position:relative;height:64px;border-radius:8px;background:#ddd center/cover;box-shadow:0 3px 7px rgba(40,30,10,.3)}
+.s-worm .passes div span{position:absolute;left:4px;bottom:2px;font:700 10px var(--sans);color:#fff;text-shadow:0 1px 2px #000}
+.s-worm .passes div.f{outline:2.5px solid var(--amber)}
+.s-worm .cap{left:55px;top:624px}
+
+/* ===== 14 · water caustics ===== */
+.s-water .pool{position:absolute;left:55px;top:120px;width:520px;height:390px;background:#0B2E3A;cursor:crosshair}
+.s-water .pool canvas{width:520px;height:390px;image-rendering:auto}
+.s-water .pool .badge{position:absolute;left:10px;top:10px}
+.s-water .ctl{position:absolute;left:55px;top:522px;width:520px}
+.s-water .ctl .row{margin-bottom:6px}
+.s-water .side{position:absolute;left:600px;top:120px;width:304px}
+.s-water .side .tile{padding:12px 14px;margin-bottom:10px}
+.s-water .side .tile p{font-size:13px;margin-top:5px}
+.s-water .side .lens{display:block;width:100%;height:96px;margin-top:6px}
+.s-water .real{height:120px;border-radius:12px;background:#111 url(img/water-floor.jpg) center/cover;box-shadow:0 4px 10px rgba(40,30,10,.3)}
+
+/* ===== 15 · variation + stability ===== */
+.s-var .l{position:absolute;left:55px;top:120px;width:412px;height:516px;padding:16px 18px}
+.s-var .r{position:absolute;left:492px;top:120px;width:412px;height:516px;padding:16px 18px}
+.s-var .tile h3{font-size:19px}
+.s-var .tile p{font-size:13.5px;margin-top:6px}
+.s-var .eqn{margin:10px 0 6px;padding:8px 12px;border-radius:10px;background:var(--night);color:#DCEBE8;font:13px var(--mono)}
+.s-var .eqn b{color:#F4C27A;font-weight:600}
+.s-var svg{display:block;width:376px}
+.s-var .row{margin-top:6px}
+.s-var .shots{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.s-var .shots div{height:92px;border-radius:9px;background:#111 center/cover;position:relative}
+.s-var .shots span{position:absolute;left:6px;bottom:4px;font:700 10px var(--sans);color:#fff;text-shadow:0 1px 2px #000}
+
+/* ===== 16 · victorian GA ===== */
+.s-vic .houses{position:absolute;left:55px;top:120px;width:560px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.s-vic .h{position:relative;height:166px;border-radius:12px;background:linear-gradient(#CFE0EA,#EEF1EA 72%,#A9B98A 72.1%,#93A675);cursor:pointer;overflow:hidden;
+  box-shadow:0 3px 8px rgba(40,30,10,.28);border:2.5px solid transparent;transition:border-color .2s,transform .2s var(--ease)}
+.s-vic .h:hover{transform:translateY(-2px)}
+.s-vic .h.sel{border-color:var(--amber)}
+.s-vic .h svg{width:100%;height:100%}
+.s-vic .h .g{position:absolute;left:6px;top:4px;font:600 9.5px var(--mono);color:#3A4148;background:rgba(255,255,255,.7);padding:1px 5px;border-radius:5px}
+.s-vic .h.born{animation:born .55s var(--ease) both}
+@keyframes born{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:none}}
+.s-vic .side{position:absolute;left:640px;top:120px;width:264px}
+.s-vic .side .tile{padding:12px 14px;margin-bottom:10px}
+.s-vic .side .tile p{font-size:12.5px;margin-top:5px}
+.s-vic .dna{font:11px/1.45 var(--mono);color:var(--ink-2);word-break:break-word}
+.s-vic .dna b{color:var(--sand-ink);font-weight:600}
+.s-vic .locks{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:12px}
+.s-vic .locks label{display:flex;gap:4px;align-items:center;cursor:pointer}
+.s-vic .ctl{position:absolute;left:55px;top:646px;width:560px}
+.s-vic .dist{font-size:11.5px}
+.s-vic .dist .db{display:grid;grid-template-columns:86px 1fr 34px;gap:6px;align-items:center;margin-top:3px}
+.s-vic .dist .db i{display:block;height:9px;border-radius:3px;background:var(--teal)}
+.s-vic .dist .db span:last-child{font:600 10.5px var(--mono);text-align:right}
+
+/* ===== 17 · dunes CA ===== */
+.s-dune .field{position:absolute;left:55px;top:120px;width:440px;height:440px;background:#C8A66A}
+.s-dune .field canvas{width:440px;height:440px;image-rendering:pixelated}
+.s-dune .field .badge{position:absolute;left:10px;top:10px}
+.s-dune .field .t{position:absolute;right:10px;top:9px;font:600 12px var(--mono);color:#2C2216}
+.s-dune .prof{position:absolute;left:55px;top:572px;width:440px;height:64px;background:#fff}
+.s-dune .prof canvas{width:440px;height:64px}
+.s-dune .side{position:absolute;left:518px;top:120px;width:386px}
+.s-dune .rule{display:grid;grid-template-columns:28px 1fr;gap:10px;margin-bottom:9px;font-size:13.5px;line-height:1.35}
+.s-dune .rule .n{width:26px;height:26px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:12px;font-weight:700}
+.s-dune .rule b{display:block}
+.s-dune .ctl{margin:10px 0 12px}
+.s-dune .lin{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+.s-dune .lin div{padding:8px 10px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--rule);font-size:11.5px;line-height:1.35}
+.s-dune .lin b{display:block;font-size:12.5px;color:var(--teal)}
+
+/* ===== 18 · web of models ===== */
+.s-web .graph{position:absolute;left:40px;top:124px;width:504px;height:468px}
+.s-web .graph svg{width:504px;height:468px}
+.s-web .nd circle{fill:#fff;stroke:var(--teal);stroke-width:2.2;transition:fill .2s,stroke .2s}
+.s-web .nd text{font:700 12.5px var(--sans);fill:var(--ink);text-anchor:middle}
+.s-web .nd.hot circle{fill:var(--amber);stroke:var(--amber)}
+.s-web .ed{stroke:var(--spoke);stroke-width:2;fill:none;transition:stroke .2s,stroke-width .2s}
+.s-web .ed.hot{stroke:var(--amber);stroke-width:4;stroke-dasharray:8 6;animation:flow 1s linear infinite}
+.s-web .links{position:absolute;left:556px;top:120px;width:348px}
+.s-web .lk{padding:5px 10px;margin-bottom:5px;border-radius:10px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--rule);font-size:11.5px;line-height:1.3;cursor:default;transition:background .2s,box-shadow .2s}
+.s-web .lk b{display:block;font-size:12px;color:var(--teal)}
+.s-web .lk.hot{outline:none;background:#FBF4E8;box-shadow:inset 0 0 0 2px var(--amber)}
+
+/* ===== 19 · method ===== */
+.s-meth .loop{position:absolute;left:55px;top:124px;width:849px;display:flex;align-items:center;gap:8px}
+.s-meth .loop span{padding:6px 14px;border-radius:999px;background:#fff;border:1.5px solid var(--rule);font-size:13.5px;font-weight:700;color:var(--ink)}
+.s-meth .loop i{font-style:normal;color:var(--grey);font-weight:700}
+.s-meth.on .loop span{animation:loopstep 12.5s infinite}
+.s-meth.on .loop span:nth-of-type(2){animation-delay:2.5s}.s-meth.on .loop span:nth-of-type(3){animation-delay:5s}
+.s-meth.on .loop span:nth-of-type(4){animation-delay:7.5s}.s-meth.on .loop span:nth-of-type(5){animation-delay:10s}
+@keyframes loopstep{0%,17%{background:var(--amber);border-color:var(--amber);color:#fff}20%,100%{background:#fff;border-color:var(--rule);color:var(--ink)}}
+.s-meth table{position:absolute;left:55px;top:178px;width:849px;border-collapse:separate;border-spacing:0;font-size:12.5px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:0 5px 10px rgba(40,30,10,.25)}
+.s-meth th{padding:8px 10px;text-align:left;font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:#fff;background:var(--teal)}
+.s-meth td{padding:6.5px 10px;border-top:1px solid var(--rule);vertical-align:top;line-height:1.3}
+.s-meth td:first-child{font-weight:700;white-space:nowrap}
+.s-meth td.y{color:var(--teal);font-weight:700}
+.s-meth td small{color:var(--grey)}
+.s-meth .line{top:604px}
+
+/* ===== 20 · limits ===== */
+.s-lim .grid{top:120px;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.s-lim .tile{height:158px;padding:12px 15px}
+.s-lim .tile h3{font-size:16.5px;margin-top:4px}
+.s-lim .tile p{font-size:13px;margin-top:6px;line-height:1.36}
+.s-lim .line{top:632px;font-size:15.5px}
+
+/* ===== 21 · resources ===== */
+.s-res .grid{top:120px;grid-template-columns:1fr 1fr;gap:10px 21px}
+.s-res .tile{padding:11px 16px}
+.s-res .tile h3{font-size:15.5px;margin:0}
+.s-res .tile p{margin-top:3px;font-size:13px}
+.s-res a{color:var(--teal);font-weight:600;text-decoration:none}
+.s-res a:hover{text-decoration:underline}
+</style>
+</head>
+<body data-footer="Models of Amelia Island">
+<div id="viewport"><div id="stage">
+
+<!-- ============================================================ 1 · title -->
+<section class="slide s-title" data-nonum>
+  <div class="page">
+    <canvas id="isle" width="1920" height="1440" aria-hidden="true"></canvas>
+    <div class="veil"></div>
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">ONE ISLAND · NINE WEB MODELS</div>
+    <h1 class="anim">Models of<br>Amelia Island<span>.</span></h1>
+    <p class="sub anim">Sand, sea, marsh, trees, stone, water and houses, each built as a model you can change in a browser.</p>
+    <div class="nine" data-b="1">
+      <span><b>1</b>Geomorphology</span><span><b>2</b>Drumstick</span><span><b>3</b>Dunes</span>
+      <span><b>4</b>Egans Creek</span><span><b>5</b>Trees</span><span><b>6</b>Live Oak</span>
+      <span><b>7</b>Wormstone</span><span><b>8</b>Water</span><span><b>9</b>Victorian</span>
+    </div>
+    <div class="by anim">Paul Fishwick</div>
+    <button class="music" id="music-btn" type="button" title="Play or pause the music (M)">
+      <span class="eq"><i></i><i></i><i></i><i></i></span><span>The Luminous Tide</span><span class="state">click to play</span>
+    </button>
+    <div class="credit">Music © Paul Fishwick · “The Luminous Tide — Arrival” · made with Google Flow Music (the Live Oak Explorer’s soundtrack). The island is drawn from the geomorphology model’s own polygons.</div>
+  </div>
+  <aside class="notes">
+    <p>Click the music button (or press M); it fades out when you leave the title.</p>
+    <p>The island on the right is the real outline used by the geomorphology model: brown Pleistocene core, tan Holocene sand, green Egans Creek marsh. Waves arrive from the northeast and sand drifts south along the beach, which is the longshore drift that drumstick simulates.</p>
+    <p>[build] The nine models. Each one is a lead line to a place on the island.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 · nine models -->
+<section class="slide s-nine">
+  <div class="page">
+    <header class="hd"><h2>One Island, Nine Models</h2><div class="kicker">Overview · click a model, or let it cycle</div></header>
+    <div class="nine" data-noadvance>
+      <article class="tile mt" data-m="0"><div class="tag">Deep time</div><h3>Geomorphology</h3><small>125,000 years on one slider</small>
+        <svg viewBox="0 0 34 34"><path d="M3 26 q7-10 14-4 t14-6"/><path d="M3 31 h28"/><circle cx="24" cy="8" r="3"/></svg></article>
+      <article class="tile mt" data-m="1"><div class="tag">Physics</div><h3>Drumstick</h3><small>An island grown from waves</small>
+        <svg viewBox="0 0 34 34"><path d="M14 4 q10 2 8 12 q-2 8-6 16 q-6-2-6-10 q0-10 4-18z"/></svg></article>
+      <article class="tile mt" data-m="2"><div class="tag">Wind</div><h3>Dunes</h3><small>Sand slabs that self-organize</small>
+        <svg viewBox="0 0 34 34"><path d="M2 26 q6-12 12-2 q6-12 12-2 q4-7 6-2"/><path d="M4 8 h12 M8 13 h14"/></svg></article>
+      <article class="tile mt" data-m="3"><div class="tag">Wetland</div><h3>Egans Creek</h3><small>Tides, marsh and birds</small>
+        <svg viewBox="0 0 34 34"><path d="M2 20 q8-6 15 0 t15 0"/><path d="M8 20 v-9 M12 20 v-12 M24 20 v-10 M28 20 v-7"/></svg></article>
+      <article class="tile mt" data-m="4"><div class="tag">Inventory</div><h3>Tree Atlas</h3><small>15,386 records on a map</small>
+        <svg viewBox="0 0 34 34"><circle cx="8" cy="10" r="3"/><circle cx="20" cy="7" r="3"/><circle cx="26" cy="19" r="3"/><circle cx="12" cy="23" r="3"/><circle cx="22" cy="29" r="2"/></svg></article>
+      <article class="tile mt" data-m="5"><div class="tag">Organism</div><h3>Live Oak</h3><small>Salt pruning by the wind</small>
+        <svg viewBox="0 0 34 34"><path d="M17 32 v-10 M17 22 q-6-4-12-3 M17 22 q5-6 12-6"/><path d="M3 18 q8-14 28-4"/></svg></article>
+      <article class="tile mt" data-m="6"><div class="tag">Object</div><h3>Wormstone</h3><small>A stone with 2,400 holes</small>
+        <svg viewBox="0 0 34 34"><ellipse cx="17" cy="18" rx="14" ry="10"/><circle cx="11" cy="16" r="2"/><circle cx="18" cy="13" r="1.6"/><circle cx="23" cy="19" r="2.2"/><circle cx="15" cy="22" r="1.5"/></svg></article>
+      <article class="tile mt" data-m="7"><div class="tag">Light</div><h3>Water</h3><small>Caustics and vortices</small>
+        <svg viewBox="0 0 34 34"><path d="M3 12 q4-4 7 0 t7 0 t7 0 t7 0"/><path d="M6 24 q4 4 8-1 q3 5 8 0 q4 5 7 0"/><circle cx="17" cy="24" r="2.5"/></svg></article>
+      <article class="tile mt" data-m="8"><div class="tag">Architecture</div><h3>Victorian</h3><small>Breeding houses from DNA</small>
+        <svg viewBox="0 0 34 34"><path d="M4 31 V16 L13 8 L22 16 V31 Z"/><path d="M22 31 V12 l5-5 l5 5 V31"/><path d="M10 31 v-7 h6 v7"/></svg></article>
+    </div>
+    <div class="box detail"><div><h4>Asks</h4><p id="nm-q"></p></div><div><h4>Method</h4><p id="nm-m"></p></div><div><h4>Built with</h4><p id="nm-b"></p></div></div>
+    <div class="map"><div class="nm">AMELIA ISLAND · N ↑</div><svg id="nm-map" viewBox="2400 -2600 13800 28400" preserveAspectRatio="xMidYMid meet"></svg></div>
+  </div>
+  <aside class="notes">
+    <p>Nine apps, each a model of one part of the island. Click a tile, or let it cycle; the pin shows where the model lives on the island.</p>
+    <p>All nine run in a browser. Most are plain HTML, CSS and JavaScript with no build step; Egans Creek uses Vite; the 3D ones use Three.js; the Live Oak can also drive Blender and Unreal on this computer.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 · scale -->
+<section class="slide s-scale">
+  <div class="page">
+    <header class="hd"><h2>From a Stone to an Ice Age</h2><div class="kicker">The nine models by space and time · hover a model</div></header>
+    <div class="chart"><svg id="scale" viewBox="0 0 849 505"></svg></div>
+    <p class="line" data-b="10">The models span seven powers of ten in space and eleven in time.</p>
+  </div>
+  <aside class="notes">
+    <p>Horizontal: the size of the thing modelled, from a 15 cm stone to a 40 km stretch of coast. Vertical: how much time the model covers, from seconds of moving water to 125,000 years of sea level.</p>
+    <p>[builds ×9] One model at a time, smallest first. [build] The span.</p>
+    <p>Boxes are ranges: Egans Creek covers a 12.4-hour tide and the stages of the marsh’s formation. Wormstone, Victorian and the Tree Atlas are snapshots, so they sit on the “a moment” row.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 · geomorphology -->
+<section class="slide s-geo">
+  <div class="page">
+    <header class="hd"><h2>125,000 Years on One Slider</h2><div class="kicker">1 · Geomorphology · after Dr. Frank Hopf’s lectures for Conserve Nassau</div></header>
+    <div class="map"><svg id="geo-map" viewBox="2400 -2600 13800 28400" preserveAspectRatio="xMidYMid slice"></svg><span class="badge" id="geo-badge">Sea</span><span class="n">N ↑ · 5 km ▬</span></div>
+    <article class="tile era"><div class="ka" id="geo-ka">125 ka<small>years ago</small></div>
+      <div class="slv">Sea level<b id="geo-sl">+6.0 m</b></div>
+      <h3 id="geo-name"></h3><p id="geo-txt"></p><div class="src" id="geo-src"></div></article>
+    <div class="panel curve"><svg id="geo-curve" viewBox="0 0 574 200" data-noadvance></svg></div>
+    <div class="ctl" data-noadvance>
+      <input type="range" id="geo-t" min="0" max="1000" value="0" aria-label="Time, years before present (log scale)">
+      <div class="row"><button class="btn go" id="geo-play">▶ Play the island</button><button class="btn sm" data-ka="5">Weld · 5 ka</button><button class="btn sm" data-ka="0">Today</button>
+        <div class="leg"><span><i style="background:var(--pleist)"></i>Pleistocene</span><span><i style="background:var(--holo)"></i>Holocene</span><span><i style="background:var(--marsh)"></i>Marsh</span><span><i style="background:var(--ridge)"></i>Ridges</span></div></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The geomorphology app turns Hopf’s narrative into a time-sliced map. The slider is logarithmic in years, so most of its travel is in the Holocene, where most of the change happens.</p>
+    <p>These polygons are the app’s own geometry, simplified: the Pleistocene core and the Egans Creek marsh are traced from OpenStreetMap, the offshore sandbars and the Holocene wedge are interpretive offsets, and the jetties come from NOAA charts.</p>
+    <p>Press Play, or jump to the weld at 5 ka. The curve below is the sea level both this app and drumstick use (Hawkes 2016 for NE Florida, Lambeck 2014 for the glacial lowstand).</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 5 · weld -->
+<section class="slide s-weld">
+  <div class="page">
+    <header class="hd"><h2>When the Sea Slowed Down</h2><div class="kicker">1 · Geomorphology · the weld and “two piles of sand on a bed of mud”</div></header>
+    <span class="badge tag2">Rate of sea-level rise · from the model’s curve</span>
+    <div class="panel rate"><svg id="weld-rate" viewBox="0 0 849 208"></svg></div>
+    <span class="badge tag3">Plantation cross-section · west → east · schematic</span>
+    <div class="panel xs"><svg id="weld-xs" viewBox="0 0 849 230"></svg></div>
+    <p class="line" data-b="5">Below about 2 mm a year, a barrier stops retreating and starts to build. That happened here about 5,000 years ago.</p>
+  </div>
+  <aside class="notes">
+    <p>Top: the slope of the sea-level curve on the previous slide, in millimetres per year. Meltwater Pulse 1A runs at tens of mm/yr. Mariotti (2021) puts the switch from a retreating to a building barrier near 2 mm/yr; that falls near 5 ka, which matches Hopf’s date for the weld.</p>
+    <p>[build] The mud bed and the old Pleistocene island. [build] The sea rises. [build] A Holocene sandbar offshore, with a lagoon behind it. [build] The bar welds on and traps the lagoon, which becomes Egans Creek marsh. [build] The rule.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 6 · drumstick -->
+<section class="slide s-drum">
+  <div class="page">
+    <header class="hd"><h2>Growing a Coast from Waves</h2><div class="kicker">2 · Drumstick · a one-line Ashton–Murray shoreline, running live</div></header>
+    <div class="panel sim"><canvas id="drum" width="1168" height="808"></canvas><span class="badge">Plan view · mainland left · Atlantic right</span><span class="yr" id="drum-yr">0 yr</span></div>
+    <div class="side">
+      <article class="tile"><div class="tag">Wave rose · from the east</div><svg class="rose" id="drum-rose" viewBox="-80 -80 160 160"></svg></article>
+      <article class="tile"><div class="tag">Climate diffusivity μ₂</div><div class="mu" id="drum-mu">+0.00</div><p id="drum-mu-t">Positive: bumps smooth out.</p></article>
+    </div>
+    <div class="presets" data-noadvance>
+      <div class="row"><button class="btn sm" data-p="hat">Hatteras</button><button class="btn sm" data-p="ob">Outer Banks</button></div>
+      <div class="row"><button class="btn sm on" data-p="sea">Sea Islands</button><button class="btn sm" data-p="low">Low-angle</button></div>
+      <div class="row"><button class="btn go sm" id="drum-reset">Restart</button></div>
+    </div>
+    <div class="eq"><b>Q</b> = K·H<sup>12/5</sup>·T<sup>1/5</sup>·cos<sup>6/5</sup>(φ−θ)·sin(φ−θ) &nbsp;&nbsp;·&nbsp;&nbsp; <b>∂y/∂t</b> = −(1/D)·∂Q/∂x<br><span style="color:#7F8A93">CERC sand flux along the shore · the shoreline moves wherever that flux piles up or runs out</span></div>
+  </div>
+  <aside class="notes">
+    <p>Drumstick is a physics companion to the geomorphology app: start with water and a nearly straight coast and ask what the waves build.</p>
+    <p>This is a small live version of its core, the Ashton–Murray one-line model. Each wave carries sand along the shore by the CERC formula; where flux converges, the shoreline advances.</p>
+    <p>The key idea: when most waves arrive at a high angle (more than 45° from shore-normal), the climate diffusivity goes negative and small bumps grow into capes. Hatteras does this; the Sea Islands, Amelia’s coast, stay smooth. Same four presets as the app.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7 · origins -->
+<section class="slide s-orig">
+  <div class="page">
+    <header class="hd"><h2>Three Ways to Make a Barrier</h2><div class="kicker">2 · Drumstick · origin theories as starting conditions</div></header>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">de Beaumont · 1845</div><h3>An offshore bar emerges</h3><svg viewBox="0 0 250 118" id="og-bar"></svg><p>A shoal in the surf zone gathers sand until its crest breaks the surface and vegetates.</p><span class="in">start: sandbar · crest −0.5 m, 1.5 km out</span></article>
+      <article class="tile" data-b="2"><div class="tag">Hoyt · 1967</div><h3>A ridge is drowned behind</h3><svg viewBox="0 0 250 118" id="og-ridge"></svg><p>Rising sea floods the low ground behind a coastal ridge, leaving it as an island.</p><span class="in">start: emerged barrier with lagoon</span></article>
+      <article class="tile" data-b="3"><div class="tag">Fisher · Gilbert · McGee</div><h3>A spit grows and breaks</h3><svg viewBox="0 0 250 118" id="og-spit"></svg><p>A spit lengthens downdrift; a storm cuts an inlet and the tip becomes an island.</p><span class="in">2-D cellular model · experimental</span></article>
+    </div>
+    <div class="box res" data-b="4"><div class="im"></div><div>
+      <h4>8,000 simulated years from a sandbar</h4>
+      <p>From 8000 BCE, with Hawkes sea level and an Amelia wave climate, the physics builds a long detached barrier of about the right size and place. Yellow is modern Amelia. It is not Amelia’s exact outline, and the plan never expected it to be.</p>
+      <table><tr><td>Hatteras · RMS growth over 5,000 yr</td><td>221×</td></tr><tr><td>Sea Islands (Amelia’s coast)</td><td>20×</td></tr><tr><td>Pure low-angle</td><td>0.95× · decays</td></tr></table>
+    </div></div>
+  </div>
+  <aside class="notes">
+    <p>[builds ×3] The three classical theories of barrier-island origin, each a starting condition in drumstick. The animations loop.</p>
+    <p>[build] An 8,000-year run, and the validation against Ashton–Murray 2006: cape growth across the four wave climates spans about 200×, with 10–20 km cape wavelengths, inside the published 5–30 km range.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 8 · tides -->
+<section class="slide s-tide">
+  <div class="page">
+    <header class="hd"><h2>Water Comes and Goes</h2><div class="kicker">4 · Egans Creek · tide explorer · NOAA station 8720030, Fernandina Beach</div></header>
+    <div class="panel scene"><svg id="tide-scene" viewBox="0 0 849 278"></svg><span class="badge">Illustrative cycle · conceptual cross-section</span></div>
+    <div class="panel chart"><svg id="tide-chart" viewBox="0 0 580 170" data-noadvance></svg></div>
+    <article class="tile read"><div class="tag" id="tide-dir">Rising</div><div class="v" id="tide-v">0.0 <small>m above low</small></div><p id="tide-t"></p></article>
+    <div class="ctl row" data-noadvance><button class="btn go" id="tide-play">▶ Run a tidal cycle</button><button class="btn sm" id="tide-lo">Low</button><button class="btn sm" id="tide-hi">High</button>
+      <span class="note">level = R/2 · (1 − cos 2πt / 12.42 h), R = 1.83 m — the app’s own learning cycle</span></div>
+  </div>
+  <aside class="notes">
+    <p>The Egans Creek atlas has six chapters; the tide explorer is the most developed. It reads the latest NOAA observation at Fernandina Beach, every six minutes, and plots NOAA predictions for any date.</p>
+    <p>What you see here is its third mode, the labelled “illustrative cycle”: a 12.42-hour semidiurnal tide with the station’s 1.83 m mean range. Drag the chart or run the cycle. Mud banks are exposed and covered, the cordgrass floods, and the heron moves with the water’s edge.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 9 · honesty -->
+<section class="slide s-hon">
+  <div class="page">
+    <header class="hd"><h2>A Model That Says What It Knows</h2><div class="kicker">4 · Egans Creek · three kinds of claim</div></header>
+    <div class="three">
+      <article class="tile lv" data-b="1"><i style="background:var(--teal)"></i><div class="tag">Documented locally</div><p>35 USGS flowlines named Egans Creek; NOAA water levels; 2003 tidal restoration and the 2009 Jasmine Street control.</p></article>
+      <article class="tile lv" data-b="2"><i style="background:var(--amber)"></i><div class="tag">Regional explanation</div><p>An older Pleistocene core, younger coastal sand, and a lagoon that became the marsh, from Olsen (2016) after Henry (1971).</p></article>
+      <article class="tile lv" data-b="3"><i style="background:#B9C2C8"></i><div class="tag">Illustrative reconstruction</div><p>The cross-section, the marsh animation and the “accretion wedge.” Contacts are unmeasured; vertical scale is exaggerated.</p></article>
+    </div>
+    <div class="code" data-b="4"><div class="ttl">src/science.js · THE APP REFUSES A BAD SUBTRACTION</div><pre><em>// depth needs water and bed in the same datum</em>
+export function <b>depth</b>(water, bed) {
+  if (water.datum !== bed.datum)
+    throw Error(<b>'Vertical datums must match'</b>);
+  return Math.max(0, water.value - bed.value);
+}
+<em>// MLLW water heights and NAVD88 terrain cannot be
+// subtracted without a supported conversion.
+// Never invent a creek lag or attenuation.</em></pre></div>
+    <div class="try" data-b="4" data-noadvance><div class="row"><span class="lbl">Try it</span><button class="btn sm" id="dp-ok">water MLLW − bed MLLW</button><button class="btn sm" id="dp-bad">water MLLW − bed NAVD88</button></div><div class="out" id="dp-out">depth({value:1.6, datum:'MLLW'}, …)</div></div>
+    <div class="vers" data-b="5" data-noadvance>
+      <div class="ver on" data-v="0"><div class="im" style="background-image:url(img/eganscreek.jpg)"></div><b>Egans Creek: A Model</b><small>Codex &amp; Claude Code · Vite</small></div>
+      <div class="ver" data-v="1"><div class="im" style="background-image:url(img/egan-chatgpt.jpg)"></div><b>Deep Looking Explorer</b><small>ChatGPT · one HTML file</small></div>
+      <div class="ver" data-v="2"><div class="im" style="background-image:url(img/egan-sign.jpg)"></div><b>Greenway Explorer</b><small>Gemini · two prompts</small></div>
+    </div>
+    <article class="tile vtxt" data-b="5"><div class="tag" id="vt-tag"></div><p id="vt-p"></p></article>
+  </div>
+  <aside class="notes">
+    <p>[builds ×3] The plan for the atlas requires every diagram to say which kind of claim it is: documented here, explained regionally, or illustrated.</p>
+    <p>[build] The rule is in the code too. Press the two buttons: the same subtraction succeeds with matching datums and throws with mismatched ones.</p>
+    <p>[build] One creek, three AI builds from the same field photos. Click each.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 10 · trees -->
+<section class="slide s-trees">
+  <div class="page">
+    <header class="hd"><h2>14,034 Trees in One City</h2><div class="kicker">5 · Amelia Island Tree Atlas · Fernandina Beach inventory, 2023 updates</div></header>
+    <div class="panel map"><canvas id="trees" width="768" height="1040"></canvas><span class="badge">Every city-inventory point</span><span class="n" id="tr-n">0</span></div>
+    <div class="bars" id="tr-bars"></div>
+    <article class="tile cond" data-b="1"><div class="tag">Condition, as recorded</div><div class="st" id="tr-st"></div><div class="lg" id="tr-lg"></div></article>
+    <div class="ctl" data-noadvance><div class="row"><button class="btn go sm" id="tr-play">Plant them again</button><button class="btn sm" id="tr-dead">Show dead records</button></div>
+      <p>Records, not unique trees. The atlas adds 1,352 more from the county, Omni, iNaturalist, AIPCA, heritage and planting lists.</p></div>
+  </div>
+  <aside class="notes">
+    <p>The Tree Atlas merges public inventories into one Leaflet map with clusters, filters and photo galleries. The default view shows 15,386 records; this slide plots the largest layer, the city’s 14,034, as real coordinates.</p>
+    <p>Hover a species to pick it out on the map. Live Oak alone is 4,519 records, about a third. [build] Condition as recorded, including 593 dead records, which the atlas lets you hide.</p>
+    <p>The atlas is careful with units: a diameter counts only if it carries an explicit inch mark; bare numbers are listed as “units unverified.”</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 11 · oak -->
+<section class="slide s-oak">
+  <div class="page">
+    <header class="hd"><h2>A Tree Shaped by Salt Wind</h2><div class="kicker">6 · Live Oak Explorer · salt pruning, drawn live in 2-D from the same rules</div></header>
+    <div class="panel view"><svg id="oak" viewBox="0 0 584 440"></svg><span class="badge">Side view · Atlantic wind</span></div>
+    <div class="side" data-noadvance>
+      <svg class="dial" id="oak-dial" viewBox="-60 -60 120 120"></svg>
+      <div class="sl"><span>Wind</span><input type="range" id="oak-w" min="0" max="100" value="70"><output id="oak-wo">0.70</output></div>
+      <div class="sl"><span>Shear angle</span><input type="range" id="oak-a" min="5" max="40" value="20"><output id="oak-ao">20°</output></div>
+      <div class="sl"><span>Age</span><input type="range" id="oak-g" min="20" max="300" value="150"><output id="oak-go">150 y</output></div>
+      <div class="sl"><span>Spanish moss</span><input type="range" id="oak-m" min="0" max="100" value="50"><output id="oak-mo">0.50</output></div>
+      <div class="row" style="margin:6px 0 10px"><button class="btn sm" id="oak-sk">Skeleton view</button><button class="btn sm" id="oak-sh">Shear surface</button><button class="btn go sm" id="oak-grow">Grow</button></div>
+      <article class="tile"><div class="tag">Salt kills buds, not old wood</div><p>Thin shoots that cross the shear surface die back to grey stubs; thick limbs bend and grow along beneath it.</p></article>
+    </div>
+    <p class="rules"><b>Rules from the app:</b> a short trunk that divides low into heavy limbs · near-horizontal limbs that sag, rest an elbow, and rise again · the trunk leans leeward with age · moss hangs on sheltered limbs, away from the salt face.</p>
+  </div>
+  <aside class="notes">
+    <p>The Live Oak Explorer grows one coastal live oak from sliders. Its central idea is the skeleton: a graph of joints and links that every renderer then gives flesh.</p>
+    <p>This is a 2-D drawing of the same rules. Drag the compass or the sliders: the shear surface rises leeward at the crown shear angle; thin shoots that cross it die; thick limbs flatten under it. Age leans the trunk downwind. Moss avoids the windward face.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 12 · renderers -->
+<section class="slide s-ren">
+  <div class="page">
+    <header class="hd"><h2>One Skeleton, Three Renderers</h2><div class="kicker">6 · Live Oak Explorer · Three.js in the browser, Blender and Unreal on this computer</div></header>
+    <div class="panel vid"><video id="ren-v" muted loop playsinline preload="metadata" poster="video/oak-threejs.jpg"><source src="video/oak-threejs.mp4" type="video/mp4"></video><span class="badge" id="ren-b">Three.js · 30–60 fps</span></div>
+    <div class="pick row" data-noadvance><span class="lbl">Orbit</span><button class="btn sm on" data-r="threejs">Three.js</button><button class="btn sm" data-r="unreal">Unreal Engine 5.8</button><span class="lbl" style="margin-left:auto">same tree, same pond</span></div>
+    <div class="pipe">
+      <div class="st src" data-lens="sk"><b>The skeleton</b><code>js/oakGenerator.js</code><br>joints, radii, links, leaves, moss strands, roots</div>
+      <div class="st" data-lens="threejs"><b>Three.js</b><code>js/oakMesher.js</code><br>tubes, leaf sprigs, moss ribbons · live sliders</div>
+      <div class="st" data-lens="blender"><b>Blender 5.1</b><code>blender/build_oak.py</code><br>4K bark, hair-curve moss, Cycles · GLB / FBX</div>
+      <div class="st" data-lens="unreal"><b>Unreal Engine 5.8</b><code>unreal/scripts/</code><br>FBX → master materials → Lumen level</div>
+    </div>
+    <article class="tile light" data-b="1"><h4>Growing toward the light · the pond preset</h4>
+      <div class="lb"><span>Pond-side reach</span><div class="tr"><span data-w="63"></span></div><span class="val">13.7 m</span></div>
+      <div class="lb"><span>… with light seeking 0.5</span><div class="tr"><span class="b" data-w="100"></span></div><span class="val">21.8 m</span></div>
+      <div class="lb"><span>Branches touching water</span><div class="tr"><span data-w="19"></span></div><span class="val">31</span></div>
+      <div class="lb"><span>… with light seeking 0.5</span><div class="tr"><span class="b" data-w="100"></span></div><span class="val">163</span></div></article>
+    <div class="stills"><div style="background-image:url(img/oak-champion.jpg)"></div><div style="background-image:url(img/oak-meshy.jpg)"></div>
+      <small>Left: the Florida champion preset (11.1 m girth, 55 m spread). Right: the Meshy “Whispering Oak,” kept only as a visual reference.</small></div>
+  </div>
+  <aside class="notes">
+    <p>Three renderers read one skeleton JSON, one ground definition and one set of seven skies, so the tree matches across them. Pick an orbit: Three.js live in the browser, or the Unreal level built by script.</p>
+    <p>[build] The light field. Open water over a pond is the brightest direction a tree has, so limbs reach toward it. Turning light seeking from 0 to 0.5 grew pond-side reach from 13.7 to 21.8 m. The limbs don’t “drink”: roots do that.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 13 · wormstone -->
+<section class="slide s-worm">
+  <div class="page">
+    <header class="hd"><h2>A Stone Full of Holes</h2><div class="kicker">7 · Wormstone form lab · a seeded Fourier curve, carved by marching cubes</div></header>
+    <div class="panel photo"><span class="badge">The stone · IMG_1925</span></div>
+    <div class="panel model"><span class="badge">The model · 2,400 openings</span></div>
+    <div class="panel curve"><svg id="worm" viewBox="-150 -150 300 300"></svg><span class="badge">2-D profile · live</span></div>
+    <div class="ctl" data-noadvance>
+      <div class="sl"><span>Terms</span><input type="range" id="wm-n" min="1" max="24" value="9"><output id="wm-no">9</output></div>
+      <div class="sl"><span>Roughness</span><input type="range" id="wm-r" min="0" max="100" value="38"><output id="wm-ro">0.38</output></div>
+      <div class="sl"><span>Smoothness</span><input type="range" id="wm-s" min="0" max="30" value="12"><output id="wm-so">1.2</output></div>
+      <div class="row"><button class="btn go sm" id="wm-seed">New seed</button><span class="mono" style="font-size:12px" id="wm-sd">seed 1925</span></div>
+    </div>
+    <div class="side">
+      <article class="tile"><div class="tag">The curve</div><p class="mono" style="font-size:11.5px">r(t) = R·(1 + ρ·Σ wᵢ cos(i·t + φᵢ)) <br>wᵢ = qᵢ / i<sup>s</sup></p></article>
+      <article class="tile"><div class="tag">The solid</div><p>A field is sampled 256 times per axis; bores enter near the surface normal and wander inward; a nearest-channel wall keeps thin dividers so holes never merge into caves.</p></article>
+      <article class="tile wash"><div class="big">40.4%</div><p>of the stone removed · fine mesh in 19 s, in a worker, with a draft first</p></article>
+    </div>
+    <div class="passes" id="wm-passes"></div>
+    <p class="cap">Seven density passes reviewed by screenshot, then the final. A geometric approximation of the photo, not an erosion simulation.</p>
+  </div>
+  <aside class="notes">
+    <p>A beach stone riddled with borings. The lab began as a 2-D “random curve lab”: a radius built from seeded cosine terms. Move the sliders; the same seed always gives the same stone.</p>
+    <p>In 3-D, 2,400 bores are spread over the skin and carved out of a distance field; marching cubes turns it into a mesh. The strip at the bottom is the iteration: seven density passes before the final.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 14 · water -->
+<section class="slide s-water">
+  <div class="page">
+    <header class="hd"><h2>Light Through Moving Water</h2><div class="kicker">8 · WebGL Water, nozzle edition · caustics and black vortex discs</div></header>
+    <div class="panel pool" data-noadvance><canvas id="pool" width="260" height="195"></canvas><span class="badge">Pool floor · photons, live · click to add a wave</span></div>
+    <div class="ctl" data-noadvance>
+      <div class="row"><span class="lbl">Nozzle</span><button class="btn sm on" data-z="shallow">Shallow · waves</button><button class="btn sm" data-z="deep">Deep · vortex</button><button class="btn sm" data-z="both">Both</button><button class="btn go sm" id="pool-calm">Calm</button></div>
+    </div>
+    <div class="side">
+      <article class="tile"><div class="tag">One mechanism, two effects</div><svg class="lens" id="lens" viewBox="0 0 280 96"></svg>
+        <p>A crest is a converging lens: light piles up into a bright web. A vortex dimple is a diverging lens: light is thrown out of it, leaving a black disc.</p></article>
+      <article class="tile"><div class="tag">The real thing</div><p>About a million photons a frame, refracted by Snell’s law and splatted onto the floor in WebGL2.</p></article>
+      <div class="real"></div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>A reimplementation of Evan Wallace’s WebGL Water, with the sphere replaced by nozzles on the pool walls. A shallow nozzle makes waves, and waves make caustics. A deep nozzle spins a vortex, which shows on the floor as a black disc.</p>
+    <p>This canvas is a small CPU version of the photon idea: refract a grid of rays through the surface slope and add up where they land. Click to drop a wave. Switch to Deep to add a vortex dimple.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 15 · variation + stability -->
+<section class="slide s-var">
+  <div class="page">
+    <header class="hd"><h2>Shake the Sliders, Find the Bug</h2><div class="kicker">8 · Water · Gaussian variation and a boundary instability</div></header>
+    <article class="tile l" data-noadvance><div class="tag">Every slider is a mean</div><h3>Roll a scene, keep your choice</h3>
+      <p>Each control stores a z-score, not a value. The thumb never moves; repeated rolls can’t drift away from what you set.</p>
+      <div class="eqn">v = clamp(<b>μ</b> + <b>z</b>·σ, v<sub>min</sub>, v<sub>max</sub>) · σ = 10% of range</div>
+      <svg id="var-svg" viewBox="0 0 376 190"></svg>
+      <div class="sl"><span>Mean μ</span><input type="range" id="var-mu" min="0" max="100" value="18"><output id="var-muo">0.18</output></div>
+      <div class="row"><button class="btn go sm" id="var-roll">Randomize</button><button class="btn sm" id="var-auto">Roll every second</button></div>
+    </article>
+    <article class="tile r"><div class="tag">A picket fence of spikes</div><h3>Measured, not tuned away</h3>
+      <p>Spikes stood along the walls after tens of seconds. Read back from the GPU, wall vorticity was 17× the interior. A wall rule stamped after the pressure solve, and half-width stencils, fed a slow sink: every mode decays at √d.</p>
+      <svg id="stab-svg" viewBox="0 0 376 150"></svg>
+      <div class="shots"><div style="background-image:url(img/water-before.jpg)"><span>Before · Corner Whirl, 70 s</span></div><div style="background-image:url(img/water-after.jpg)"><span>After · ghost-cell walls</span></div></div>
+    </article>
+  </div>
+  <aside class="notes">
+    <p>Left: the design-gallery idea. Each slider is the mean of a Gaussian; Randomize draws a z-score for it. Move the mean: the cloud of draws moves with it. Near an end stop the clipped draws pile up at the bound, and the app shows that honestly.</p>
+    <p>Right: a bug found by measuring. |λ| = √0.99925 for every mode means a 22-second e-folding time, far too slow to absorb a source acting every step. Fix: free-slip walls as mirrored ghost cells.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 16 · victorian -->
+<section class="slide s-vic">
+  <div class="page">
+    <header class="hd"><h2>Breeding Victorian Houses</h2><div class="kicker">9 · Victorian House Simulator · a genetic algorithm over house DNA</div></header>
+    <div class="houses" id="vic" data-noadvance></div>
+    <div class="side" data-noadvance>
+      <article class="tile"><div class="tag">Selected genome</div><div class="dna" id="vic-dna"></div>
+        <div class="locks" id="vic-locks"><label><input type="checkbox" data-k="paint">color</label><label><input type="checkbox" data-k="roof">roof</label><label><input type="checkbox" data-k="turret">turret</label><label><input type="checkbox" data-k="stories">floors</label><label><input type="checkbox" data-k="porch">porch</label></div></article>
+      <article class="tile wash"><div class="tag">Statistical map · 53 houses</div><div class="dist" id="vic-dist"></div><p>Gene odds come from photos read by a vision model.</p></article>
+    </div>
+    <div class="ctl row" data-noadvance><span class="lbl">Click a house, then</span><button class="btn go sm" id="vic-breed">Breed from selected</button><button class="btn sm" id="vic-x">Crossover (2)</button><button class="btn sm" id="vic-rnd">Randomize all</button></div>
+  </div>
+  <aside class="notes">
+    <p>The simulator shows a 3×3 grid of procedurally built 3D houses. Each house is a genome: style, stories, roof, turret, porch, cladding, palette. Breed keeps the selected parent and fills the other eight with mutants; Crossover mixes two parents; locks hold genes fixed.</p>
+    <p>The odds aren’t made up: about 100 Wikimedia photos were analysed by a vision model through OpenRouter; 53 confirmed Victorians gave the rates, such as one-over-one windows 78%, turrets 28%, mansard roofs 31%. These elevations are a 2-D sketch of each genome.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 17 · dunes -->
+<section class="slide s-dune">
+  <div class="page">
+    <header class="hd"><h2>Sand That Organizes Itself</h2><div class="kicker">3 · Dunes · Werner (1995) slab cellular automaton, running live</div></header>
+    <div class="panel field" data-noadvance><canvas id="dune" width="128" height="128"></canvas><span class="badge">Wind → · height shaded</span><span class="t" id="dune-t">0</span></div>
+    <div class="panel prof"><canvas id="dune-p" width="880" height="128"></canvas></div>
+    <div class="side">
+      <div class="rule"><span class="n">1</span><div><b>Pick up a slab</b>anywhere that is not in a wind shadow.</div></div>
+      <div class="rule"><span class="n">2</span><div><b>Hop it downwind</b>L = 5 cells, then try to land it.</div></div>
+      <div class="rule"><span class="n">3</span><div><b>Stick or hop again</b>p = 0.6 on sand, 0.4 on bare ground, always in shadow.</div></div>
+      <div class="rule"><span class="n">4</span><div><b>Shadow and avalanche</b>15° lee shadow; slopes past repose slide.</div></div>
+      <div class="ctl row" data-noadvance><button class="btn go sm" id="dune-run">Pause</button><button class="btn sm" id="dune-rnd">Random sand</button><button class="btn sm" id="dune-flat">Flat sand</button></div>
+      <div class="lin">
+        <div><b>Cellular</b>Jim Elder’s C# Werner, Momiji, Baas → HTML, then WebGPU</div>
+        <div><b>Continuum</b>AeoLiS: Bagnold transport, 1024² at 60 fps on WebGPU</div>
+        <div><b>Real-time</b>Taylor &amp; Keyser’s ACM paper: barchan, star, echo</div>
+      </div>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The dunes folder holds three lines of work: a port of Jim Elder’s C# cellular automaton (Werner 1995 and variants), a WebGPU version of the AeoLiS continuum model, and an implementation of a real-time dune paper.</p>
+    <p>This is the Werner automaton itself, running live: four rules, and ripples become transverse dunes with gentle stoss and steep lee faces. Below, a profile along the wind.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 18 · web -->
+<section class="slide s-web">
+  <div class="page">
+    <header class="hd"><h2>Reading the Models Together</h2><div class="kicker">What one model hands to another · hover a link</div></header>
+    <div class="graph"><svg id="web" viewBox="0 0 560 520"></svg></div>
+    <div class="links" id="web-links"></div>
+  </div>
+  <aside class="notes">
+    <p>The models are separate apps but share data and ideas. Hover a link on the right to light its edge.</p>
+    <p>The sea-level file is literally shared between geomorphology and drumstick. The weld in one is the origin of the marsh in another. The 4,519 live oaks in the atlas are the population behind the single tree in the explorer.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 19 · method -->
+<section class="slide s-meth">
+  <div class="page">
+    <header class="hd"><h2>How They Were Made</h2><div class="kicker">The same loop, nine times · Paul Fishwick with AI coding agents</div></header>
+    <div class="loop"><span>Look &amp; read</span><i>→</i><span>Plan</span><i>→</i><span>Build</span><i>→</i><span>Verify by screenshot</span><i>→</i><span>Write it up</span></div>
+    <table>
+      <tr><th>Model</th><th>Looked at</th><th>Plan</th><th>Verified with</th><th>Write-up</th></tr>
+      <tr><td>Geomorphology</td><td>4 Hopf lecture transcripts, Hayes ch. 7, NOAA charts</td><td>projectplan.md</td><td>Selenium figure captures</td><td>12-page LaTeX paper</td></tr>
+      <tr><td>Drumstick</td><td>Ashton–Murray, Lorenzo-Trueba, CEM, Barrier3D</td><td>projectplan.md</td><td>validate_am.py · RMS growth</td><td>8-page LaTeX paper</td></tr>
+      <tr><td>Dunes</td><td>Jim Elder’s C#, AeoLiS, an ACM paper</td><td>projectplan.md ×4</td><td>browser test pages</td><td>report + slides</td></tr>
+      <tr><td>Egans Creek</td><td>3 field photos, Greenway stories, NOAA, USGS</td><td>PLAN.md · RESEARCH.md</td><td>Playwright, desktop + phone</td><td>VALIDATION · PROVENANCE</td></tr>
+      <tr><td>Tree Atlas</td><td>city, county, Omni, iNaturalist, AIPCA</td><td>README research log</td><td>node --test adapters</td><td>README with counts</td></tr>
+      <tr><td>Live Oak</td><td>field photos, ~160 CC photos, ez-tree</td><td>PROMPT.md</td><td>cross-check sheet, 3 renderers</td><td>docs/ design notes</td></tr>
+      <tr><td>Wormstone</td><td>one photo, borer references</td><td>random-curve-lab</td><td>Selenium review, 7 passes</td><td>validation/RESULTS.md</td></tr>
+      <tr><td>Water</td><td>Evan Wallace’s WebGL Water</td><td>projectplan.md</td><td>GPU readback via Selenium</td><td>LaTeX manual</td></tr>
+      <tr><td>Victorian</td><td>~100 Commons photos, local houses</td><td>projectplan.md</td><td>screenshot suite</td><td>LaTeX manual</td></tr>
+    </table>
+    <p class="line">Each app ships with its evidence: a plan, tests that look at the screen, and a document built from those screenshots.</p>
+  </div>
+  <aside class="notes">
+    <p>The method is the same as in Parts 1 and 2: look first, then build. Each project began with reading and a written plan, was built in small steps, checked by automated screenshots, and ended with a document whose figures are those screenshots.</p>
+    <p>Credits as recorded in the apps: Claude Code for geomorphology, drumstick and the Live Oak; OpenAI Codex for wormstone; both for Egans Creek and the Tree Atlas.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 20 · limits -->
+<section class="slide s-lim">
+  <div class="page">
+    <header class="hd"><h2>What Each Model Leaves Out</h2><div class="kicker">Every model is a choice · in their own words</div></header>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="tag">Geomorphology</div><h3>Paleo-shores are offsets</h3><p>The 12, 8 and 5 ka shorelines are interpretive sketches from migration distances, labelled as such.</p></article>
+      <article class="tile" data-b="1"><div class="tag">Drumstick</div><h3>Not Amelia’s outline</h3><p>No antecedent topography, no storm-by-storm detail; inlets are parameterized, not resolved.</p></article>
+      <article class="tile" data-b="1"><div class="tag">Dunes</div><h3>Slabs, not grains</h3><p>Rules on a grid stand in for wind over sand; the continuum version is still adding moisture and plants.</p></article>
+      <article class="tile" data-b="2"><div class="tag">Egans Creek</div><h3>No creek gauge</h3><p>Fernandina Beach is a nearby reference. No invented lag, no bathtub flooding forecast.</p></article>
+      <article class="tile" data-b="2"><div class="tag">Tree Atlas</div><h3>Records, not trees</h3><p>Not a census of the island. Nearby points are candidates for review, not confirmed duplicates.</p></article>
+      <article class="tile" data-b="2"><div class="tag">Live Oak</div><h3>One tree, typical traits</h3><p>Salt aerosol is invisible in life, so its overlay is off by default. The Meshy model is reference only.</p></article>
+      <article class="tile" data-b="3"><div class="tag">Wormstone</div><h3>No unseen interior</h3><p>A geometric approximation: no organism, mineral or erosion is inferred from the photograph.</p></article>
+      <article class="tile" data-b="3"><div class="tag">Water</div><h3>A pool, not the sea</h3><p>A shallow-water heightfield plus 2-D flow; the vortex slider’s default stays at the physical value.</p></article>
+      <article class="tile" data-b="3"><div class="tag">Victorian</div><h3>53 houses, not a town</h3><p>Gene odds from a Commons sample; procedural textures stand in where no asset fits.</p></article>
+    </div>
+    <p class="line" data-b="4">A model is useful because of what it leaves out, as long as it says so.</p>
+  </div>
+  <aside class="notes"><p>[builds ×3] Each project documents its own limits; these are paraphrased from the READMEs and papers. [build] The point.</p></aside>
+</section>
+
+<!-- ============================================================ 21 · resources -->
+<section class="slide s-res">
+  <div class="page">
+    <header class="hd"><h2>Resources</h2><div class="kicker">The models, the sources, and the people behind them</div></header>
+    <div class="grid">
+      <article class="tile"><h3>Amelia geomorphology</h3><p><a href="https://metaphorz.github.io/ameliageomorphology/" target="_blank" rel="noopener">metaphorz.github.io/ameliageomorphology</a></p></article>
+      <article class="tile"><h3>Egans Creek: A Model</h3><p><a href="https://metaphorz.github.io/eganscreek/" target="_blank" rel="noopener">metaphorz.github.io/eganscreek</a></p></article>
+      <article class="tile"><h3>Amelia Island Tree Atlas</h3><p><a href="https://metaphorz.github.io/ameliaislandtrees/" target="_blank" rel="noopener">metaphorz.github.io/ameliaislandtrees</a></p></article>
+      <article class="tile"><h3>Dr. Frank Hopf · Conserve Nassau</h3><p><a href="https://www.youtube.com/watch?v=SNysbbhGiDY" target="_blank" rel="noopener">“Hopf: A Fragile Barrier Island”</a> · the narrative behind model 1</p></article>
+      <article class="tile"><h3>Ashton &amp; Murray 2006</h3><p>High-angle wave instability · JGR Earth Surface 111, F04011 · model 2</p></article>
+      <article class="tile"><h3>Hawkes et al. 2016</h3><p>Relative sea level in NE Florida · Quaternary Science Reviews 142 · models 1, 2</p></article>
+      <article class="tile"><h3>NOAA Tides &amp; Currents</h3><p><a href="https://www.tidesandcurrents.noaa.gov/stationhome.html?id=8720030" target="_blank" rel="noopener">Station 8720030, Fernandina Beach</a> · model 4</p></article>
+      <article class="tile"><h3>Werner 1995</h3><p>Eolian dunes as a self-organized system · Geology 23 · after Jim Elder’s C# · model 3</p></article>
+      <article class="tile"><h3>Evan Wallace · WebGL Water</h3><p><a href="https://madebyevan.com/webgl-water/" target="_blank" rel="noopener">madebyevan.com/webgl-water</a> · model 8</p></article>
+      <article class="tile"><h3>ez-tree</h3><p><a href="https://github.com/dgreenheck/ez-tree" target="_blank" rel="noopener">github.com/dgreenheck/ez-tree</a> · skeleton and mesh split · model 6</p></article>
+      <article class="tile"><h3>Fernandina Beach tree inventory</h3><p><a href="https://maps.ncpafl.com/ncflpa_arcgis/rest/services/Hosted/COFBTreeInventy2023Updates/FeatureServer/0" target="_blank" rel="noopener">ArcGIS REST · 14,034 records</a> · model 5</p></article>
+      <article class="tile"><h3>Poster · AI Parts 1 and 2</h3><p><a href="poster.html" target="_blank" rel="noopener">The nine models on one page</a> · <a href="../ai2/" target="_blank" rel="noopener">AI · Part 2 · Media</a></p></article>
+    </div>
+  </div>
+  <aside class="notes"><p>Links open in a new tab. The poster is the 3×3 one-page version of this talk.</p></aside>
+</section>
+
+</div></div>
+
+<div id="hint">→ / space / click to advance · F fullscreen · P presenter view · M music</div>
+
+<div id="presenter">
+  <div id="pv-notes"></div>
+  <div id="pv-side">
+    <div id="pv-next"><div class="label">Next</div><div id="pv-nextstage"></div></div>
+    <div><div id="pv-count"></div><div id="pv-build"></div></div>
+    <div><div class="label">Elapsed (click to reset)</div><div id="pv-timer">0:00</div><div id="pv-clock"></div></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<!-- slides.js first: it builds SVG steps (data-b) that deck.js counts -->
+<script src="slides.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>
