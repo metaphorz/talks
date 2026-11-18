@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Early Bookcases, Cupboards &amp; Carousels — Knowledge Graph</title>
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<style>
+  :root{
+    --bg:#1b1712; --panel:#2a241c; --ink:#f3ead8; --muted:#b6a98e;
+    --line:#4a4032; --accent:#c9a25a;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:Georgia,'Times New Roman',serif;background:var(--bg);color:var(--ink)}
+  #app{display:flex;height:100vh;overflow:hidden}
+  /* Graph */
+  #graphwrap{position:relative;flex:1;min-width:0}
+  #graph{position:absolute;inset:0}
+  header{
+    position:absolute;top:0;left:0;right:0;z-index:5;
+    padding:12px 18px;background:linear-gradient(180deg,rgba(20,17,13,.92),rgba(20,17,13,0));
+    pointer-events:none;
+  }
+  header h1{margin:0;font-size:20px;letter-spacing:.3px}
+  header p{margin:4px 0 0;font-size:12.5px;color:var(--muted);pointer-events:auto}
+  header a{color:var(--accent)}
+  /* Controls */
+  #controls{
+    position:absolute;left:14px;bottom:14px;z-index:5;background:rgba(30,26,20,.88);
+    border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:12.5px;max-width:230px;
+  }
+  #controls .legend{display:flex;flex-direction:column;gap:6px}
+  #controls label{display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--ink)}
+  #controls .swatch{width:13px;height:13px;border-radius:50%;flex:0 0 auto;border:1px solid rgba(255,255,255,.25)}
+  #controls input{accent-color:var(--accent)}
+  #search{width:100%;margin-bottom:10px;padding:6px 8px;border-radius:6px;border:1px solid var(--line);
+    background:#1f1a14;color:var(--ink);font-family:inherit;font-size:12.5px}
+  #hint{margin-top:9px;color:var(--muted);font-size:11px;line-height:1.4}
+  /* Info panel */
+  #panel{
+    width:380px;flex:0 0 380px;background:var(--panel);border-left:1px solid var(--line);
+    overflow-y:auto;padding:20px;
+  }
+  #panel.empty .placeholder{display:block}
+  #panel .placeholder{color:var(--muted);font-size:14px;line-height:1.6}
+  #panel img{width:100%;border-radius:8px;border:1px solid var(--line);display:block;margin-bottom:12px}
+  #panel h2{font-size:18px;margin:0 0 4px}
+  #panel .kicker{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+  #panel .cap{font-size:13.5px;line-height:1.55;color:var(--ink);margin:0 0 14px}
+  #panel dl{margin:0;font-size:13px}
+  #panel dt{color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.5px;margin-top:10px}
+  #panel dd{margin:2px 0 0;line-height:1.5}
+  #panel .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}
+  #panel .chip{font-size:12px;padding:4px 10px;border:1px solid var(--line);border-radius:20px;
+    background:#221d16;cursor:pointer;color:var(--ink)}
+  #panel .chip:hover{border-color:var(--accent);color:var(--accent)}
+  #panel .src{display:inline-block;margin-top:16px;font-size:12.5px;color:var(--accent)}
+  #panel .desc{font-size:13.5px;line-height:1.6;margin:0 0 8px}
+  @media(max-width:760px){#panel{display:none}}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="graphwrap">
+    <header>
+      <h1>Early Bookcases, Cupboards &amp; Carousels</h1>
+      <p>An interactive knowledge graph of how scholars stored &amp; reached their books — built from the Lost Art Press post
+      <a href="https://blog.lostartpress.com/2024/07/28/early-bookcases-cupboards-and-carousels/" target="_blank" rel="noopener">“Early Bookcases, Cupboards &amp; Carousels” (28 Jul 2024)</a>.
+      Artwork images via that post &amp; their listed collections.</p>
+    </header>
+    <div id="graph"></div>
+    <div id="controls">
+      <input id="search" type="text" placeholder="Search nodes…" autocomplete="off">
+      <div class="legend" id="legend"></div>
+      <div id="hint">Click a node to view details. Drag to rearrange · scroll to zoom.</div>
+    </div>
+  </div>
+  <aside id="panel" class="empty">
+    <div class="placeholder">
+      <p><strong>Select any node</strong> to explore.</p>
+      <p>Golden image nodes are the <em>artworks</em> from the post. Each links to the storage <em>devices</em> it depicts, plus the <em>region</em>, <em>era</em>, and <em>people</em> involved.</p>
+      <p>Start from a hub like <em>Book Carousel</em> or <em>Ramelli Bookwheel</em>, or from an era such as <em>Late Medieval</em>.</p>
+    </div>
+  </aside>
+</div>
+
+<script>
+/* ---------- Data model ----------
+   Compact source data; nodes/edges are generated below. */
+
+const DEVICES = {
+  theme:    {label:"Storing & Reaching Books", desc:"Scholars have always needed many heavy books within reach. This graph traces the furniture and devices — shelves, cupboards, folding doors, rotating carousels and the great bookwheel — that made that possible across cultures and centuries."},
+  shelving: {label:"Open Shelving", desc:"Books rested flat on open shelves, usually with spines inward. Seen from medieval Europe to Baghdad's libraries and Korean chaekgeori screens — an evenly-spaced, accessible arrangement."},
+  cupboard: {label:"Frame-and-panel Cupboard", desc:"Enclosed bookcases (armaria) built with frame-and-panel joinery, astragal molding and carved decoration. The Codex Amiatinus gives the earliest Western image of one."},
+  doors:    {label:"Folding & Bifold Doors", desc:"Bifold and tri-fold doors secured valuable books in cramped spaces. They appear in ancient Egypt and Herculaneum (1st c. CE) and are described in 1 Kings 6 for Solomon's Temple."},
+  flat:     {label:"Flat Storage & Edge Titles", desc:"Spine titles didn't appear until the 16th century. Because sizes were unstandardized and volumes heavy, books lay flat with titles handwritten on the fore edge, foot edge, or cover."},
+  carousel: {label:"Book Carousel", desc:"Rotating desktop holders let scholars keep several open texts in view without moving. Manuscript illuminations show hexagonal, double-decker and swing-arm designs, some with integrated lanterns."},
+  bookwheel:{label:"Ramelli Bookwheel", desc:"Agostino Ramelli's 1588 epicyclic-gear wheel kept its shelves at a constant 45° as it turned — “very useful and convenient for study.” Surviving examples and modern recreations still turn today."},
+  printing: {label:"Paper & Moveable Type", desc:"Paper (China, c.105 CE) and moveable type (China c.1040; Korean metal type by 1234) spread bookmaking across Asia. Jikji (1377) is the earliest extant metal-type book."}
+};
+
+const REGIONS = {
+  rome:   {label:"Ancient Mediterranean", desc:"Egypt and Roman Herculaneum — origins of folding shrine/cabinet doors."},
+  weu:    {label:"Medieval Western Europe", desc:"France, Italy, Austria, Flanders, England: the heartland of manuscript bookcases, carousels and scribal workstations."},
+  islam:  {label:"Islamic World", desc:"Baghdad's grand libraries, with open, evenly-spaced shelving (al-Wâsitî, 1237)."},
+  asia:   {label:"East Asia", desc:"China, Korea and Japan: paper, moveable type, stitch-bound books stored flat on open shelving."},
+  modern: {label:"Modern Recreations", desc:"20th–21st century rebuilds of Ramelli's wheel — Venice and Rochester."}
+};
+
+const ERAS = {
+  ancient: {label:"Ancient (pre-500)", desc:"Foundations: folding doors in Egypt and Herculaneum."},
+  early:   {label:"Early Medieval (500–1000)", desc:"The Codex Amiatinus and the earliest Western bookcase image."},
+  late:    {label:"Late Medieval (1000–1450)", desc:"Carousels, cupboards and complete scribal workstations flourish; Asian moveable type."},
+  ren:     {label:"Renaissance & Early Modern (1450–1800)", desc:"Spine titles arrive; Ramelli's bookwheel (1588) and its library descendants."},
+  now:     {label:"Modern (1800–today)", desc:"Chaekgeori screens and working bookwheel recreations."}
+};
+
+const PEOPLE = {
+  jerome:   "Saint Jerome", ezra:"The Prophet Ezra", ceolfrid:"Ceolfrid (monk, d.716)",
+  colantonio:"Colantonio (painter)", boethius:"Boethius", benoit:"Benoît de Sainte-Maure",
+  proba:"Saint Proba", cornificia:"Cornificia", macrobius:"Macrobius", luke:"Saint Luke",
+  benvenuto:"Benvenuto da Imola", yi:"Yi Eungrok", wasiti:"Yahya al-Wâsitî",
+  ramelli:"Agostino Ramelli", libeskind:"Daniel Libeskind"
+};
+
+// Artworks: each appears as an image node.
+const ART = [
+  {id:"jerome", img:"images/IMG_9543.jpeg", title:"Saint Jerome in His Study",
+   cap:"Saint Jerome in His Study, by Colantonio, c.1445–1446. Open shelves cluttered with books surround his desk, with boarded construction and a small frame-and-panel chest.",
+   devices:["shelving","cupboard"], region:"weu", era:"ren", people:["jerome","colantonio"],
+   collection:"Museo di Capodimonte, Napoli"},
+
+  {id:"amiatinus", img:"images/IMG_8009.jpeg", title:"Codex Amiatinus — Ezra",
+   cap:"The Prophet Ezra before a temple-like cupboard with frame-and-panel double doors, astragal molding and carved decoration. Completed before 716 in Northumbria — the earliest Western image of a bookcase.",
+   devices:["cupboard","doors"], region:"weu", era:"early", people:["ezra","ceolfrid"],
+   collection:"Biblioteca Medicea Laurenziana, Florence — MS Amiatino 1"},
+
+  {id:"edges", img:"images/IMG_8168.jpeg", title:"Titles on the Edges",
+   cap:"Book titles written on the fore edge and foot edge — the standard before spine titles appeared in the 16th century.",
+   devices:["flat"], region:"weu", era:"late", people:[],
+   collection:"Medieval manuscripts (various)"},
+
+  {id:"renner", img:"images/IMG_8211.jpeg", title:"Boethius in Der Renner",
+   cap:"Boethius turns the pages of a book in Der Renner, last quarter of the 15th century, Austria — shelved books with titles on their covers.",
+   devices:["flat","shelving"], region:"weu", era:"ren", people:["boethius"],
+   collection:"Morgan Library, MS M.763, f.195r"},
+
+  {id:"troie", img:"images/IMG_7992.jpeg", title:"Roman de Troie",
+   cap:"Opening of the Roman de Troie (Romance of Troy), c.1340–1350 by Benoît de Sainte-Maure — a tri-fold cupboard storing the discovered history of Troy.",
+   devices:["doors","cupboard"], region:"weu", era:"late", people:["benoit"],
+   collection:"BnF, Paris — MS Français 782, f.2v"},
+
+  {id:"herculaneum", img:"images/IMG_8198.jpeg", title:"Bifold Doors, Herculaneum",
+   cap:"Examples of bifold doors, 1st century CE, from Herculaneum — carbonized wooden shrine/cabinet doors (House of the Stags; House of the Wooden Shrine).",
+   devices:["doors"], region:"rome", era:"ancient", people:[],
+   collection:"Herculaneum, 1st century CE"},
+
+  {id:"cornificia", img:"images/IMG_8226.jpeg", title:"Cornificia & Saint Proba",
+   cap:"Left: Cornificia in a Flemish translation of Le Livre de la Cité des Dames, c.1475, Bruges. Right: Saint Proba reading — two poets working amid desk and bookcase constraints.",
+   devices:["shelving","cupboard"], region:"weu", era:"ren", people:["cornificia","proba"],
+   collection:"British Library Add. MS 20698, f.70r; Bodleian Douce 287, f.5v"},
+
+  {id:"macrobius", img:"images/IMG_8080.jpeg", title:"Somnium Scipionis (Macrobius)",
+   cap:"Somnium Scipionis with Macrobius' Commentary, 1383, Bologna — a scholar at work, suggesting an early book carousel.",
+   devices:["carousel"], region:"weu", era:"late", people:["macrobius"],
+   collection:"Bodleian Library, Canon. Class. Lat. 257, f.002r"},
+
+  {id:"luke1", img:"images/IMG_8195.jpeg", title:"Saint Luke — Hexagonal Carousels",
+   cap:"Left: Saint Luke mending a quill in The Dunois Hours, c.1440–1450, Paris. Right: Saint Luke, Book of Hours, c.1410–1423 — hexagonal and double-decker carousels.",
+   devices:["carousel"], region:"weu", era:"ren", people:["luke"],
+   collection:"British Library Yates Thompson 3, f.15v; Yates Thompson 46, f.14v"},
+
+  {id:"luke2", img:"images/IMG_8196.jpeg", title:"Swing-arm Carousels",
+   cap:"Left: Benvenuto da Imola commenting on The Divine Comedy, early 15th century, Italy. Right: Saint Luke, Bedford Hours — swing-arm carousels with integrated lantern lighting.",
+   devices:["carousel"], region:"weu", era:"late", people:["benvenuto","luke"],
+   collection:"Bodleian MS Canon. Ital 107, f.001r; British Library Add. 18850, f.20r"},
+
+  {id:"scribe", img:"images/IMG_7999.jpeg", title:"The Scribe at Work",
+   cap:"The scribe at work, c.1320–1340, Cambrai — a complete scholarly workstation: cupboard, double-decker carousel and a locking book bench.",
+   devices:["carousel","cupboard","shelving"], region:"weu", era:"late", people:[],
+   collection:"Bibliothèque municipale, Cambrai, 620 (572), f.001"},
+
+  {id:"jikji", img:"images/IMG_8233.jpeg", title:"Jikji",
+   cap:"The cover and pages of Jikji — the earliest extant book printed with moveable metal type, 1377, Cheongju, Korea — with the title written on the foot edge.",
+   devices:["printing","flat"], region:"asia", era:"late", people:[],
+   collection:"BnF, Coreen 109"},
+
+  {id:"chaekgeori", img:"images/IMG_8053.jpeg", title:"Chaekgeori Screen",
+   cap:"Chaekgeori (“books and things”) eight-panel screen by Yi Eungrok, c.1860–1874, Korea — scholarly collections artfully arranged on open shelving with books, vases and writing implements.",
+   devices:["shelving","flat"], region:"asia", era:"now", people:["yi"],
+   collection:"Asian Art Museum, San Francisco"},
+
+  {id:"abbasid", img:"images/IMG_8910.jpeg", title:"The Abbasid Library",
+   cap:"The Abbasid Library, 1237, Baghdad, illustrated by Yahya al-Wâsitî — open, evenly-spaced shelving in a grand library.",
+   devices:["shelving"], region:"islam", era:"late", people:["wasiti"],
+   collection:"BnF, MS Arabe 5847, f.5"},
+
+  {id:"ramelli", img:"images/IMG_1722.jpeg", title:"Ramelli's Bookwheel",
+   cap:"Figure 188 from Le Diverse et Artifiose Machine de Capitano Agostino Ramelli, 1588 — the epicyclic-gear bookwheel whose shelves hold a constant 45° angle.",
+   devices:["bookwheel"], region:"weu", era:"ren", people:["ramelli"],
+   collection:"Ramelli, 1588 — Fig. CLXXXVIII"},
+
+  {id:"libraries", img:"images/IMG_8188.jpeg", title:"Library Bookwheels",
+   cap:"Surviving smaller library bookwheels. Left: Bibliotheca Thysiana, Leiden, 1650. Right: Biblioteca Palafoxiana, Puebla, Mexico, 1773.",
+   devices:["bookwheel"], region:"weu", era:"ren", people:[],
+   collection:"Bibliotheca Thysiana; Biblioteca Palafoxiana"},
+
+  {id:"libeskind", img:"images/IMG_8194.jpeg", title:"The Reading Machine",
+   cap:"The program and photographs of The Reading Machine — based on Ramelli's 1588 design — by Daniel Libeskind for the 1985 Venice Architecture Biennale.",
+   devices:["bookwheel"], region:"modern", era:"now", people:["libeskind"],
+   collection:"1985 Venice Architecture Biennale"},
+
+  {id:"robbins", img:"images/IMG_8242.jpg", title:"Robbins Library Bookwheel",
+   cap:"Turning the bookwheel at the Robbins Library, University of Rochester — a functional Ramelli wheel built in 2018 with RIT engineering students. “An invigorating experience, both physically and intellectually.”",
+   devices:["bookwheel"], region:"modern", era:"now", people:[],
+   collection:"Robbins Library, University of Rochester (2018)"}
+];
+
+/* ---------- Build nodes & edges ---------- */
+const TYPE_COLOR = {
+  theme:"#e7e1d3", device:"#c9a25a", region:"#7fae8b", era:"#9b8bd6", person:"#d98b7a", artwork:"#caa84e"
+};
+const TYPE_LABEL = {
+  device:"Device / concept", region:"Region", era:"Era", person:"Person", artwork:"Artwork"
+};
+
+const nodes = [];
+const edges = [];
+const seen = new Set();
+function addNode(n){ if(seen.has(n.id))return; seen.add(n.id); nodes.push(n); }
+
+// theme + devices
+addNode(hub("theme", DEVICES.theme.label, "theme", 34, DEVICES.theme.desc, TYPE_COLOR.theme));
+Object.entries(DEVICES).forEach(([id,v])=>{
+  if(id==="theme")return;
+  addNode(hub("dev_"+id, v.label, "device", 24, v.desc, TYPE_COLOR.device));
+  edges.push({from:"theme", to:"dev_"+id, color:{color:"#5a4f3c"}, width:1});
+});
+// regions & eras
+Object.entries(REGIONS).forEach(([id,v])=>addNode(hub("reg_"+id, v.label, "region", 20, v.desc, TYPE_COLOR.region)));
+Object.entries(ERAS).forEach(([id,v])=>addNode(hub("era_"+id, v.label, "era", 20, v.desc, TYPE_COLOR.era)));
+
+function hub(id,label,group,size,desc,color){
+  return {id,label,group,size,_desc:desc,
+    shape:"dot", color:{background:color,border:"#1b1712",highlight:{background:color,border:"#fff"}},
+    font:{color:"#f3ead8",size:14,strokeWidth:4,strokeColor:"#1b1712",face:"Georgia"}};
+}
+
+// artworks
+ART.forEach(a=>{
+  addNode({
+    id:"art_"+a.id, label:a.title, group:"artwork",
+    shape:"image", image:a.img, brokenImage:"data:image/svg+xml;utf8,"+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='120' height='90'><rect width='120' height='90' fill='#3a3225'/><text x='60' y='48' fill='#c9a25a' font-size='11' text-anchor='middle'>image</text></svg>"),
+    size:34, _art:a,
+    font:{color:"#e7d9b6",size:12,strokeWidth:4,strokeColor:"#1b1712",face:"Georgia",vadjust:4},
+    borderWidth:3, color:{border:TYPE_COLOR.artwork,highlight:{border:"#fff"}}
+  });
+  a.devices.forEach(d=>edges.push({from:"art_"+a.id,to:"dev_"+d,color:{color:"#6a5a3a"},width:1.5}));
+  edges.push({from:"art_"+a.id,to:"reg_"+a.region,color:{color:"#3f5a45"},width:1,dashes:true});
+  edges.push({from:"art_"+a.id,to:"era_"+a.era,color:{color:"#4a4068"},width:1,dashes:true});
+  a.people.forEach(p=>{
+    addNode(hub("per_"+p, PEOPLE[p], "person", 14, null, TYPE_COLOR.person));
+    edges.push({from:"art_"+a.id,to:"per_"+p,color:{color:"#6e463d"},width:1});
+  });
+});
+
+/* ---------- Render ---------- */
+const container = document.getElementById("graph");
+const data = {nodes:new vis.DataSet(nodes), edges:new vis.DataSet(edges)};
+const network = new vis.Network(container, data, {
+  layout:{improvedLayout:true},
+  physics:{
+    solver:"forceAtlas2Based",
+    forceAtlas2Based:{gravitationalConstant:-60,centralGravity:0.012,springLength:130,springConstant:0.08,avoidOverlap:0.6},
+    stabilization:{iterations:300}
+  },
+  interaction:{hover:true,tooltipDelay:120,navigationButtons:false,keyboard:false},
+  nodes:{shadow:{enabled:true,color:"rgba(0,0,0,.4)",size:8,x:2,y:2}},
+  edges:{smooth:{type:"continuous"},selectionWidth:2}
+});
+
+/* ---------- Info panel ---------- */
+const panel = document.getElementById("panel");
+function esc(s){return (s||"").replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+
+function showNode(id){
+  const n = data.nodes.get(id);
+  if(!n){return;}
+  panel.classList.remove("empty");
+  if(n.group==="artwork"){
+    const a=n._art;
+    const devChips=a.devices.map(d=>chip("dev_"+d,DEVICES[d].label)).join("");
+    const ppl=a.people.map(p=>chip("per_"+p,PEOPLE[p])).join("");
+    panel.innerHTML=`
+      <div class="kicker">Artwork</div>
+      <img src="${a.img}" alt="${esc(a.title)}">
+      <h2>${esc(a.title)}</h2>
+      <p class="cap">${esc(a.cap)}</p>
+      <dl>
+        <dt>Collection / source</dt><dd>${esc(a.collection)}</dd>
+        <dt>Region</dt><dd>${chip("reg_"+a.region,REGIONS[a.region].label)}</dd>
+        <dt>Era</dt><dd>${chip("era_"+a.era,ERAS[a.era].label)}</dd>
+      </dl>
+      <dt style="margin-top:14px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">Depicts</dt>
+      <div class="chips">${devChips}</div>
+      ${ppl?`<dt style="margin-top:14px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)">People</dt><div class="chips">${ppl}</div>`:""}
+      <a class="src" href="https://blog.lostartpress.com/2024/07/28/early-bookcases-cupboards-and-carousels/" target="_blank" rel="noopener">View source post on Lost Art Press ↗</a>`;
+  } else {
+    const related = ART.filter(a=>{
+      if(n.group==="device") return a.devices.includes(id.replace("dev_",""));
+      if(n.group==="region") return a.region===id.replace("reg_","");
+      if(n.group==="era")    return a.era===id.replace("era_","");
+      if(n.group==="person") return a.people.includes(id.replace("per_",""));
+      if(n.id==="theme")     return false;
+      return false;
+    });
+    const chips=related.map(a=>chip("art_"+a.id,a.title)).join("");
+    panel.innerHTML=`
+      <div class="kicker">${esc(TYPE_LABEL[n.group]||"")}</div>
+      <h2>${esc(n.label)}</h2>
+      ${n._desc?`<p class="desc">${esc(n._desc)}</p>`:""}
+      ${related.length?`<dt style="font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-top:14px">Appears in ${related.length} artwork${related.length>1?"s":""}</dt><div class="chips">${chips}</div>`:""}`;
+  }
+}
+function chip(id,label){return `<span class="chip" data-id="${id}">${esc(label)}</span>`;}
+
+panel.addEventListener("click",e=>{
+  const c=e.target.closest(".chip");
+  if(c){const id=c.getAttribute("data-id");network.selectNodes([id]);network.focus(id,{scale:1.0,animation:true});showNode(id);}
+});
+network.on("selectNode",p=>showNode(p.nodes[0]));
+network.on("doubleClick",p=>{if(p.nodes[0])network.focus(p.nodes[0],{scale:1.2,animation:true});});
+
+/* ---------- Legend + filtering ---------- */
+const legend=document.getElementById("legend");
+const groups=["artwork","device","region","era","person"];
+const active=new Set(groups);
+groups.forEach(g=>{
+  const id="chk_"+g;
+  legend.insertAdjacentHTML("beforeend",
+    `<label><input type="checkbox" id="${id}" checked><span class="swatch" style="background:${TYPE_COLOR[g]}"></span>${TYPE_LABEL[g]}</label>`);
+});
+legend.addEventListener("change",()=>{
+  groups.forEach(g=>{document.getElementById("chk_"+g).checked?active.add(g):active.delete(g);});
+  data.nodes.forEach(n=>{
+    const grp=n.group==="theme"?"theme":n.group;
+    const hidden = grp!=="theme" && !active.has(grp);
+    data.nodes.update({id:n.id,hidden});
+  });
+});
+
+/* ---------- Search ---------- */
+document.getElementById("search").addEventListener("input",e=>{
+  const q=e.target.value.trim().toLowerCase();
+  if(!q)return;
+  const hit=data.nodes.get().find(n=>(n.label||"").toLowerCase().includes(q));
+  if(hit){network.selectNodes([hit.id]);network.focus(hit.id,{scale:1.0,animation:true});showNode(hit.id);}
+});
+</script>
+</body>
+</html>

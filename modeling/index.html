@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Modeling — An Introduction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Noto+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck.css">
+<style>
+/* ===== shared pieces ===== */
+:root{--mono:"Noto Sans Mono",ui-monospace,Menlo,monospace;--night:#151B21;--night-2:#1E262E}
+.tile{position:relative;background:var(--card);border-radius:18px;padding:18px 18px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.tile.wash{background:var(--teal-wash)}
+.tile .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--amber)}
+.tile h3{margin:9px 0 0;font-size:20px;line-height:1.2;font-weight:700;color:var(--ink)}
+.tile p{margin:10px 0 0;font-size:15.5px;line-height:1.34;color:var(--ink)}
+.grid{position:absolute;left:55px;width:849px;display:grid;gap:21px}
+.line{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:16.5px;font-weight:700;color:var(--teal)}
+.box{position:absolute;background:var(--teal-wash);border-radius:18px;box-shadow:0 5px 10px rgba(40,30,10,.25)}
+.btn{font:600 13.5px var(--sans);color:var(--ink);background:#fff;border:1.5px solid var(--rule);border-radius:999px;
+  padding:7px 14px;cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.btn:hover{border-color:var(--teal)}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.go{background:var(--amber);border-color:var(--amber);color:#fff}
+.btn.go:hover{box-shadow:0 0 0 3px rgba(201,133,47,.25)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row .lbl{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey);margin-right:4px}
+.ai-note{position:absolute;left:57px;top:652px;width:849px;font-size:9.5px;color:var(--grey)}
+.ai-note a{color:inherit}
+.mono{font-family:var(--mono)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes flow{to{stroke-dashoffset:-24}}
+
+/* graph drawing shared by the knowledge slides */
+.kg .edge{fill:none;stroke:#9FB8B5;stroke-width:1.8}
+.kg .edge.draw{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset .8s var(--ease) .15s}
+.kg .shown .edge.draw,.kg .edge.draw.shown{stroke-dashoffset:0}
+.kg .rel{font:italic 600 11.5px var(--sans);fill:var(--teal);paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+.kg .node rect{fill:#fff;stroke:var(--teal);stroke-width:1.8}
+.kg .node.hub rect{fill:var(--teal);stroke:var(--teal)}
+.kg .node.hub text{fill:#fff}
+.kg .node.lit rect{fill:var(--amber);stroke:var(--amber)}
+.kg .node.lit text{fill:#fff}
+.kg .node text{font:600 12.5px var(--sans);fill:var(--ink);text-anchor:middle;dominant-baseline:central}
+
+/* live web apps, drawn at full size and scaled onto the page */
+.app{position:absolute;left:55px;top:150px;width:849px;height:500px;border-radius:12px;overflow:hidden;
+  box-shadow:0 5px 12px rgba(40,30,10,.3);background:#111}
+.app iframe{position:absolute;left:0;top:0;width:1290px;height:760px;border:0;transform:scale(.6581);transform-origin:0 0}
+.app .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#8a8a99;font-size:14px}
+.approw{position:absolute;left:55px;top:116px;width:849px;justify-content:space-between}
+.approw a{font-size:13px;font-weight:700;color:var(--teal);text-decoration:none}
+.approw a:hover{text-decoration:underline}
+.approw .src{font-size:12.5px;color:var(--grey)}
+
+/* ===== 1 · title ===== */
+.s-title .page{background:radial-gradient(ellipse at 70% 45%,#22303A 0%,var(--night) 62%,#0E1216 100%)}
+.s-title canvas{position:absolute;left:0;top:0;width:960px;height:720px}
+.s-title .veil{position:absolute;left:0;top:0;width:520px;height:720px;
+  background:linear-gradient(90deg,rgba(14,18,22,.92) 0%,rgba(14,18,22,.75) 60%,rgba(14,18,22,0) 100%)}
+.s-title .bar{position:absolute;left:65px;top:150px;width:9px;height:228px;background:var(--amber);box-shadow:2px 3px 6px rgba(0,0,0,.5)}
+.s-title .eyebrow{position:absolute;left:99px;top:166px;font-size:12.5px;font-weight:700;color:#7FC4C0;letter-spacing:.08em}
+.s-title h1{position:absolute;left:97px;top:196px;margin:0;font-size:60px;line-height:1.08;font-weight:700;letter-spacing:-.01em;color:#F7F3EA}
+.s-title h1 span{color:var(--amber)}
+.s-title .sub{position:absolute;left:99px;top:290px;width:390px;margin:0;font-size:18.5px;line-height:1.3;color:#B9C2C8}
+.s-title .five{position:absolute;left:99px;top:410px;width:420px;display:flex;flex-wrap:wrap;gap:8px}
+.s-title .five span{padding:5px 12px;border-radius:999px;border:1.5px solid #3C5560;color:#DCEBE8;font-size:13.5px;font-weight:600;
+  background:rgba(29,110,115,.18);transition:border-color .5s,background .5s}
+.s-title .five span.hot{border-color:var(--amber);background:rgba(201,133,47,.22)}
+.s-title .five span b{color:var(--amber);margin-right:5px}
+.s-title .by{position:absolute;left:99px;top:500px;font-size:15px;font-weight:700;color:#F7F3EA}
+.s-title .cap{position:absolute;left:560px;top:620px;width:360px;text-align:center;font-size:13px;font-style:italic;color:#7F8A93;transition:opacity .5s}
+.s-title .foot{color:#5E6A73}
+.slide.on.s-title .bar.anim{transform-origin:top;animation:growbar .8s var(--ease) both}
+.slide.on.s-title .eyebrow.anim{animation:rise .6s var(--ease) .2s both}
+.slide.on.s-title h1.anim{animation:rise .8s var(--ease) .35s both}
+.slide.on.s-title .sub.anim{animation:rise .8s var(--ease) .6s both}
+.slide.on.s-title .by.anim{animation:rise .8s var(--ease) .8s both}
+
+/* ===== 2 · we learn by modeling ===== */
+.s-kid .kids{top:126px;grid-template-columns:repeat(3,1fr)}
+.s-kid .kids .tile{padding:0 0 18px;overflow:hidden}
+.s-kid .kids img{display:block;width:100%;height:250px;object-fit:cover}
+.s-kid .kids .tag,.s-kid .kids h3,.s-kid .kids p{padding:0 20px}
+.s-kid .kids .tag{display:block;margin-top:16px}
+.s-kid .kids h3{font-size:22px}
+.s-kid .line{top:566px;font-size:17.5px}
+
+/* ===== 3 · what is a model ===== */
+.s-what .loop{position:absolute;left:55px;top:128px;width:470px;height:420px}
+.s-what .loop .arc{fill:none;stroke:var(--teal);stroke-width:3;stroke-dasharray:8 4}
+.s-what.on .loop .arc{animation:flow 1.2s linear infinite}
+.s-what .loop .arc.back{stroke:var(--amber)}
+.s-what .loop .ring{fill:#fff;stroke:var(--rule);stroke-width:2}
+.s-what .loop .ico{fill:none;stroke:var(--ink-2);stroke-width:2.4;stroke-linejoin:round;stroke-linecap:round}
+.s-what .loop .blk{fill:var(--teal-wash);stroke:var(--teal);stroke-width:2}
+.s-what .loop text{font:700 15px var(--sans);fill:var(--ink);text-anchor:middle}
+.s-what .loop text.verb{font:italic 600 13.5px var(--sans);fill:var(--teal)}
+.s-what .loop text.verb.back{fill:var(--amber)}
+.s-what .props{position:absolute;left:545px;top:128px;width:359px;display:grid;gap:12px}
+.s-what .props .tile{padding:12px 16px 13px 64px;min-height:88px}
+.s-what .props .n{position:absolute;left:16px;top:16px;width:34px;height:34px;border-radius:50%;background:var(--teal);color:#fff;
+  font-size:16px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.s-what .props h3{margin:0;font-size:18px}
+.s-what .props p{margin:4px 0 0;font-size:14.5px;line-height:1.3}
+.s-what .line{top:582px;font-size:17px}
+
+/* ===== 4 · bourton zoom (from Deep Looking, week 3) ===== */
+.s-zoom .frame{position:absolute;left:55px;top:122px;width:585px;height:464px;border-radius:14px;overflow:hidden;background:#F3EEE2;
+  box-shadow:0 5px 12px rgba(40,30,10,.3)}
+.s-zoom .lvl{position:absolute;inset:0;transition:transform 1.1s var(--ease),opacity .9s var(--ease)}
+.s-zoom .lvl img{display:block;width:100%;height:100%;object-fit:cover}
+.s-zoom .lvl[data-b]{opacity:0;transform:scale(.22);transform-origin:var(--zi,50% 50%)}
+.s-zoom .lvl[data-b].shown{opacity:1;transform:none}
+.s-zoom .lvl:has(~ .lvl.shown){opacity:0;transform:scale(3.2);transform-origin:var(--zo,50% 50%)}
+.s-zoom .maplabel{position:absolute;font-size:12.5px;font-weight:700;font-style:italic}
+.s-zoom .maplabel.river{left:236px;top:322px;color:var(--teal);transform:rotate(41deg)}
+.s-zoom .maplabel.mv{left:298px;top:250px;width:150px;text-align:right;color:#A86A1E}
+.s-zoom .credit{position:absolute;left:57px;top:592px;width:585px;font-size:9.5px;line-height:1.35;color:var(--grey)}
+.s-zoom .caps{position:absolute;left:660px;top:122px;width:244px;height:190px}
+.s-zoom .cap{position:absolute;inset:0;transition:opacity .5s}
+.s-zoom .cap[data-b]{transform:none}
+.s-zoom .cap:has(~ .cap.shown){opacity:0}
+.s-zoom .cap .scale{font-size:46px;line-height:1;font-weight:700;color:var(--teal);letter-spacing:-.01em}
+.s-zoom .cap h3{margin:12px 0 0;font-size:19px;color:var(--ink)}
+.s-zoom .cap p{margin:6px 0 0;font-size:14.5px;line-height:1.32;color:var(--ink-2)}
+.s-zoom .plaque{position:absolute;margin:0;left:660px;top:328px;width:244px;padding:10px;border-radius:14px}
+.s-zoom .plaque img{display:block;width:224px;height:150px;object-fit:cover;border-radius:6px}
+.s-zoom .plaque p{margin:8px 2px 0;font-size:12.5px;line-height:1.32;font-style:italic;color:var(--ink-2)}
+.s-zoom .plaque p span{font-style:normal;color:var(--grey)}
+
+/* ===== 5 · what a model keeps (from Deep Looking, week 3) ===== */
+.s-keep .how,.s-keep .take{top:120px;font-size:14.5px;transition:opacity .4s}
+.s-keep .how{color:var(--grey);font-style:italic;font-weight:400}
+.s-keep .take{font-size:16.5px;font-weight:700;color:var(--teal);background:var(--paper)}
+.s-keep:has(.take.shown) .how{opacity:0}
+.s-keep .pool{position:absolute;left:55px;top:150px;width:849px;min-height:88px;display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:9px}
+.s-keep .prop{height:36px;padding:0 16px;border:1.5px solid #E3D9C6;border-radius:18px;background:#fff;
+  font:600 14.5px var(--sans);color:var(--ink);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none;
+  box-shadow:0 2px 4px rgba(40,30,10,.12)}
+.s-keep .prop.dragging{cursor:grabbing;position:relative;z-index:20;box-shadow:0 8px 16px rgba(40,30,10,.3)}
+.s-keep .bin{position:absolute;top:250px;width:414px;height:262px;padding:14px 16px;border-radius:20px}
+.s-keep .bin.kept{left:55px}.s-keep .bin.lost{left:490px}
+.s-keep .bin h4{margin:0 0 12px;font-size:13px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--teal)}
+.s-keep .bin.lost h4{color:var(--amber)}
+.s-keep .bin.hover{outline:3px dashed var(--amber);outline-offset:-6px}
+.s-keep .drop{display:flex;flex-wrap:wrap;gap:9px;align-content:flex-start;min-height:180px}
+.s-keep .bin.kept .prop{background:#fff;border-color:#A9CFC9}
+.s-keep .bin.lost .prop{background:#FBF4E8;border-color:#E3CFA8}
+.s-keep .ev{position:absolute;top:526px;width:414px;height:110px;display:flex;gap:12px;align-items:center;padding:10px}
+.s-keep .ev.a{left:55px}.s-keep .ev.b{left:490px}
+.s-keep .ev img{width:120px;height:90px;object-fit:cover;border-radius:8px;flex:none}
+.s-keep .ev p{margin:0;font-size:14px;line-height:1.3;color:var(--ink)}
+.s-keep .ev b{color:var(--teal)}
+
+/* ===== 6 · three kinds ===== */
+.s-kinds .grid{top:128px;grid-template-columns:1.25fr 1fr 1fr}
+.s-kinds .tile{height:418px}
+.s-kinds .tile.later{background:transparent;box-shadow:none;border:2px dashed var(--spoke)}
+.s-kinds .tile.later .big{color:var(--spoke)}
+.s-kinds .tile.later h3,.s-kinds .tile.later p{color:var(--grey)}
+.s-kinds .big{font-size:54px;font-weight:700;line-height:1;color:var(--teal)}
+.s-kinds svg{display:block;width:100%;height:118px;margin:10px 0 2px}
+.s-kinds .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.s-kinds .chips span{font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--teal-wash);color:var(--teal)}
+.s-kinds .line{top:578px;font-size:17px}
+
+/* ===== 7 · the village as knowledge ===== */
+.s-vk .psg{position:absolute;left:55px;top:126px;width:330px;padding:16px 18px}
+.s-vk .psg p{margin:6px 0 0;font-size:15.5px;line-height:1.5}
+.s-vk .psg [data-b]{opacity:1;transform:none;border-radius:4px;transition:background .5s,box-shadow .5s}
+.s-vk .psg [data-b].shown{background:#F6E6CD;box-shadow:0 0 0 2px #F6E6CD}
+.s-vk .trip{position:absolute;left:55px;top:384px;width:330px;height:252px;padding:14px 18px;overflow:hidden}
+.s-vk .trip ol{margin:8px 0 0;padding:0;list-style:none;font:10.5px/1.95 var(--mono);color:var(--ink-2);white-space:nowrap}
+.s-vk .trip li b{color:var(--teal);font-weight:600}
+.s-vk .board{position:absolute;left:400px;top:126px;width:504px;height:510px;padding:0}
+.s-vk .board svg{width:504px;height:510px}
+.s-vk .line{top:646px;left:400px;width:504px;font-size:14.5px;text-align:left}
+
+/* ===== 8 · four maps ===== */
+.s-four .views{position:absolute;left:55px;top:122px}
+.s-four .side{position:absolute;left:55px;top:172px;width:238px;height:466px;padding:16px 18px}
+.s-four .side .who{font-size:12.5px;font-weight:700;color:var(--grey);margin-top:2px}
+.s-four .side p{font-size:14.5px}
+.s-four .side .ex{font:12.5px/1.5 var(--mono);color:var(--teal);background:var(--teal-wash);border-radius:8px;padding:8px 10px;margin-top:12px}
+.s-four .board{position:absolute;left:310px;top:172px;width:594px;height:466px;padding:0}
+.s-four .board svg{width:594px;height:466px}
+.s-four .board .node{cursor:pointer}
+.s-four .board .branch{fill:none;stroke-width:5;stroke-linecap:round}
+.s-four .info{position:absolute;left:310px;top:644px;width:594px;margin:0;font-size:12.5px;color:var(--ink-2)}
+.s-four .info b{color:var(--teal)}
+
+/* ===== 9 · sentences become triples ===== */
+.s-tri .sent{position:absolute;left:55px;top:140px;width:849px;height:60px;text-align:center;font-size:27px;line-height:60px;color:var(--ink);transition:opacity .4s}
+.s-tri .sent span{border-radius:6px;transition:background .4s,color .4s}
+.s-tri .sent span.k{padding:0 3px}
+.s-tri .sent span.s{background:#DCEBE8;color:var(--teal)}
+.s-tri .sent span.r{background:#F6E6CD;color:#8A5A1E}
+.s-tri .sent span.o{background:#E4E0F0;color:#4D4380}
+.s-tri .slots{position:absolute;left:145px;top:232px;width:669px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+.s-tri .slot{height:84px;border-radius:14px;border:2px dashed var(--spoke);position:relative;display:flex;align-items:center;justify-content:center;
+  font-size:19px;font-weight:700;color:var(--ink);text-align:center;padding:0 10px;transition:background .4s,border-color .4s}
+.s-tri .slot::before{content:attr(data-k);font-style:normal;position:absolute;left:0;right:0;top:-22px;font-size:11.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--grey);text-align:center}
+.s-tri .slot.full{border-style:solid}
+.s-tri .slot.s.full{background:#DCEBE8;border-color:#A9CFC9;color:var(--teal)}
+.s-tri .slot.r.full{background:#F6E6CD;border-color:#E3CFA8;color:#8A5A1E;font-style:italic}
+.s-tri .slot.o.full{background:#E4E0F0;border-color:#C9C2E0;color:#4D4380}
+.s-tri .fly{position:absolute;z-index:5;font-weight:700;pointer-events:none;transition:left .7s var(--ease),top .7s var(--ease),font-size .7s var(--ease),opacity .3s}
+.s-tri .board{position:absolute;left:55px;top:350px;width:849px;height:230px;padding:0;overflow:hidden}
+.s-tri .board svg{width:849px;height:230px}
+.s-tri .line{top:600px;font-size:16.5px}
+
+/* ===== 10–11, 13 · live apps ===== */
+.s-maker .feed{position:absolute;left:55px;top:116px;width:849px;justify-content:flex-start}
+.s-maker .feed .btn{padding:5px 12px;font-size:12.5px}
+.s-maker .feed a{margin-left:auto;font-size:13px;font-weight:700;color:var(--teal);text-decoration:none}
+.s-maker .app iframe{width:1415px;height:834px;transform:scale(.6)}
+
+/* ===== 12 · pipeline ===== */
+.s-pipe .flow{position:absolute;left:55px;top:140px;width:849px;height:150px}
+.s-pipe .flow .pipe{fill:none;stroke:var(--rule);stroke-width:6;stroke-linecap:round}
+.s-pipe .flow .pulse{fill:var(--amber)}
+.s-pipe .flow .st rect{fill:#fff;stroke:var(--teal);stroke-width:2}
+.s-pipe .flow .st.lit rect{fill:var(--teal)}
+.s-pipe .flow .st.lit text{fill:#fff}
+.s-pipe .flow .st text{font:700 14px var(--sans);fill:var(--ink);text-anchor:middle}
+.s-pipe .flow .st text.n{font:700 24px var(--sans);fill:var(--teal)}
+.s-pipe .flow .st.lit text.n{fill:#fff}
+.s-pipe .cards{top:316px;grid-template-columns:repeat(5,1fr);gap:12px}
+.s-pipe .cards .tile{padding:12px 12px 14px;height:236px}
+.s-pipe .cards h3{margin:4px 0 0;font-size:16px}
+.s-pipe .cards p{font-size:13px;line-height:1.32;margin-top:6px}
+.s-pipe .cards .eg{font:11.5px/1.4 var(--mono);color:var(--teal);margin-top:8px}
+.s-pipe .line{top:578px;font-size:16px}
+
+/* ===== 14 · two models ===== */
+.s-two table{position:absolute;left:55px;top:130px;width:849px;border-collapse:separate;border-spacing:0 8px;font-size:15.5px}
+.s-two th{text-align:left;font-size:12px;letter-spacing:.03em;text-transform:uppercase;color:var(--grey);padding:0 16px}
+.s-two td{background:#fff;padding:11px 16px;vertical-align:top;line-height:1.32;box-shadow:0 2px 5px rgba(40,30,10,.15)}
+.s-two td:first-child{border-radius:12px 0 0 12px;font-weight:700;color:var(--teal);width:175px}
+.s-two td:last-child{border-radius:0 12px 12px 0}
+.s-two tr[data-b]{transform:none}
+.s-two .line{top:470px;font-size:17px}
+
+/* ===== 15 · resources ===== */
+.s-res .grid{top:124px;grid-template-columns:1fr 1fr;gap:14px 21px}
+.s-res .tile{padding:14px 18px}
+.s-res .tile h3{margin:2px 0 0;font-size:16.5px}
+.s-res .tile p{margin-top:4px;font-size:13.5px;line-height:1.32}
+.s-res a{color:var(--teal);font-weight:600;text-decoration:none}
+.s-res a:hover{text-decoration:underline}
+</style>
+</head>
+<body data-footer="Modeling · An Introduction">
+<div id="viewport"><div id="stage">
+
+<!-- ============================================================ 1 · title -->
+<section class="slide s-title" data-nonum>
+  <div class="page">
+    <canvas id="morph" width="1920" height="1440" aria-hidden="true"></canvas>
+    <div class="veil"></div>
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">MODELING · AN INTRODUCTION</div>
+    <h1 class="anim">Modeling<span>.</span></h1>
+    <p class="sub anim">We understand the world by building small versions of it: in sand, in stone, and in what we know.</p>
+    <div class="five">
+      <span data-k="0"><b>·</b>Blocks</span><span data-k="1"><b>·</b>A model village</span><span data-k="2"><b>·</b>Knowledge</span>
+    </div>
+    <div class="by anim">Paul Fishwick</div>
+    <div class="cap" id="morph-cap"></div>
+  </div>
+  <aside class="notes">
+    <p>The animation cycles through the talk: a house of blocks, a village holding a smaller copy of itself, and a graph of what we know.</p>
+    <p>Same pieces each time, arranged three ways. That is the idea of the talk: a model is a choice of parts and how they connect.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 · we learn by modeling -->
+<section class="slide s-kid">
+  <div class="page">
+    <header class="hd"><h2>We Learn by Modeling</h2><div class="kicker">Childhood · our first models</div></header>
+    <div class="grid kids">
+      <article class="tile"><img src="img/child-sandbox.jpg" alt="Two young children digging with a bucket and shovel in a sandbox"><span class="tag">Sandbox</span><h3>Shape the land</h3><p>Roads, rivers, castles: a whole world at small scale.</p></article>
+      <article class="tile"><img src="img/child-tinkertoy.jpg" alt="Children around a table building large structures from Tinkertoys"><span class="tag">Tinkertoys</span><h3>Connect the parts</h3><p>Hubs and sticks: a structure you can hold and turn.</p></article>
+      <article class="tile"><img src="img/child-lego.jpg" alt="Hands snapping a LEGO brick onto a small vehicle model"><span class="tag">LEGO</span><h3>Build from units</h3><p>Small pieces, endless combinations, rebuilt again and again.</p></article>
+    </div>
+    <p class="line" data-b="1">Modeling is fundamental to learning: we understand the world by building small versions of it.</p>
+    <p class="ai-note">Photos via Wikimedia Commons: <a href="https://commons.wikimedia.org/wiki/File:Sandbox_Lawn_Jam_Our_Community_Place_Harrisonburg_VA_June_2008.jpg" target="_blank" rel="noopener">Artaxerxes</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">CC BY-SA 3.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Tinkertoys_in_Laos.jpg" target="_blank" rel="noopener">Blue Plover</a>, <a href="https://creativecommons.org/licenses/by-sa/3.0" target="_blank" rel="noopener">CC BY-SA 3.0</a> · <a href="https://commons.wikimedia.org/wiki/File:Playing_with_Lego_bricks.jpg" target="_blank" rel="noopener">Nenad Stojkovic</a>, <a href="https://creativecommons.org/licenses/by/2.0" target="_blank" rel="noopener">CC BY 2.0</a></p>
+  </div>
+  <aside class="notes">
+    <p>Ask: who had a sandbox? Tinkertoys? LEGO? What did you build?</p>
+    <p>Each one is a model: a small, simplified version of something bigger, made from parts, that you can change and test.</p>
+    <p>[build] Modeling is how children learn the world, and it never stops being how we learn.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 · what is a model -->
+<section class="slide s-what">
+  <div class="page">
+    <header class="hd"><h2>What Is a Model?</h2><div class="kicker">Four things every model shares</div></header>
+    <svg class="loop" viewBox="0 0 470 420" aria-hidden="true">
+      <defs><marker id="w-a" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#1D6E73"/></marker>
+        <marker id="w-b" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4" markerHeight="4" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#C9852F"/></marker></defs>
+      <path class="arc" d="M112 112 C170 30 300 30 352 108" marker-end="url(#w-a)"/>
+      <path class="arc back" d="M358 308 C300 390 170 390 118 312" marker-end="url(#w-b)"/>
+      <text class="verb" x="235" y="46">look · choose · simplify</text>
+      <text class="verb back" x="235" y="392">play · test · compare</text>
+      <circle class="ring" cx="105" cy="210" r="88"/>
+      <circle class="ring" cx="365" cy="210" r="88"/>
+      <g class="ico" transform="translate(0 -20)"><path d="M55 230 L55 195 L80 172 L105 195 L105 230 Z M105 230 L105 182 L130 160 L155 182 L155 230 Z"/><path d="M70 230 v-16 h12 v16 M118 200 h10 v10 h-10z M138 200 h10 v10 h-10z"/><path d="M40 230 H170"/></g>
+      <g class="blkg" transform="translate(0 -14)"><rect class="blk" x="327" y="206" width="24" height="24"/><rect class="blk" x="351" y="206" width="24" height="24"/><rect class="blk" x="375" y="206" width="24" height="24"/>
+        <rect class="blk" x="339" y="182" width="24" height="24"/><rect class="blk" x="363" y="182" width="24" height="24"/><path class="blk" d="M335 182 L363 160 L391 182 Z"/></g>
+      <text x="105" y="268">The thing</text><text x="365" y="268">The model</text>
+    </svg>
+    <div class="props">
+      <article class="tile" data-b="1"><div class="n">1</div><h3>Smaller</h3><p>A village at one-ninth scale; a coast in a sandbox.</p></article>
+      <article class="tile" data-b="2"><div class="n">2</div><h3>Simpler</h3><p>It keeps some things and leaves the rest out, on purpose.</p></article>
+      <article class="tile" data-b="3"><div class="n">3</div><h3>Made of parts</h3><p>Sand, sticks, bricks, stones, words, or facts.</p></article>
+      <article class="tile" data-b="4"><div class="n">4</div><h3>Changeable</h3><p>Move a piece, try “what if?”, and see what happens.</p></article>
+    </div>
+    <p class="line" data-b="5">A model is only good when we hold it up against the real thing and ask what it got right.</p>
+  </div>
+  <aside class="notes">
+    <p>Building from the sandbox slide: what do the sandbox, the Tinkertoys and the LEGO have in common?</p>
+    <p>The loop: we look at the thing and choose what to keep (top), then play with the model and compare it back to the thing (bottom). The arrows keep flowing: it never finishes.</p>
+    <p>[builds 1–4] Smaller, simpler, made of parts, changeable.</p>
+    <p>[build 5] The return arrow is the important one: a model is tested against what it models.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 · bourton zoom -->
+<section class="slide s-zoom">
+  <div class="page">
+    <header class="hd"><h2>A Model of a Model of a Model</h2><div class="kicker">A familiar model · Bourton-on-the-Water ↔ its model village</div></header>
+    <div class="frame">
+      <div class="lvl" style="--zo:82% 69%">
+        <img src="img/bourton-map.svg" alt="Map of the centre of Bourton-on-the-Water, with the River Windrush and the model village marked">
+        <span class="maplabel river">River Windrush</span>
+        <span class="maplabel mv">The Model Village</span>
+      </div>
+      <div class="lvl" data-b="1" style="--zi:82% 69%;--zo:50% 60%"><img src="img/bourton-1-9.jpg" alt="Looking across the one-ninth scale model village"></div>
+      <div class="lvl" data-b="2" style="--zi:50% 60%;--zo:50% 70%"><img src="img/bourton-1-81.jpg" alt="The model of the model village, with the 1:9 model cottages behind it"></div>
+      <div class="lvl" data-b="3" style="--zi:50% 70%;--zo:55% 84%"><img src="img/bourton-1-81-top.jpg" alt="The model of the model village seen from above"></div>
+      <div class="lvl" data-b="4" style="--zi:55% 84%"><img src="img/bourton-1-729.jpg" alt="The model inside the model of the model village"></div>
+    </div>
+    <p class="credit">Map data © OpenStreetMap contributors · 1:9 overview: Brian Robert Marshall, CC BY-SA 2.0 · 1:81 from above and 1:729: Karen Roe, CC BY 2.0 · other photos: Paul Fishwick</p>
+    <div class="caps">
+      <div class="cap"><div class="scale">1 : 1</div><h3>The village</h3><p>Bourton-on-the-Water, Gloucestershire. The amber outline is the model village, behind the Old New Inn.</p></div>
+      <div class="cap" data-b="1"><div class="scale">1 : 9</div><h3>The model village</h3><p>The village rebuilt in Cotswold stone by local craftsmen, 1936–1940.</p></div>
+      <div class="cap" data-b="2"><div class="scale">1 : 81</div><h3>A model of the model</h3><p>Inside the model village is a model of the model village.</p></div>
+      <div class="cap" data-b="3"><div class="scale">1 : 81</div><h3>…seen from above</h3><p>Now look at the bottom centre.</p></div>
+      <div class="cap" data-b="4"><div class="scale">≈ 1 : 729</div><h3>And a model of that</h3><p>Each level copies the one that contains it.</p></div>
+    </div>
+    <figure class="tile plaque">
+      <img src="img/bourton-plaque.jpg" alt="Bronze plaque at the model village">
+      <p>“…built of Cotswold stone to a one-ninth scale… opened on Coronation Day 1937.” <span>— the plaque</span></p>
+    </figure>
+  </div>
+  <aside class="notes">
+    <p>A grown-up sandbox: a whole village copied at one-ninth scale. Each click zooms one level in.</p>
+    <p>Plaque: conceived 1936 by C.A. Morris, landlord of the Old New Inn; one-ninth scale; opened Coronation Day 1937, completed 1940.</p>
+    <p>Ask at each level: what is the same, what has changed? 1:729 is our arithmetic (9 × 9 × 9), not a published figure.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 5 · what a model keeps -->
+<section class="slide s-keep">
+  <div class="page">
+    <header class="hd"><h2>What Does a Model Keep?</h2><div class="kicker">Every model is a choice · model ↔ original</div></header>
+    <p class="line how">Drag each card into a box — or click it to cycle. Kept in the model, or lost?</p>
+    <p class="line take" data-b="2">A model keeps what its makers chose — and freezes it. In time, it becomes a record of the past.</p>
+    <div class="pool drop">
+      <button class="prop">Street layout</button><button class="prop">River Windrush</button><button class="prop">Cotswold stone</button>
+      <button class="prop">Building shapes</button><button class="prop">Size</button><button class="prop">People</button>
+      <button class="prop">Interiors</button><button class="prop">You can live in it</button><button class="prop">The present day</button>
+    </div>
+    <div class="box bin kept"><h4>Kept in the model</h4><div class="drop"></div></div>
+    <div class="tile bin lost"><h4>Lost in the model</h4><div class="drop"></div></div>
+    <div class="tile ev a" data-b="1"><img src="img/model-church.jpg" alt="Inside the model church: tiny pews and a congregation"><p><b>Interiors?</b> Some were kept: the model church has pews, a pulpit and a congregation.</p></div>
+    <div class="tile ev b" data-b="1"><img src="img/model-restoration.jpg" alt="A model house with a sign: under restoration, please do not touch"><p><b>The present day?</b> “This building is under restoration.” The model ages too — but shows the 1930s.</p></div>
+  </div>
+  <aside class="notes">
+    <p>Let the room sort the cards; there are arguments either way. Drag, or click to cycle pool → kept → lost.</p>
+    <p>[build 1] Two photos complicate the easy answers: interiors (the church) and time (restoration).</p>
+    <p>[build 2] The takeaway: a model is a set of choices — and over time it turns into history.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 6 · three kinds -->
+<section class="slide s-kinds">
+  <div class="page">
+    <header class="hd"><h2>Three Kinds of Model</h2><div class="kicker">We start with the first</div></header>
+    <div class="grid">
+      <article class="tile">
+        <div class="big">1</div><div class="tag" style="margin-top:8px">Knowledge</div>
+        <svg viewBox="0 0 260 150" aria-hidden="true" class="kg">
+          <g stroke="#9FB8B5" stroke-width="2"><line x1="130" y1="75" x2="45" y2="30"/><line x1="130" y1="75" x2="215" y2="28"/><line x1="130" y1="75" x2="40" y2="122"/><line x1="130" y1="75" x2="220" y2="120"/><line x1="215" y1="28" x2="220" y2="120"/></g>
+          <g fill="#fff" stroke="#1D6E73" stroke-width="2"><circle cx="45" cy="30" r="11"/><circle cx="215" cy="28" r="11"/><circle cx="40" cy="122" r="11"/><circle cx="220" cy="120" r="11"/></g>
+          <circle cx="130" cy="75" r="16" fill="#C9852F"/></svg>
+        <h3>What we know about a thing</h3>
+        <p>Its parts, facts and relations, written as connected statements.</p>
+        <div class="chips"><span>knowledge graph</span><span>semantic network</span><span>concept map</span><span>mind map</span></div>
+      </article>
+      <article class="tile later"><div class="big">2</div><h3>To come</h3><p>Next in the series.</p></article>
+      <article class="tile later"><div class="big">3</div><h3>To come</h3><p>Next in the series.</p></article>
+    </div>
+    <p class="line" data-b="1">The model village is built from stone. A knowledge model is built from statements.</p>
+  </div>
+  <aside class="notes">
+    <p>[draft] Kinds 2 and 3 are placeholders until we add them.</p>
+    <p>Knowledge models represent what we know or believe about a thing: its parts, its facts, and how they relate.</p>
+    <p>[build] Same idea as the sandbox, different material: statements instead of sand or stone.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7 · the village as knowledge -->
+<section class="slide s-vk">
+  <div class="page">
+    <header class="hd"><h2>The Same Village, as Knowledge</h2><div class="kicker">Knowledge models · from sentences to a graph</div></header>
+    <article class="tile psg">
+      <div class="tag">What we know</div>
+      <p><span data-b="1">The model village copies Bourton-on-the-Water</span>, <span data-b="1">a village on the River Windrush</span>. <span data-b="2">It stands behind the Old New Inn, whose landlord, C. A. Morris, conceived it in 1936</span>. <span data-b="3">It is built of Cotswold stone at one-ninth scale</span>, <span data-b="4">and opened on Coronation Day 1937</span>. <span data-b="5">Inside it is a model of the model village.</span></p>
+    </article>
+    <article class="tile trip"><div class="tag">As triples · subject – relation – object</div><ol id="vk-trips"></ol></article>
+    <article class="tile board kg"><svg id="vk-graph" viewBox="0 0 504 510" aria-label="A knowledge graph of the model village that grows with each sentence"></svg></article>
+    <p class="line" data-b="6">Stone keeps shapes. This model keeps facts and links.</p>
+  </div>
+  <aside class="notes">
+    <p>Back to Bourton, but now we build the model from what we know, not from stone.</p>
+    <p>[builds 1–5] Each click takes one sentence, turns it into triples, and adds them to the graph.</p>
+    <p>[build 6] Which questions can each model answer? The stone one: what does the high street look like? This one: who built it, when, from what?</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 8 · four maps -->
+<section class="slide s-four">
+  <div class="page">
+    <header class="hd"><h2>One Village, Four Maps</h2><div class="kicker">Knowledge models · switch the view, click a concept</div></header>
+    <div class="row views" id="fviews"><span class="lbl">View</span>
+      <button class="btn on" data-v="sem">Semantic network</button><button class="btn" data-v="con">Concept map</button><button class="btn" data-v="mind">Mind map</button><button class="btn" data-v="kg">Knowledge graph</button></div>
+    <article class="tile side" id="fside"></article>
+    <article class="tile board kg"><svg id="fgraph" viewBox="0 0 594 466" aria-label="The model village drawn four ways"></svg></article>
+    <p class="info" id="finfo">Click a concept to see its links.</p>
+  </div>
+  <aside class="notes">
+    <p>The same twelve concepts, drawn four ways. Watch them move between views.</p>
+    <p>Semantic network (Quillian, 1968): strict link types, is-a, has, part-of. Concept map (Novak, 1970s): top-down, links read as sentences. Mind map (Buzan, 1974): a centre and branches by theme, no link labels. Knowledge graph (Google, 2012): every link a triple, the form an AI model produces.</p>
+    <p>Click a node to read its links in the current view's vocabulary.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 9 · sentences become triples -->
+<section class="slide s-tri">
+  <div class="page">
+    <header class="hd"><h2>Sentences Become Triples</h2><div class="kicker">The atom of a knowledge graph · subject – relation – object</div></header>
+    <div class="sent" id="tri-sent"></div>
+    <div class="slots"><div class="slot s" data-k="subject"></div><div class="slot r" data-k="relation"></div><div class="slot o" data-k="object"></div></div>
+    <article class="tile board kg"><svg id="tri-graph" viewBox="0 0 849 230" aria-hidden="true"></svg></article>
+    <p class="line">Every knowledge graph is a pile of these. Language models are very good at writing them.</p>
+  </div>
+  <aside class="notes">
+    <p>This runs by itself: a sentence, its three parts, and a new link in the graph below.</p>
+    <p>The examples come from the topics ahead: Bourton, honeybees, old bookcases, the Industrial Revolution.</p>
+    <p>Pulling triples out of text used to be a research problem. Now any large language model does it on request.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 10 · let AI build it -->
+<section class="slide s-maker">
+  <div class="page">
+    <header class="hd"><h2>Let AI Build the Model</h2><div class="kicker">Live · ① OpenRouter key: left panel of the app · ② pick a passage · ③ Analyze Text</div></header>
+    <div class="row feed" id="feed"><span class="lbl">Send a passage</span>
+      <button class="btn" data-p="bourton">Bourton’s model village</button><button class="btn" data-p="bees">Honeybees</button><button class="btn" data-p="sandbox">A sandbox</button>
+      <a href="apps/kgmaker/" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app"><div class="wait">Loading the app…</div><iframe data-src="apps/kgmaker/" title="Text Knowledge Graph app"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>The real app, running inside the slide. Pick a passage above to drop it in, choose a level of detail, then Analyze Text.</p>
+    <p>It needs an OpenRouter API key, typed once into the field on the left; it stays in this browser and is never part of the published page.</p>
+    <p>Try the same passage at Low and High detail: the model gets bigger, not truer. Then ask the audience for their own text.</p>
+    <p>After clicking inside the app, click the paper margin (or use the clicker's Page Down) to move on.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 11 · bookcases -->
+<section class="slide s-books">
+  <div class="page">
+    <header class="hd"><h2>A Model of How Scholars Kept Books</h2><div class="kicker">Live · a knowledge graph built with AI from one blog post</div></header>
+    <div class="row approw"><span class="src">From “Early Bookcases, Cupboards &amp; Carousels”, Lost Art Press, 28 July 2024 · click an artwork or a device</span>
+      <a href="apps/bookcases/" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app"><div class="wait">Loading the graph…</div><iframe data-src="apps/bookcases/" title="Early Bookcases knowledge graph"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>Knowledge of a thing: the furniture scholars used to store and reach books. Shelves, cupboards, carousels, the bookwheel.</p>
+    <p>Golden nodes are artworks from the post; each links to the devices it shows, plus region, era and people.</p>
+    <p>Start at Book Carousel or Ramelli Bookwheel, or from an era such as Late Medieval.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 12 · pipeline -->
+<section class="slide s-pipe">
+  <div class="page">
+    <header class="hd"><h2>From a Document to a Graph</h2><div class="kicker">AI Knowledge Graph Generator · Robert McDermott · how it works</div></header>
+    <svg class="flow" id="pipe" viewBox="0 0 849 150" aria-hidden="true"></svg>
+    <div class="grid cards">
+      <article class="tile" data-b="1"><div class="tag">1 · Chunk</div><h3>Cut the text</h3><p>966 words become 13 overlapping pieces of about 100 words.</p></article>
+      <article class="tile" data-b="2"><div class="tag">2 · Extract</div><h3>Ask for triples</h3><p>A language model reads each piece and writes its facts.</p><div class="eg">Industrial Revolution – originated in – Britain</div></article>
+      <article class="tile" data-b="3"><div class="tag">3 · Standardize</div><h3>One name each</h3><p>Different names for the same thing are merged into one.</p><div class="eg">“steam engines” = “Steam engine”</div></article>
+      <article class="tile" data-b="4"><div class="tag">4 · Infer</div><h3>Close the gaps</h3><p>New links join parts of the graph that the text left apart.</p><div class="eg">A → B, B → C ⇒ A → C</div></article>
+      <article class="tile" data-b="5"><div class="tag">5 · Draw</div><h3>An interactive graph</h3><p>308 triples become 192 entities joined by 260 links.</p></article>
+    </div>
+    <p class="line" data-b="6">The tool writes thousands of facts. Choosing which ones matter is still the modeler’s job.</p>
+  </div>
+  <aside class="notes">
+    <p>A second tool, open source: github.com/robert-mcdermott/ai-knowledge-graph. It works on long documents by cutting them up.</p>
+    <p>[builds 1–5] The five stages. Numbers are from our run on a 966-word text on the Industrial Revolution.</p>
+    <p>[build 6] Same lesson as the model village: a model is a choice.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 13 · industrial revolution -->
+<section class="slide s-ind">
+  <div class="page">
+    <header class="hd"><h2>The Industrial Revolution, as a Graph</h2><div class="kicker">Live · 192 entities, 260 links · drag, zoom, hover</div></header>
+    <div class="row approw"><span class="src">Generated from a 966-word text by the AI Knowledge Graph Generator (Apache 2.0)</span>
+      <a href="apps/industrial/" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app" style="background:#fff"><div class="wait">Loading the graph…</div><iframe data-src="apps/industrial/" title="Industrial Revolution knowledge graph"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>What the pipeline produced. Colors are communities: clusters of entities that link mostly to each other.</p>
+    <p>Ask: is this a good model of the Industrial Revolution? What would a historian keep, merge or throw away?</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 14 · two models of one village -->
+<section class="slide s-two">
+  <div class="page">
+    <header class="hd"><h2>Two Models of One Village</h2><div class="kicker">Stone and statements · what each one is for</div></header>
+    <table>
+      <tr><th></th><th>The model village</th><th>The knowledge model</th></tr>
+      <tr data-b="1"><td>Made of</td><td>Cotswold stone, at one-ninth scale</td><td>Statements: subject – relation – object</td></tr>
+      <tr data-b="2"><td>Keeps</td><td>Shapes, layout, materials, the look of 1937</td><td>Names, facts, dates, who and why</td></tr>
+      <tr data-b="3"><td>Leaves out</td><td>People, interiors, the present day</td><td>Shape, size, colour, the feel of the place</td></tr>
+      <tr data-b="4"><td>Answers</td><td>What does the high street look like?</td><td>Who built it, when, and from what?</td></tr>
+      <tr data-b="5"><td>You change it by</td><td>Craftsmen rebuilding a house</td><td>Adding or correcting a single fact</td></tr>
+    </table>
+    <p class="line" data-b="6">Both are smaller, simpler, made of parts and changeable. Both are choices.</p>
+  </div>
+  <aside class="notes">
+    <p>Pulls the two halves together. Same four properties from slide 3, very different materials.</p>
+    <p>[build 6] Neither is the village. Each is useful for some questions and silent on others.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 15 · resources -->
+<section class="slide s-res">
+  <div class="page">
+    <header class="hd"><h2>Resources</h2><div class="kicker">Try the tools · read the originals</div></header>
+    <div class="grid">
+      <article class="tile"><h3>Text Knowledge Graph</h3><p><a href="apps/kgmaker/" target="_blank" rel="noopener">Open the app</a> · paste any text; needs an OpenRouter key</p></article>
+      <article class="tile"><h3>Early Bookcases graph</h3><p><a href="apps/bookcases/" target="_blank" rel="noopener">Open the graph</a> · from the <a href="https://blog.lostartpress.com/2024/07/28/early-bookcases-cupboards-and-carousels/" target="_blank" rel="noopener">Lost Art Press post</a></p></article>
+      <article class="tile"><h3>AI Knowledge Graph Generator</h3><p><a href="https://github.com/robert-mcdermott/ai-knowledge-graph" target="_blank" rel="noopener">github.com/robert-mcdermott/ai-knowledge-graph</a> · <a href="apps/industrial/" target="_blank" rel="noopener">our Industrial Revolution graph</a></p></article>
+      <article class="tile"><h3>OpenRouter</h3><p><a href="https://openrouter.ai/keys" target="_blank" rel="noopener">openrouter.ai/keys</a> · one key for Claude, GPT, Gemini and Grok</p></article>
+      <article class="tile"><h3>Concept maps · Joseph Novak</h3><p><a href="https://cmap.ihmc.us/docs/theory-of-concept-maps" target="_blank" rel="noopener">The Theory Underlying Concept Maps</a> · free CmapTools from IHMC</p></article>
+      <article class="tile"><h3>Semantic networks · Ross Quillian</h3><p>“Semantic Memory” (1968), in Minsky, ed., <i>Semantic Information Processing</i></p></article>
+      <article class="tile"><h3>Mind maps · Tony Buzan</h3><p><i>Use Your Head</i> (BBC, 1974)</p></article>
+      <article class="tile"><h3>Bourton-on-the-Water model village</h3><p>Behind the Old New Inn, Gloucestershire · <a href="https://metaphorz.github.io/talks/deeplookingweek3/" target="_blank" rel="noopener">Deep Looking, week 3</a></p></article>
+    </div>
+  </div>
+  <aside class="notes"><p>All three apps are part of this deck's folder, so the links work from the published page.</p></aside>
+</section>
+
+</div></div>
+<div id="hint">→ / click to advance · F fullscreen · P presenter view</div>
+<div id="presenter">
+  <div id="pv-notes"></div>
+  <div id="pv-side">
+    <div id="pv-next"><div class="label">Next</div><div id="pv-nextstage"></div></div>
+    <div><div id="pv-count"></div><div id="pv-build"></div></div>
+    <div><div class="label">Elapsed (click to reset)</div><div id="pv-timer">0:00</div><div id="pv-clock"></div></div>
+  </div>
+</div>
+
+<script src="slides.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>

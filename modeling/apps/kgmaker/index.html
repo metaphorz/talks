@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Knowledge Graph</title>
+    <script type="text/javascript" src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+    <!-- local only: written from ~/.env by modeling/start, ignored by git, absent on the published site -->
+    <script type="text/javascript" src="config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(to bottom, #1a1a2e 0%, #0f0f1e 100%);
+            color: #e0e0e0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 350px;
+            background: rgba(26, 26, 46, 0.95);
+            border-right: 1px solid #2a2a4e;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #4a9eff;
+            margin-bottom: 10px;
+        }
+
+        h2 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #a0a0c0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 200px;
+            background: #1a1a2e;
+            border: 1px solid #2a2a4e;
+            border-radius: 8px;
+            padding: 12px;
+            color: #e0e0e0;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            transition: all 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        textarea.drag-over {
+            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+            border-style: dashed;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type=file] {
+            position: absolute;
+            left: -9999px;
+        }
+
+        .file-input-label {
+            display: block;
+            padding: 10px 16px;
+            background: #2a2a4e;
+            border: 1px solid #3a3a5e;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .file-input-label:hover {
+            background: #3a3a5e;
+            border-color: #4a9eff;
+        }
+
+        button {
+            padding: 12px 20px;
+            background: #4a9eff;
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #3a8eef;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #2a2a4e;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .api-key-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        input[type="password"],
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            background: #1a1a2e;
+            border: 1px solid #2a2a4e;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+        }
+
+        input[type="password"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #4a9eff;
+        }
+
+        select {
+            cursor: pointer;
+        }
+
+        select option {
+            background: #1a1a2e;
+            color: #e0e0e0;
+        }
+
+        .controls-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .control-group label {
+            font-size: 13px;
+            color: #a0a0c0;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 4px;
+            background: #2a2a4e;
+            border-radius: 2px;
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #4a9eff;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            background: #4a9eff;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+        }
+
+        .filter-section {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .filter-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .filter-item:hover {
+            background: rgba(74, 158, 255, 0.1);
+        }
+
+        .filter-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .filter-item label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        #network {
+            width: 100%;
+            height: 100%;
+            background: #0f0f1e;
+        }
+
+        .status {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            padding: 12px 20px;
+            background: rgba(26, 26, 46, 0.95);
+            border-bottom: 1px solid #2a2a4e;
+            font-size: 18px;
+            color: #a0a0c0;
+        }
+
+        .status.processing {
+            color: #4a9eff;
+        }
+
+        .status:empty { display: none; }
+
+        .status.error {
+            color: #ff6b6b;
+        }
+
+        .status.success {
+            color: #51cf66;
+        }
+
+        .legend {
+            position: absolute;
+            top: 70px;
+            right: 20px;
+            background: rgba(26, 26, 46, 0.95);
+            border: 1px solid #2a2a4e;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 12px;
+            max-height: calc(100vh - 140px);
+            overflow-y: auto;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 6px 0;
+        }
+
+        .legend-color {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .credits {
+            font-size: 11px;
+            color: #6a6a8a;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .credits a {
+            color: #4a9eff;
+            text-decoration: none;
+        }
+
+        .credits a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <div>
+                <h1>Text Knowledge Graph</h1>
+                <p style="font-size: 13px; color: #8a8aa0; margin-bottom: 20px;">
+                    Analyze text and visualize entities as an interactive graph
+                </p>
+            </div>
+
+            <div class="api-key-section">
+                <h2>Model Selection</h2>
+                <div class="control-group">
+                    <label for="modelSelect">Choose LLM Model</label>
+                    <select id="modelSelect">
+                        <option value="anthropic/claude-sonnet-5.5">Claude Sonnet 5.5</option>
+                        <option value="openai/gpt-5.6-sol">GPT-5.6 Sol</option>
+                        <option value="google/gemini-3.8-flash">Gemini 3.8 Flash</option>
+                        <option value="x-ai/grok-4.7">Grok 4.7</option>
+                    </select>
+                </div>
+
+                <div class="control-group" style="margin-top: 16px;">
+                    <label for="detailLevel">Level of Detail: <span id="detailLevelLabel">Medium</span></label>
+                    <input type="range" id="detailLevel" min="1" max="5" value="3" step="1" />
+                    <div style="display: flex; justify-content: space-between; font-size: 11px; color: #6a6a8a; margin-top: 4px;">
+                        <span>Low</span>
+                        <span>Med-Low</span>
+                        <span>Medium</span>
+                        <span>Med-High</span>
+                        <span>High</span>
+                    </div>
+                    <small style="color: #6a6a8a; font-size: 11px; display: block; margin-top: 8px;">
+                        Higher detail = more entities and concepts
+                    </small>
+                </div>
+
+                <div class="control-group" style="margin-top: 16px;">
+                    <label for="apiKeyInput">OpenRouter API key</label>
+                    <input type="password" id="apiKeyInput" placeholder="sk-or-..." autocomplete="off" style="width:100%;padding:8px;border-radius:6px;border:1px solid #3a3a5a;background:#1a1a2e;color:#e0e0e0" />
+                    <small style="color: #6a6a8a; font-size: 11px; display: block; margin-top: 6px;">
+                        Kept in this browser only. Get one at openrouter.ai/keys
+                    </small>
+                </div>
+            </div>
+
+            <div class="input-section">
+                <h2>Text Input</h2>
+                <textarea id="textInput" placeholder="Paste, type, or drag & drop a text file here..."></textarea>
+
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".txt,.md" />
+                    <label for="fileInput" class="file-input-label">
+                        📁 Or upload a text file
+                    </label>
+                </div>
+
+                <button id="analyzeBtn">Analyze Text</button>
+            </div>
+
+            <div class="controls-section">
+                <h2>Physics Controls</h2>
+                <div class="control-group">
+                    <label for="chargeStrength">Charge Strength: <span id="chargeValue">-1000</span></label>
+                    <input type="range" id="chargeStrength" min="-3000" max="-100" value="-1000" step="100" />
+                </div>
+                <div class="control-group">
+                    <label for="linkDistance">Link Distance: <span id="linkValue">150</span></label>
+                    <input type="range" id="linkDistance" min="50" max="400" value="150" step="10" />
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <h2>Filter Nodes</h2>
+                <div id="filterContainer"></div>
+            </div>
+
+            <div class="credits">
+                Created by Paul Fishwick and Claude Code
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div id="network"></div>
+            <div class="legend" id="legend"></div>
+            <div class="status" id="status">Ready to analyze text</div>
+        </div>
+    </div>
+
+    <script>
+        // Global state
+        let network = null;
+        let allNodes = [];
+        let allEdges = [];
+        let nodeTypes = new Set();
+
+        // Color scheme for different node types
+        const typeColors = {
+            'Person': '#51cf66',        // Green
+            'Concept': '#4a9eff',       // Blue
+            'Event': '#ff6b6b',         // Red
+            'Location': '#ffd43b',      // Yellow
+            'Emotion': '#ff8c42',       // Orange
+            'Theme': '#ae3ec9',         // Purple
+            'Literary Device': '#20c997', // Teal
+            'Symbol': '#fa5252',        // Dark Red
+            'Imagery': '#22b8cf',       // Cyan (changed from orange)
+            'Entity': '#868e96'         // Gray
+        };
+
+        // API key: typed once, kept in this browser's localStorage (never in the page source)
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        try { apiKeyInput.value = localStorage.getItem('openrouterKey') || ''; } catch (e) {}
+        if (!apiKeyInput.value && window.OPENROUTER_API_KEY) apiKeyInput.value = window.OPENROUTER_API_KEY;
+        apiKeyInput.addEventListener('input', () => {
+            try { localStorage.setItem('openrouterKey', apiKeyInput.value.trim()); } catch (e) {}
+        });
+
+        // A slide deck embedding this page can hand it a passage to analyze
+        window.addEventListener('message', (e) => {
+            if (e.origin !== window.location.origin || !e.data || typeof e.data.text !== 'string') return;
+            document.getElementById('textInput').value = e.data.text;
+            if (e.data.detail) {
+                const d = document.getElementById('detailLevel');
+                d.value = e.data.detail;
+                d.dispatchEvent(new Event('input'));
+            }
+        });
+
+        // Load and save model selection
+        const modelSelect = document.getElementById('modelSelect');
+        const savedModel = localStorage.getItem('selectedModel');
+        if (savedModel && [...modelSelect.options].some(o => o.value === savedModel)) {
+            modelSelect.value = savedModel;
+        }
+
+        modelSelect.addEventListener('change', (e) => {
+            localStorage.setItem('selectedModel', e.target.value);
+        });
+
+        // Load and save detail level selection
+        const detailLevel = document.getElementById('detailLevel');
+        const detailLevelLabel = document.getElementById('detailLevelLabel');
+        const detailLabels = ['Low', 'Medium-Low', 'Medium', 'Medium-High', 'High'];
+
+        const savedDetailLevel = localStorage.getItem('detailLevel');
+        if (savedDetailLevel) {
+            detailLevel.value = savedDetailLevel;
+            detailLevelLabel.textContent = detailLabels[savedDetailLevel - 1];
+        }
+
+        detailLevel.addEventListener('input', (e) => {
+            const level = parseInt(e.target.value);
+            detailLevelLabel.textContent = detailLabels[level - 1];
+            localStorage.setItem('detailLevel', level);
+        });
+
+        // File upload handler
+        const textInput = document.getElementById('textInput');
+
+        document.getElementById('fileInput').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                loadTextFile(file);
+            }
+        });
+
+        // Drag and drop handlers
+        textInput.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            textInput.classList.add('drag-over');
+        });
+
+        textInput.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            textInput.classList.remove('drag-over');
+        });
+
+        textInput.addEventListener('drop', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            textInput.classList.remove('drag-over');
+
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                // Check if it's a text file
+                if (file.type.startsWith('text/') || file.name.endsWith('.txt') || file.name.endsWith('.md')) {
+                    loadTextFile(file);
+                } else {
+                    setStatus('Please drop a text file (.txt, .md)', 'error');
+                }
+            }
+        });
+
+        // Shared function to load text file
+        function loadTextFile(file) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                textInput.value = event.target.result;
+                setStatus(`Loaded: ${file.name}`, 'success');
+            };
+            reader.onerror = () => {
+                setStatus('Error reading file', 'error');
+            };
+            reader.readAsText(file);
+        }
+
+        // Physics controls
+        document.getElementById('chargeStrength').addEventListener('input', (e) => {
+            document.getElementById('chargeValue').textContent = e.target.value;
+            updatePhysics();
+        });
+
+        document.getElementById('linkDistance').addEventListener('input', (e) => {
+            document.getElementById('linkValue').textContent = e.target.value;
+            updatePhysics();
+        });
+
+        function updatePhysics() {
+            if (!network) return;
+
+            const charge = parseInt(document.getElementById('chargeStrength').value);
+            const distance = parseInt(document.getElementById('linkDistance').value);
+
+            network.setOptions({
+                physics: {
+                    barnesHut: {
+                        gravitationalConstant: charge,
+                        springLength: distance
+                    }
+                }
+            });
+        }
+
+        // Initialize network
+        function initNetwork() {
+            const container = document.getElementById('network');
+            const data = {
+                nodes: new vis.DataSet([]),
+                edges: new vis.DataSet([])
+            };
+
+            const options = {
+                nodes: {
+                    shape: 'dot',
+                    size: 20,
+                    font: {
+                        size: 14,
+                        color: '#ffffff',
+                        face: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto'
+                    },
+                    borderWidth: 2,
+                    borderWidthSelected: 3,
+                    shadow: {
+                        enabled: true,
+                        color: 'rgba(0,0,0,0.3)',
+                        size: 10,
+                        x: 0,
+                        y: 0
+                    }
+                },
+                edges: {
+                    width: 2,
+                    color: {
+                        color: '#4a5568',
+                        highlight: '#4a9eff',
+                        hover: '#4a9eff'
+                    },
+                    smooth: {
+                        type: 'continuous'
+                    },
+                    arrows: {
+                        to: {
+                            enabled: true,
+                            scaleFactor: 0.5
+                        }
+                    },
+                    font: {
+                        size: 11,
+                        color: '#a0a0c0',
+                        face: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto',
+                        background: 'rgba(15, 15, 30, 0.8)',
+                        strokeWidth: 0
+                    }
+                },
+                physics: {
+                    barnesHut: {
+                        gravitationalConstant: -1000,
+                        springLength: 150,
+                        springConstant: 0.04
+                    },
+                    stabilization: {
+                        iterations: 150
+                    }
+                },
+                interaction: {
+                    hover: true,
+                    tooltipDelay: 100,
+                    navigationButtons: true,
+                    keyboard: true
+                }
+            };
+
+            network = new vis.Network(container, data, options);
+
+            // Add click handler for hyperlinks
+            network.on('click', (params) => {
+                if (params.nodes.length > 0) {
+                    const nodeId = params.nodes[0];
+                    const node = allNodes.find(n => n.id === nodeId);
+                    if (node && node.url) {
+                        window.open(node.url, '_blank');
+                    }
+                }
+            });
+
+            // Add hover handler for tooltips
+            network.on('hoverNode', (params) => {
+                const node = allNodes.find(n => n.id === params.node);
+                if (node) {
+                    let tooltip = node.label;
+                    if (node.description) {
+                        tooltip += '\n' + node.description;
+                    }
+                    if (node.url) {
+                        tooltip += '\n🔗 ' + node.url;
+                    }
+                    network.canvas.body.container.title = tooltip;
+                }
+            });
+
+            network.on('blurNode', () => {
+                network.canvas.body.container.title = '';
+            });
+        }
+
+        // Analyze text using selected LLM
+        async function analyzeText() {
+            const text = document.getElementById('textInput').value.trim();
+            const selectedModel = modelSelect.value;
+            const detailLevelValue = parseInt(detailLevel.value);
+
+            if (!text) {
+                setStatus('Please enter some text to analyze', 'error');
+                return;
+            }
+
+            const apiKey = apiKeyInput.value.trim();
+            if (!apiKey) {
+                setStatus('Enter your OpenRouter API key on the left', 'error');
+                return;
+            }
+
+            const modelName = modelSelect.options[modelSelect.selectedIndex].text;
+            setStatus(`Analyzing text with ${modelName} (${detailLabels[detailLevelValue - 1]} detail)...`, 'processing');
+            document.getElementById('analyzeBtn').disabled = true;
+
+            // Define detail level instructions
+            const detailInstructions = {
+                1: 'TARGET: 5 entities. Count as you extract to ensure you reach this target. Extract only the MOST IMPORTANT entities. Focus on primary themes and main characters. Be very selective. Before finishing, verify you have approximately 5 entities.',
+                2: 'TARGET: 8 entities. Count as you extract to ensure you reach this target. Extract important entities with moderate selectivity. Include main themes, primary characters, and key concepts. Before finishing, verify you have approximately 8 entities.',
+                3: 'TARGET: 12 entities. Count as you extract to ensure you reach this target. Extract a balanced set of entities. Include themes, characters, concepts, and important literary devices. Before finishing, verify you have approximately 12 entities.',
+                4: 'TARGET: 16 entities. Count as you extract to ensure you reach this target. Extract entities with high detail. Include themes, characters, concepts, emotions, symbols, and literary devices. Before finishing, verify you have approximately 16 entities.',
+                5: 'TARGET: 20 entities. Count as you extract to ensure you reach this target. Extract comprehensive detail with all relevant entities. Include themes, characters, concepts, emotions, symbols, imagery, literary devices, and relationships. Before finishing, verify you have approximately 20 entities.'
+            };
+
+            try {
+                const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${apiKey}`,
+                        'HTTP-Referer': window.location.origin,
+                        'X-Title': 'Text Knowledge Graph'
+                    },
+                    body: JSON.stringify({
+                        model: selectedModel,
+                        messages: [{
+                            role: 'user',
+                            content: `Analyze the following text and extract entities and their relationships to create a knowledge graph.
+
+DETAIL LEVEL: ${detailInstructions[detailLevelValue]}
+
+For each entity, provide:
+- A unique ID (numbered)
+- A label (the entity name)
+- A type (Person, Concept, Event, Location, Emotion, Theme, Literary Device, Symbol, Imagery, or Entity)
+- A brief description
+- A relevant URL (Wikipedia, dictionary, or educational resource)
+
+For relationships, identify how entities connect to each other.
+
+CRITICAL: The graph must be fully connected. Every entity must have at least one relationship connecting it to another entity. Do not create isolated nodes. Ensure all entities are part of a single connected graph.
+
+Return ONLY valid JSON in this exact format (no markdown, no explanations):
+{
+  "nodes": [
+    {
+      "id": 1,
+      "label": "Entity Name",
+      "type": "Person",
+      "description": "Brief description",
+      "url": "https://en.wikipedia.org/wiki/..."
+    }
+  ],
+  "edges": [
+    {
+      "from": 1,
+      "to": 2,
+      "label": "relationship type"
+    }
+  ]
+}
+
+Text to analyze:
+${text}`
+                        }]
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`API error: ${response.status} - ${errorData.error?.message || response.statusText}`);
+                }
+
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+
+                // Parse the JSON response
+                let graphData;
+                try {
+                    // Keep only the JSON object, even if the model adds code fences or a sentence around it
+                    const jsonText = content.slice(content.indexOf('{'), content.lastIndexOf('}') + 1);
+                    graphData = JSON.parse(jsonText);
+                } catch (e) {
+                    throw new Error('Failed to parse response as JSON');
+                }
+
+                // Render the graph
+                renderGraph(graphData);
+                setStatus(`Successfully analyzed! Found ${graphData.nodes.length} entities and ${graphData.edges.length} relationships`, 'success');
+
+            } catch (error) {
+                console.error('Error:', error);
+                setStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                document.getElementById('analyzeBtn').disabled = false;
+            }
+        }
+
+        // Render the graph
+        function renderGraph(graphData) {
+            allNodes = graphData.nodes.map(node => ({
+                id: node.id,
+                label: node.label,
+                title: node.description || node.label,
+                type: node.type || 'Entity',
+                description: node.description,
+                url: node.url,
+                color: {
+                    background: typeColors[node.type] || typeColors['Entity'],
+                    border: typeColors[node.type] || typeColors['Entity'],
+                    highlight: {
+                        background: typeColors[node.type] || typeColors['Entity'],
+                        border: '#ffffff'
+                    }
+                },
+                size: 25,
+                font: {
+                    color: '#ffffff'
+                }
+            }));
+
+            allEdges = graphData.edges.map(edge => ({
+                from: edge.from,
+                to: edge.to,
+                label: edge.label || ''
+            }));
+
+            // Get all unique node types
+            nodeTypes = new Set(allNodes.map(n => n.type));
+
+            // Update filters
+            updateFilters();
+
+            // Update legend
+            updateLegend();
+
+            // Update network
+            network.setData({
+                nodes: new vis.DataSet(allNodes),
+                edges: new vis.DataSet(allEdges)
+            });
+        }
+
+        // Update filter checkboxes
+        function updateFilters() {
+            const container = document.getElementById('filterContainer');
+            container.innerHTML = '';
+
+            Array.from(nodeTypes).sort().forEach(type => {
+                const div = document.createElement('div');
+                div.className = 'filter-item';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `filter-${type}`;
+                checkbox.checked = true;
+                checkbox.addEventListener('change', applyFilters);
+
+                const label = document.createElement('label');
+                label.htmlFor = `filter-${type}`;
+                label.textContent = type;
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                container.appendChild(div);
+            });
+        }
+
+        // Apply filters
+        function applyFilters() {
+            const activeTypes = new Set();
+            Array.from(nodeTypes).forEach(type => {
+                const checkbox = document.getElementById(`filter-${type}`);
+                if (checkbox && checkbox.checked) {
+                    activeTypes.add(type);
+                }
+            });
+
+            const filteredNodes = allNodes.filter(node => activeTypes.has(node.type));
+            const filteredNodeIds = new Set(filteredNodes.map(n => n.id));
+            const filteredEdges = allEdges.filter(edge =>
+                filteredNodeIds.has(edge.from) && filteredNodeIds.has(edge.to)
+            );
+
+            network.setData({
+                nodes: new vis.DataSet(filteredNodes),
+                edges: new vis.DataSet(filteredEdges)
+            });
+        }
+
+        // Update legend
+        function updateLegend() {
+            const legend = document.getElementById('legend');
+            legend.innerHTML = '<strong style="color: #a0a0c0; margin-bottom: 8px; display: block;">NODE TYPES</strong>';
+
+            Array.from(nodeTypes).sort().forEach(type => {
+                const item = document.createElement('div');
+                item.className = 'legend-item';
+
+                const color = document.createElement('div');
+                color.className = 'legend-color';
+                color.style.backgroundColor = typeColors[type] || typeColors['Entity'];
+
+                const label = document.createElement('span');
+                label.textContent = type;
+
+                item.appendChild(color);
+                item.appendChild(label);
+                legend.appendChild(item);
+            });
+        }
+
+        // Set status message
+        function setStatus(message, type = '') {
+            const status = document.getElementById('status');
+            status.textContent = message;
+            status.className = 'status ' + type;
+        }
+
+        // Initialize
+        initNetwork();
+        document.getElementById('analyzeBtn').addEventListener('click', analyzeText);
+    </script>
+</body>
+</html>

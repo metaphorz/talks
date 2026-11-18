@@ -9,3 +9,6 @@ source/
 .DS_Store
 # working folder for the AI talks (outline, original video); the published deck is ai1/
 AI/
+
+# local-only API keys for the live apps (written by <deck>/start from ~/.env)
+config.js

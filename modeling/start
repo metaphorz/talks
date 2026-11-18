@@ -1,0 +1,14 @@
+#!/bin/zsh
+# Serve the Modeling deck locally, with the OpenRouter key from ~/.env filled in for the live app.
+# The key goes into apps/kgmaker/config.js, which git ignores; the published site never has it.
+cd "${0:A:h}"
+[ -f ~/.env ] && source ~/.env
+if [ -n "$OPENROUTER_API_KEY" ]; then
+  print -r -- "window.OPENROUTER_API_KEY = '$OPENROUTER_API_KEY';" > apps/kgmaker/config.js
+  echo "OpenRouter key loaded from ~/.env"
+else
+  echo "No OPENROUTER_API_KEY in ~/.env: paste a key into the app on slide 10"
+fi
+PORT=8791
+lsof -ti :$PORT -sTCP:LISTEN >/dev/null || (cd .. && python3 -m http.server $PORT >/dev/null 2>&1 &)
+sleep 1; open "http://localhost:$PORT/modeling/"
