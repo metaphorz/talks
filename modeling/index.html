@@ -158,16 +158,16 @@
 .s-keep .ev b{color:var(--teal)}
 
 /* ===== 6 · three kinds ===== */
-.s-kinds .grid{top:128px;grid-template-columns:1.25fr 1fr 1fr}
-.s-kinds .tile{height:418px}
+.s-kinds .grid{top:128px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.s-kinds .tile{height:440px}
 .s-kinds .tile.later{background:transparent;box-shadow:none;border:2px dashed var(--spoke)}
 .s-kinds .tile.later .big{color:var(--spoke)}
 .s-kinds .tile.later h3,.s-kinds .tile.later p{color:var(--grey)}
 .s-kinds .big{font-size:54px;font-weight:700;line-height:1;color:var(--teal)}
-.s-kinds svg{display:block;width:100%;height:118px;margin:10px 0 2px}
+.s-kinds svg{display:block;width:100%;height:104px;margin:8px 0 2px}
 .s-kinds .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
 .s-kinds .chips span{font-size:12.5px;font-weight:600;padding:4px 10px;border-radius:999px;background:var(--teal-wash);color:var(--teal)}
-.s-kinds .line{top:578px;font-size:17px}
+.s-kinds .line{top:590px;font-size:16px}
 
 /* ===== 7 · the village as knowledge ===== */
 .s-vk .psg{position:absolute;left:55px;top:126px;width:330px;padding:16px 18px}
@@ -245,6 +245,29 @@
 .s-two td:last-child{border-radius:0 12px 12px 0}
 .s-two tr[data-b]{transform:none}
 .s-two .line{top:470px;font-size:17px}
+
+/* ===== 16 · shape modeling: the wormstone ===== */
+.s-shape .photo{position:absolute;left:55px;top:124px;width:400px;height:300px;border-radius:14px;overflow:hidden;box-shadow:0 5px 12px rgba(40,30,10,.3)}
+.s-shape .photo img{display:block;width:100%;height:100%;object-fit:cover}
+.s-shape .colony{position:absolute;left:55px;top:438px;width:400px;height:200px;padding:0;overflow:hidden;background:#EFE6D3}
+.s-shape .colony canvas{display:block;width:400px;height:200px}
+.s-shape .colony .tag{position:absolute;left:12px;top:10px;z-index:1}
+.s-shape .txt{position:absolute;left:478px;top:124px;width:426px}
+.s-shape .txt .tag{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--amber)}
+.s-shape .txt h3{margin:6px 0 0;font-size:21px;line-height:1.2}
+.s-shape .txt p{margin:9px 0 0;font-size:15px;line-height:1.42}
+.s-shape .txt ol{margin:8px 0 0;padding-left:20px;font-size:14.5px;line-height:1.42}
+.s-shape .txt b{color:var(--teal)}
+.s-shape .src{position:absolute;left:478px;top:640px;width:426px;font-size:9.5px;color:var(--grey);line-height:1.35}
+
+/* ===== 18 · dynamic modeling: control flow and data flow ===== */
+.s-dyn .lead{position:absolute;left:55px;top:120px;width:849px;margin:0;font-size:15px;line-height:1.4;color:var(--ink)}
+.s-dyn .lead b{color:var(--teal)}
+.s-dyn .pan{position:absolute;top:196px;width:414px;height:410px;padding:0;overflow:hidden}
+.s-dyn .pan.a{left:55px}.s-dyn .pan.b{left:490px}
+.s-dyn .pan svg{display:block;width:414px;height:410px}
+.s-dyn .cap{position:absolute;left:55px;top:614px;width:849px;margin:0;font-size:12.5px;color:var(--grey);text-align:center}
+.s-wsl .approw .src,.s-msl .approw .src{font-size:12.5px;color:var(--grey)}
 
 /* ===== 15 · resources ===== */
 .s-res .grid{top:124px;grid-template-columns:1fr 1fr;gap:14px 21px}
@@ -393,7 +416,7 @@
 <!-- ============================================================ 6 · three kinds -->
 <section class="slide s-kinds">
   <div class="page">
-    <header class="hd"><h2>Three Kinds of Model</h2><div class="kicker">We start with the first</div></header>
+    <header class="hd"><h2>Three Kinds of Model</h2><div class="kicker">Knowledge first, then shape, then motion</div></header>
     <div class="grid">
       <article class="tile">
         <div class="big">1</div><div class="tag" style="margin-top:8px">Knowledge</div>
@@ -405,13 +428,28 @@
         <p>Its parts, facts and relations, written as connected statements.</p>
         <div class="chips"><span>knowledge graph</span><span>semantic network</span><span>concept map</span><span>mind map</span></div>
       </article>
-      <article class="tile later"><div class="big">2</div><h3>To come</h3><p>Next in the series.</p></article>
-      <article class="tile later"><div class="big">3</div><h3>To come</h3><p>Next in the series.</p></article>
+      <article class="tile">
+        <div class="big">2</div><div class="tag" style="margin-top:8px">Shape</div>
+        <svg viewBox="0 0 260 150" aria-hidden="true"><path d="M130 22 C178 18 222 46 214 82 C206 120 168 132 128 128 C82 124 44 108 46 74 C48 40 88 26 130 22 Z" fill="#E9DDC7" stroke="#8A6236" stroke-width="2.2"/>
+          <g fill="#5C4A36"><circle cx="96" cy="62" r="5"/><circle cx="118" cy="48" r="4"/><circle cx="142" cy="66" r="6"/><circle cx="170" cy="54" r="4"/><circle cx="186" cy="82" r="5"/><circle cx="156" cy="98" r="4"/><circle cx="120" cy="92" r="5"/><circle cx="84" cy="92" r="4"/><circle cx="104" cy="112" r="3.5"/><circle cx="196" cy="62" r="3"/></g></svg>
+        <h3>What a thing looks like</h3>
+        <p>Its form in space: surfaces, holes, proportions, built as geometry.</p>
+        <div class="chips"><span>curve</span><span>surface</span><span>solid</span><span>mesh</span></div>
+      </article>
+      <article class="tile">
+        <div class="big">3</div><div class="tag" style="margin-top:8px">Dynamic</div>
+        <svg viewBox="0 0 260 150" aria-hidden="true"><g fill="#fff" stroke="#1D6E73" stroke-width="2.2"><rect x="18" y="56" width="62" height="36" rx="8"/><rect x="100" y="56" width="62" height="36" rx="8"/><rect x="182" y="56" width="62" height="36" rx="8"/></g>
+          <g fill="none" stroke="#C9852F" stroke-width="2.4"><path d="M80 74 H96 M162 74 H178"/><path d="M213 56 C213 20 49 20 49 52"/></g><g fill="#C9852F"><path d="M96 69 L102 74 L96 79 Z"/><path d="M178 69 L184 74 L178 79 Z"/><path d="M44 50 L49 58 L54 50 Z"/></g>
+          <g font-family="Noto Sans" font-size="12" font-weight="700" fill="#20252B" text-anchor="middle"><text x="49" y="78">Load</text><text x="131" y="78">Heat</text><text x="213" y="78">Pop</text></g></svg>
+        <h3>How a thing changes</h3>
+        <p>Its behavior over time: steps, decisions, loops, and what flows between them.</p>
+        <div class="chips"><span>control flow</span><span>data flow</span><span>state machine</span></div>
+      </article>
     </div>
-    <p class="line" data-b="1">The model village is built from stone. A knowledge model is built from statements.</p>
+    <p class="line" data-b="1">The model village is built from stone. A knowledge model is built from statements, a shape model from geometry, a dynamic model from steps in time.</p>
   </div>
   <aside class="notes">
-    <p>[draft] Kinds 2 and 3 are placeholders until we add them.</p>
+    <p>Three kinds, three parts of the talk: knowledge (slides 7–14), shape (the wormstone) and dynamic (the simple machines).</p>
     <p>Knowledge models represent what we know or believe about a thing: its parts, its facts, and how they relate.</p>
     <p>[build] Same idea as the sandbox, different material: statements instead of sand or stone.</p>
   </aside>
@@ -572,6 +610,76 @@
     </div>
   </div>
   <aside class="notes"><p>All three apps are part of this deck's folder, so the links work from the published page.</p></aside>
+</section>
+
+<!-- ============================================================ 16 · shape modeling -->
+<section class="slide s-shape">
+  <div class="page">
+    <header class="hd"><h2>Shape Modeling: A Stone Built by Worms</h2><div class="kicker">Kind 2 · what a thing looks like</div></header>
+    <div class="photo"><img src="img/wormstone.jpg" alt="A grey, honeycombed stone full of small holes, on a wooden table"></div>
+    <article class="tile colony"><div class="tag">A colony, building</div><canvas id="colony" width="800" height="400" aria-hidden="true"></canvas></article>
+    <div class="txt">
+      <div class="tag">Who made it</div>
+      <h3>Honeycomb worms</h3>
+      <p>Along Florida’s Atlantic coast, a small marine worm, <b><i>Phragmatopoma caudata</i></b> (often called <i>P. lapidosa</i>), about 2 inches long, builds itself a tube.</p>
+      <ol>
+        <li><b>Catch</b>: tentacles pull sand grains and shell bits from the surf.</li>
+        <li><b>Place</b>: grain by grain, on the rim of its tube.</li>
+        <li><b>Cement</b>: a protein glue the worm makes itself.</li>
+      </ol>
+      <p>Thousands of tubes side by side make a <b>reef</b> that shelters fish and crabs. The flared openings give the honeycomb; broken pieces wash up on the beach.</p>
+      <div class="tag" style="margin-top:14px">The model</div>
+      <p>An irregular curve, swept into a sleeve, then carved by thousands of channels into a stone.</p>
+    </div>
+    <p class="src">Biology: Florida Oceanographic Society, “Sabellariid worm reefs”; Florida reef studies. Photo: Paul Fishwick.</p>
+  </div>
+  <aside class="notes">
+    <p>Kind 2, shape. Start with the real thing: pass the stone around if you have it. Every hole is the end of one worm's tube.</p>
+    <p>The worms are masons: catch, place, cement. A colony of them, each building its own tube, makes a reef. The drawing shows tubes being added one at a time until they fill the space.</p>
+    <p>Next: a shape model of the stone, running live.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 17 · wormstone live -->
+<section class="slide s-wsl">
+  <div class="page">
+    <header class="hd"><h2>Wormstone, Live</h2><div class="kicker">Curve → sleeve → stone · Paul Fishwick with OpenAI Codex</div></header>
+    <div class="row approw"><span class="src">Turn the stone, change the seed and the mesh detail, try wet stone or raking light</span>
+      <a href="https://metaphorz.github.io/wormstone/" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app" style="background:#fff"><div class="wait">Loading Wormstone…</div><iframe data-src="https://metaphorz.github.io/wormstone/" title="Wormstone form lab"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>The model in three steps: a closed Fourier curve for the profile; that profile swept and twisted into a sleeve; openings spread over the surface with channels running inward, thin walls kept between them, and the surface pulled out with marching cubes.</p>
+    <p>It is a shape model, not a growth simulation: it matches the look of the photo, and says so. The unseen inside is a hypothesis.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 18 · dynamic modeling -->
+<section class="slide s-dyn">
+  <div class="page">
+    <header class="hd"><h2>Dynamic Modeling: Machines in Motion</h2><div class="kicker">Kind 3 · how a thing changes · the toaster, two ways</div></header>
+    <p class="lead">A dynamic model describes behavior over time. Two diagrams answer two questions: <b>control flow</b>, who does what, in what order, and when to decide or repeat; and <b>data flow</b>, what moves between the steps: matter, energy and signals.</p>
+    <article class="tile pan a"><svg id="ctl" viewBox="0 0 414 420" aria-label="Control flow of a toaster"></svg></article>
+    <article class="tile pan b"><svg id="dfl" viewBox="0 0 414 420" aria-label="Data flow of a toaster"></svg></article>
+    <p class="cap">Simplified from the toaster’s own diagrams in Simple Machines. Each machine there has both.</p>
+  </div>
+  <aside class="notes">
+    <p>Kind 3, dynamic. Left, control flow: two lanes, you and the toaster; the token walks the steps, and the decision “strip bent enough?” loops until it is.</p>
+    <p>Right, data flow: brown is matter (slices, toast), amber is energy (power, heat), teal is signals (the trip, the shade setting). The same machine, a different question.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 19 · machines live -->
+<section class="slide s-msl">
+  <div class="page">
+    <header class="hd"><h2>Simple Machines, Live</h2><div class="kicker">16 machines · each with a control-flow and a data-flow diagram</div></header>
+    <div class="row approw"><span class="src">Pick a machine, then open its control flow and its data flow</span>
+      <a href="https://metaphorz.github.io/machines-simple/" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app" style="background:#F3EEE2"><div class="wait">Loading Simple Machines…</div><iframe data-src="https://metaphorz.github.io/machines-simple/" title="Simple Machines"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>Toaster, desk lamp, claw machine, gumball machine, clock, potted plant, home brewery, elevator, 3D printer, vending machine, canal lock and more. For each, walk through the control flow and then the data flow.</p>
+  </aside>
 </section>
 
 </div></div>
