@@ -1,0 +1,639 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Certifying a Hurricane Model</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Noto+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck.css">
+<style>
+/* ===== shared pieces ===== */
+:root{--mono:"Noto Sans Mono",ui-monospace,Menlo,monospace;--night:#151B21;--night-2:#1E262E;
+  --g:#5B636B;--m:#2F6FA3;--s:#7A5AA6;--v:#B5562F;--a:#2E8A5C;--ci:#1D6E73;--ok:#2E8A5C;--bad:#B5412F}
+.tile{position:relative;background:var(--card);border-radius:18px;padding:18px 18px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.tile.wash{background:var(--teal-wash)}
+.tile .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--amber)}
+.tile h3{margin:9px 0 0;font-size:20px;line-height:1.2;font-weight:700;color:var(--ink)}
+.tile p{margin:10px 0 0;font-size:15.5px;line-height:1.34;color:var(--ink)}
+.grid{position:absolute;left:55px;width:849px;display:grid;gap:21px}
+.line{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:16.5px;font-weight:700;color:var(--teal)}
+.btn{font:600 13.5px var(--sans);color:var(--ink);background:#fff;border:1.5px solid var(--rule);border-radius:999px;
+  padding:7px 14px;cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.btn:hover{border-color:var(--teal)}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.go{background:var(--amber);border-color:var(--amber);color:#fff}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row .lbl{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey);margin-right:4px}
+.src{position:absolute;left:57px;top:656px;width:849px;font-size:9.5px;color:var(--grey)}
+.src a{color:inherit}
+.mono{font-family:var(--mono)}
+.quote{position:absolute;left:55px;width:849px;margin:0;font-size:19px;line-height:1.38;font-style:italic;color:var(--ink-2)}
+.quote b{font-style:normal;color:var(--teal)}
+.quote cite{display:block;margin-top:6px;font-size:12px;font-style:normal;font-weight:700;color:var(--grey);letter-spacing:.02em}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes flow{to{stroke-dashoffset:-24}}
+svg text{font-family:var(--sans)}
+.dg .box rect{fill:#fff;stroke:var(--rule);stroke-width:1.6}
+.dg .box .t{font-size:14px;font-weight:700;fill:var(--ink);text-anchor:middle}
+.dg .box .d{font-size:11.5px;fill:var(--grey);text-anchor:middle}
+.dg .lnk{fill:none;stroke:#9FB8B5;stroke-width:2}
+.dg .lab{font-size:11.5px;font-style:italic;font-weight:600;fill:var(--teal);text-anchor:middle;paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+
+/* live web apps, drawn at full size and scaled onto the page */
+.app{position:absolute;left:55px;top:150px;width:849px;height:500px;border-radius:12px;overflow:hidden;
+  box-shadow:0 5px 12px rgba(40,30,10,.3);background:#fff}
+.app iframe{position:absolute;left:0;top:0;width:1415px;height:834px;border:0;transform:scale(.6);transform-origin:0 0}
+.app .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#8a8a99;font-size:14px}
+.approw{position:absolute;left:55px;top:116px;width:849px;justify-content:space-between}
+.approw a{font-size:13px;font-weight:700;color:var(--teal);text-decoration:none}
+.approw a:hover{text-decoration:underline}
+.approw .s{font-size:12.5px;color:var(--grey)}
+
+/* ===== 1 · title ===== */
+.s-title .page{background:radial-gradient(ellipse at 72% 45%,#22303A 0%,var(--night) 62%,#0E1216 100%)}
+.s-title canvas{position:absolute;left:0;top:0;width:960px;height:720px}
+.s-title .veil{position:absolute;left:0;top:0;width:560px;height:720px;
+  background:linear-gradient(90deg,rgba(14,18,22,.94) 0%,rgba(14,18,22,.78) 62%,rgba(14,18,22,0) 100%)}
+.s-title .bar{position:absolute;left:65px;top:150px;width:9px;height:250px;background:var(--amber);box-shadow:2px 3px 6px rgba(0,0,0,.5)}
+.s-title .eyebrow{position:absolute;left:99px;top:166px;font-size:12.5px;font-weight:700;color:#7FC4C0;letter-spacing:.08em}
+.s-title h1{position:absolute;left:97px;top:194px;width:470px;margin:0;font-size:54px;line-height:1.06;font-weight:700;letter-spacing:-.01em;color:#F7F3EA}
+.s-title h1 span{color:var(--amber)}
+.s-title .sub{position:absolute;left:99px;top:330px;width:420px;margin:0;font-size:18px;line-height:1.32;color:#B9C2C8}
+.s-title .six{position:absolute;left:99px;top:430px;width:440px;display:flex;flex-wrap:wrap;gap:8px}
+.s-title .six span{padding:5px 12px;border-radius:999px;border:1.5px solid #3C5560;color:#DCEBE8;font-size:13px;font-weight:600;background:rgba(29,110,115,.18)}
+.s-title .six span b{color:var(--amber);margin-right:5px}
+.s-title .by{position:absolute;left:99px;top:540px;font-size:15px;font-weight:700;color:#F7F3EA}
+.s-title .by span{display:block;margin-top:3px;font-size:12.5px;font-weight:400;color:#8C979F}
+.s-title .foot{color:#5E6A73}
+.slide.on.s-title .bar.anim{transform-origin:top;animation:growbar .8s var(--ease) both}
+.slide.on.s-title .eyebrow.anim{animation:rise .6s var(--ease) .2s both}
+.slide.on.s-title h1.anim{animation:rise .8s var(--ease) .35s both}
+.slide.on.s-title .sub.anim{animation:rise .8s var(--ease) .6s both}
+.slide.on.s-title .by.anim{animation:rise .8s var(--ease) .8s both}
+
+/* ===== 2 · how it began ===== */
+.s-begin .andrew{position:absolute;left:55px;top:124px;width:330px;height:512px;border-radius:16px;padding:22px 24px;color:#E9EEF0;overflow:hidden;
+  background:radial-gradient(ellipse at 70% 30%,#2C3E4B,#141C22 75%);box-shadow:0 8px 18px rgba(20,25,30,.4)}
+.s-begin .andrew canvas{position:absolute;right:-70px;top:-60px;width:300px;height:300px;opacity:.85}
+.s-begin .andrew .k{position:relative;font-size:11.5px;font-weight:700;letter-spacing:.08em;color:#7FC4C0}
+.s-begin .andrew h3{position:relative;margin:8px 0 0;font-size:30px;line-height:1.1;color:#F7F3EA}
+.s-begin .andrew .d{position:relative;margin-top:4px;font-size:14px;color:#9FB0BA}
+.s-begin .andrew .stat{position:relative;margin-top:18px}
+.s-begin .andrew .stat b{display:block;font-size:44px;line-height:1;color:var(--amber)}
+.s-begin .andrew .stat span{display:block;margin-top:4px;font-size:13.5px;color:#C9D3D8;line-height:1.35}
+.s-begin .andrew .stat b span{display:inline;margin:0;font-size:inherit;color:inherit}
+.s-begin .andrew .cite{position:absolute;left:24px;bottom:16px;width:282px;font-size:10.5px;color:#7F8A93;line-height:1.35}
+.s-begin .chain{position:absolute;left:404px;top:124px;width:500px}
+.s-begin .step{position:relative;display:grid;grid-template-columns:62px 1fr;gap:14px;padding:12px 16px;margin-bottom:12px}
+.s-begin .step .yr{font-size:22px;font-weight:700;color:var(--teal);line-height:1.1}
+.s-begin .step h3{margin:0;font-size:16.5px}
+.s-begin .step p{margin:4px 0 0;font-size:13.5px;line-height:1.35}
+.s-begin .step a{color:var(--teal);font-weight:700;text-decoration:none;border-bottom:1.5px solid #A9CFC9}
+.s-begin .step a:hover{border-color:var(--teal)}
+.s-begin .step.me{background:var(--teal-wash)}
+
+/* ===== 2 · why ===== */
+.s-why .quote{top:126px;text-align:center}
+.s-why svg{position:absolute;left:55px;top:236px;width:849px;height:400px}
+.s-why .axis{stroke:var(--ink-2);stroke-width:2.5}
+.s-why .tick{stroke:var(--spoke);stroke-width:1.5}
+.s-why .yr{font-size:12px;fill:var(--grey);text-anchor:middle}
+.s-why .ev .stem{stroke:var(--amber);stroke-width:2}
+.s-why .ev circle{fill:var(--amber)}
+.s-why .ev .y{font-size:17px;font-weight:700;fill:var(--teal)}
+.s-why .ev .h{font-size:14px;font-weight:700;fill:var(--ink)}
+.s-why .ev .d{font-size:12.5px;fill:var(--ink-2)}
+.s-why .ev.big circle{fill:var(--teal)}
+
+/* ===== 3 · cast ===== */
+.s-cast svg{position:absolute;left:55px;top:122px;width:849px;height:520px}
+.s-cast .box rect{transition:stroke .3s,fill .3s}
+.s-cast .box.hot rect{stroke:var(--amber);stroke-width:2.6}
+.s-cast .box.me rect{fill:var(--teal-wash);stroke:var(--teal)}
+.s-cast .lnk{transition:stroke .3s,stroke-width .3s}
+.s-cast .lnk.hot{stroke:var(--amber);stroke-width:3}
+
+/* ===== 4 · ROA ===== */
+.s-roa .book{position:absolute;left:55px;top:126px;width:290px;height:508px;border-radius:14px;padding:26px 24px;color:#E9EEF0;
+  background:linear-gradient(160deg,#243846,#15222B);box-shadow:0 8px 18px rgba(20,25,30,.4)}
+.s-roa .book .k{font-size:11.5px;font-weight:700;letter-spacing:.08em;color:#7FC4C0}
+.s-roa .book h3{margin:10px 0 0;font-size:23px;line-height:1.2;color:#F7F3EA}
+.s-roa .book .asof{margin-top:6px;font-size:13px;color:#9FB0BA}
+.s-roa .book .pages{margin-top:20px;font-size:52px;font-weight:700;line-height:1;color:var(--amber)}
+.s-roa .book .pages span{font-size:15px;font-weight:600;color:#C9D3D8;margin-left:6px}
+.s-roa .book ol{margin:18px 0 0;padding:0 0 0 18px;font-size:13px;line-height:1.62;color:#C9D3D8}
+.s-roa .book ol li.std{color:#fff;font-weight:700}
+.s-roa .groups{position:absolute;left:366px;top:126px;width:538px}
+.s-roa .grp{display:grid;grid-template-columns:150px 1fr;align-items:center;gap:10px;height:40px;cursor:pointer;border-radius:10px;padding:0 8px}
+.s-roa .grp:hover,.s-roa .grp.on{background:#fff;box-shadow:0 2px 6px rgba(40,30,10,.15)}
+.s-roa .grp .n{font-size:14px;font-weight:700;color:var(--ink)}
+.s-roa .grp .n i{font-style:normal;display:inline-block;width:30px;color:var(--c)}
+.s-roa .grp .bars{display:flex;gap:3px;align-items:center}
+.s-roa .grp .bars b{display:block;width:22px;height:20px;border-radius:4px;background:var(--c);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease)}
+.s-roa .grp .bars b.f{height:10px;width:12px;background:transparent;border:2px solid var(--c);opacity:.8}
+.s-roa.on .grp .bars b{transform:none}
+.s-roa .legend{margin:10px 8px 0;font-size:12px;color:var(--grey)}
+.s-roa .legend b{display:inline-block;width:14px;height:12px;border-radius:3px;background:var(--grey);vertical-align:-1px;margin:0 4px 0 0}
+.s-roa .legend b.f{background:transparent;border:2px solid var(--grey);width:10px;height:8px;margin-left:14px}
+.s-roa .list{position:absolute;left:366px;top:420px;width:538px;height:214px;padding:14px 18px;overflow:hidden}
+.s-roa .list ul{margin:8px 0 0;padding:0;list-style:none;columns:2;column-gap:18px;font-size:13px;line-height:1.6}
+.s-roa .list li b{color:var(--c,var(--teal));font-family:var(--mono);font-size:12px;margin-right:6px}
+
+/* ===== 5 · anatomy ===== */
+.s-std .layer{position:absolute;left:55px;width:849px;display:grid;grid-template-columns:168px 1fr;gap:16px;align-items:start;padding:12px 16px}
+.s-std .layer .who{font-size:11px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey);margin-top:4px}
+.s-std .layer h4{margin:0;font-size:17px;color:var(--teal)}
+.s-std .layer p{margin:0;font-size:14.5px;line-height:1.38;color:var(--ink)}
+.s-std .layer p i{color:var(--ink-2)}
+.s-std .layer .forms span{display:inline-block;font:600 11.5px var(--mono);padding:2px 7px;margin:0 4px 4px 0;border-radius:6px;background:var(--teal-wash);color:var(--teal)}
+.s-std .layer.std{top:122px;background:#243846;color:#fff}
+.s-std .layer.std h4{color:#7FC4C0}.s-std .layer.std .who{color:#9FB0BA}.s-std .layer.std p{color:#F1F4F5}
+.s-std .layer.pur{top:236px}.s-std .layer.frm{top:318px}.s-std .layer.dis{top:400px}.s-std .layer.aud{top:510px}
+.s-std .layer.dis{background:#FBF4E8}
+.s-std .layer.aud{background:var(--teal-wash)}
+.s-std .layer .hl{background:#F6E6CD;border-radius:4px;padding:0 3px}
+
+/* ===== 6 · cycle ===== */
+.s-cyc svg{position:absolute;left:55px;top:118px;width:470px;height:520px}
+.s-cyc .rim{fill:none;stroke:var(--rule);stroke-width:22}
+.s-cyc .arc{fill:none;stroke-width:22;stroke-linecap:butt;opacity:.35;transition:opacity .3s}
+.s-cyc .arc.on{opacity:1}
+.s-cyc .mtick{stroke:var(--paper);stroke-width:2}
+.s-cyc .mlab{font-size:10.5px;fill:var(--grey);text-anchor:middle}
+.s-cyc .ylab{font-size:13px;font-weight:700;fill:var(--ink-2);text-anchor:middle}
+.s-cyc .dot{fill:var(--amber);stroke:#fff;stroke-width:3}
+.s-cyc .now{font-size:22px;font-weight:700;fill:var(--ink);text-anchor:middle}
+.s-cyc .nowd{font-size:13px;fill:var(--grey);text-anchor:middle}
+.s-cyc .phases{position:absolute;left:545px;top:128px;width:359px;margin:0;padding:0;list-style:none}
+.s-cyc .phases li{display:grid;grid-template-columns:96px 1fr;gap:10px;padding:8px 12px;border-radius:10px;font-size:14px;line-height:1.3;transition:background .3s,box-shadow .3s}
+.s-cyc .phases li b{font-size:12.5px;color:var(--grey)}
+.s-cyc .phases li i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:var(--c)}
+.s-cyc .phases li.on{background:#fff;box-shadow:0 2px 6px rgba(40,30,10,.18)}
+.s-cyc .phases li.on b{color:var(--teal)}
+.s-cyc .exp{position:absolute;left:545px;top:600px;width:359px;font-size:13px;color:var(--grey)}
+
+/* ===== 7 · pipeline ===== */
+.s-flow .ctl{position:absolute;left:55px;top:118px}
+.s-flow svg{position:absolute;left:55px;top:162px;width:849px;height:420px}
+.s-flow .box rect{transition:fill .35s,stroke .35s}
+.s-flow .box.lit rect{fill:var(--teal);stroke:var(--teal)}
+.s-flow .box.lit .t{fill:#fff}.s-flow .box.lit .d{fill:#DCEBE8}
+.s-flow .box.bad rect{fill:#FBEAE6;stroke:var(--bad)}
+.s-flow .box.win rect{fill:var(--amber);stroke:var(--amber)}
+.s-flow .box.win .t{fill:#fff}.s-flow .box.win .d{fill:#FFF3E2}
+.s-flow .loop{opacity:0;transition:opacity .4s}
+.s-flow .loop.on{opacity:1}
+.s-flow .loop .lnk{stroke:var(--amber);stroke-dasharray:6 4}
+.s-flow.on .loop.on .lnk{animation:flow 1s linear infinite}
+.s-flow .token{fill:var(--amber);stroke:#fff;stroke-width:3}
+.s-flow .cap{position:absolute;left:55px;top:592px;width:849px;margin:0;text-align:center;font-size:16px;font-weight:700;color:var(--teal);min-height:44px}
+
+/* ===== 8 · on-site ===== */
+.s-site .ends{position:absolute;left:55px;top:120px;width:849px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;font-weight:700;color:var(--grey)}
+.s-site .ends span{padding:5px 12px;border-radius:999px;background:#fff;box-shadow:0 1px 3px rgba(40,30,10,.18);transition:background .3s,color .3s}
+.s-site .ends span.on{background:var(--amber);color:#fff}
+.s-site .ends .rail{flex:1;height:2px;background:var(--rule);margin:0 10px}
+.s-site .cols{position:absolute;left:55px;top:160px;width:849px;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
+.s-site .col{border-radius:14px;background:rgba(255,255,255,.55);padding:10px 8px 12px;height:410px;border:2px solid transparent;transition:background .4s,border-color .4s,box-shadow .4s}
+.s-site .col.on{background:#fff;border-color:var(--c);box-shadow:0 6px 14px rgba(40,30,10,.22)}
+.s-site .col h4{margin:0;font-size:13.5px;color:var(--c);line-height:1.15;overflow-wrap:anywhere}
+.s-site .col .lead{font-size:11px;color:var(--grey);margin:3px 0 9px;min-height:28px;line-height:1.25}
+.s-site .chip{display:flex;align-items:center;gap:4px;font-size:11px;line-height:1.2;padding:4px 5px;margin-bottom:5px;border-radius:7px;background:#F3EEE2;color:var(--ink-2);transition:background .3s,color .3s}
+.s-site .chip b{font-family:var(--mono);font-size:10px;color:var(--c);flex:none;width:31px}
+.s-site .chip.done{background:var(--c);color:#fff}
+.s-site .chip.done b{color:#fff}
+.s-site .chip.done::after{content:"✓";margin-left:auto;font-weight:700}
+.s-site .foot2{position:absolute;left:55px;top:584px;width:849px;display:flex;align-items:center;gap:14px}
+.s-site .foot2 p{margin:0;font-size:14px;color:var(--ink-2);flex:1}
+
+/* ===== 9 · what is checked ===== */
+.s-chk .grid{top:124px;grid-template-columns:repeat(3,1fr);gap:14px}
+.s-chk .tile{padding:14px 16px;height:150px}
+.s-chk .tile .n{font-size:28px;font-weight:700;color:var(--teal);line-height:1}
+.s-chk .tile h3{font-size:16.5px;margin-top:6px}
+.s-chk .tile p{font-size:13.5px;margin-top:5px}
+.s-chk .quote{top:466px;font-size:16.5px}
+.s-chk .quote.b{top:566px;font-size:14.5px}
+
+/* ===== 10 · pass or revisit ===== */
+.s-out svg{position:absolute;left:55px;top:120px;width:560px;height:520px}
+.s-out .side{position:absolute;left:632px;top:126px;width:272px}
+.s-out .side .tile{padding:14px 16px;margin-bottom:12px}
+.s-out .side .tile p{font-size:13.5px;margin-top:6px}
+.s-out .side .tile h3{font-size:16px;margin-top:4px}
+.s-out .ok rect{fill:#E3F1E8;stroke:var(--ok)}
+.s-out .no rect{fill:#FBEAE6;stroke:var(--bad)}
+.s-out .clock{font-size:12px;font-weight:700;fill:var(--amber);text-anchor:middle}
+
+/* ===== 11 · vote ===== */
+.s-vote .meet{position:absolute;left:55px;top:120px;width:849px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.s-vote .meet .tile{padding:10px 14px;height:96px}
+.s-vote .meet h3{margin:2px 0 0;font-size:15.5px}
+.s-vote .meet p{margin:4px 0 0;font-size:12.5px;line-height:1.3}
+.s-vote .meet .tile.closed{background:#243846}
+.s-vote .meet .tile.closed h3{color:#fff}.s-vote .meet .tile.closed p{color:#C9D3D8}.s-vote .meet .tile.closed .tag{color:#E6B36E}
+.s-vote .ctl{position:absolute;left:55px;top:232px}
+.s-vote .board{position:absolute;left:55px;top:272px;width:849px;display:grid;grid-template-columns:repeat(6,1fr);gap:9px}
+.s-vote .gcol h4{margin:0 0 6px;font-size:12px;color:var(--c);letter-spacing:.02em;text-transform:uppercase}
+.s-vote .st{display:flex;align-items:center;justify-content:space-between;height:25px;padding:0 8px;margin-bottom:4px;border-radius:6px;background:#fff;
+  font:600 11.5px var(--mono);color:var(--ink-2);box-shadow:0 1px 2px rgba(40,30,10,.15);transition:background .25s,color .25s,transform .25s}
+.s-vote .st.y{background:var(--ok);color:#fff}
+.s-vote .st.n{background:var(--bad);color:#fff;transform:scale(1.06)}
+.s-vote .st .v{font-family:var(--sans);font-size:11px}
+.s-vote .verdict{position:absolute;left:55px;top:600px;width:849px;margin:0;text-align:center;font-size:17px;font-weight:700;color:var(--grey);transition:color .3s}
+.s-vote .verdict.y{color:var(--ok)}.s-vote .verdict.n{color:var(--bad)}
+
+/* ===== 12 · unlock ===== */
+.s-unl .quote{top:128px;font-size:19.5px}
+.s-unl .quote mark{background:#F6E6CD;color:inherit;border-radius:4px;padding:0 3px}
+.s-unl svg{position:absolute;left:55px;top:330px;width:849px;height:300px}
+.s-unl .stamp{font-size:15px;font-weight:700;fill:var(--amber);letter-spacing:.12em;text-anchor:middle}
+
+/* ===== 13 · money ===== */
+.s-money .ctl{position:absolute;left:55px;top:118px}
+.s-money svg{position:absolute;left:55px;top:160px;width:849px;height:440px}
+.s-money .coin{fill:var(--amber);stroke:#8A5A1E;stroke-width:1}
+.s-money .coin.b{fill:#7A5AA6;stroke:#4D3770}
+.s-money .storm{opacity:0;transition:opacity .5s}
+.s-money.big .storm{opacity:1}
+.s-money .cap{position:absolute;left:55px;top:604px;width:849px;margin:0;text-align:center;font-size:15px;font-weight:700;color:var(--teal)}
+
+/* ===== 14 · years ===== */
+.s-yrs svg{position:absolute;left:55px;top:120px;width:849px;height:520px}
+.s-yrs .org{font-size:13px;font-weight:600;fill:var(--ink);text-anchor:end}
+.s-yrs .yr{font-size:10.5px;fill:var(--grey);text-anchor:middle}
+.s-yrs .dot{fill:var(--teal);transition:r .3s}
+.s-yrs .rowbg{fill:transparent}
+.s-yrs .rowg:hover .rowbg{fill:#fff}
+.s-yrs .rowg:hover .dot{fill:var(--amber)}
+.s-yrs .cursor{stroke:var(--amber);stroke-width:2}
+.s-yrs .count{font-size:12px;font-weight:700;fill:var(--grey)}
+
+/* ===== 15 · computer/information ===== */
+.s-ci svg{position:absolute;left:55px;top:118px;width:560px;height:460px}
+.s-ci .vbox rect{fill:#fff;stroke:var(--ci);stroke-width:1.8}
+.s-ci .vbox text{font-size:13px;font-weight:700;fill:var(--ink);text-anchor:middle}
+.s-ci .vbox text.c{font:600 11px var(--mono);fill:var(--ci)}
+.s-ci .vbox.lit rect{fill:var(--ci)}
+.s-ci .vbox.lit text{fill:#fff}
+.s-ci .thread{fill:none;stroke:var(--amber);stroke-width:4;stroke-linecap:round}
+.s-ci .side{position:absolute;left:630px;top:124px;width:274px}
+.s-ci .side .tile{padding:13px 15px;margin-bottom:11px}
+.s-ci .side .tile p{font-size:13px;margin-top:5px;line-height:1.35}
+.s-ci .side .tile h3{font-size:15.5px;margin-top:3px}
+.s-ci .line{top:600px;font-size:15px}
+
+/* ===== 18 · close ===== */
+.s-end svg{position:absolute;left:55px;top:118px;width:849px;height:430px}
+.s-end .loopr{fill:none;stroke:var(--rule);stroke-width:3}
+.s-end .pulse{fill:var(--amber)}
+.s-end .grid{top:560px;grid-template-columns:repeat(3,1fr);gap:12px}
+.s-end .grid .tile{padding:9px 14px}
+.s-end .grid p{margin:0;font-size:12.5px}
+.s-end .grid a{color:var(--teal);font-weight:700;text-decoration:none}
+</style>
+</head>
+<body data-footer="Florida Catastrophe Modeling · Certifying a Hurricane Model">
+<div id="viewport"><div id="stage">
+
+<!-- ============================================================ 1 · title -->
+<section class="slide s-title" data-nonum>
+  <div class="page">
+    <canvas id="storm" width="1920" height="1440" aria-hidden="true"></canvas>
+    <div class="veil"></div>
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">FLORIDA CATASTROPHE MODELING</div>
+    <h1 class="anim">Certifying a Hurricane Model<span>.</span></h1>
+    <p class="sub anim">How Florida decides which computer models may be used to price hurricane insurance.</p>
+    <div class="six"><span><b>G</b>General</span><span><b>M</b>Meteorology</span><span><b>S</b>Statistics</span><span><b>V</b>Vulnerability</span><span><b>A</b>Actuarial</span><span><b>CI</b>Computer/Information</span></div>
+    <div class="by anim">Paul Fishwick<span>Professional Team, Computer/Information · Florida Commission on Hurricane Loss Projection Methodology</span></div>
+  </div>
+  <aside class="notes">
+    <p>The storm is drawn live: spiral rain bands turning around a clear eye, the way it looks from a satellite.</p>
+    <p>The six chips are the six groups of standards every model is audited against. The talk follows one model through that audit.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 · how it began -->
+<section class="slide s-begin">
+  <div class="page">
+    <header class="hd"><h2>How It Began</h2><div class="kicker">Hurricane Andrew, failed insurers, and the Legislature’s answer</div></header>
+    <div class="andrew">
+      <canvas id="andrew" width="600" height="600" aria-hidden="true"></canvas>
+      <div class="k">AUGUST 24, 1992</div>
+      <h3>Hurricane Andrew</h3>
+      <div class="d">Category 5 at landfall, south Miami-Dade County</div>
+      <div class="stat"><b><span class="cnt" data-to="15.5" data-pre="$" data-post="B" data-dec="1">$15.5B</span></b><span>insured losses, the costliest U.S. disaster to that date</span></div>
+      <div class="stat"><b><span class="cnt" data-to="11">11</span></b><span>insurers insolvent, and dozens more badly weakened</span></div>
+      <div class="stat"><b>0</b><span>standards for judging whether a hurricane loss model could be trusted</span></div>
+      <div class="cite">Losses: Property Claim Services. Insolvencies: A.M. Best (other counts range from 8 to 16).</div>
+    </div>
+    <div class="chain">
+      <article class="tile step" data-b="1"><div class="yr">1993</div><div><h3>A state reinsurance fund</h3><p>The Florida Hurricane Catastrophe Fund, <a href="https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&amp;URL=0200-0299/0215/Sections/0215.555.html" target="_blank" rel="noopener">s. 215.555, F.S.</a>, so a single storm cannot break the market again.</p></div></article>
+      <article class="tile step" data-b="2"><div class="yr">1995</div><div><h3>The Commission</h3><p>The Legislature enacts <a href="https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&amp;URL=0600-0699/0627/Sections/0627.0628.html" target="_blank" rel="noopener">s. 627.0628, F.S.</a> (CS/HB 2619, Ch. 95-276, Laws of Florida): a panel of experts to judge hurricane loss models.</p></div></article>
+      <article class="tile step" data-b="3"><div class="yr">1995</div><div><h3>Tied to rates</h3><p>Rate filings under <a href="https://www.leg.state.fl.us/statutes/index.cfm?App_mode=Display_Statute&amp;URL=0600-0699/0627/Sections/0627.062.html" target="_blank" rel="noopener">s. 627.062, F.S.</a> must use methods and models the Commission finds accurate or reliable.</p></div></article>
+      <article class="tile step me" data-b="4"><div class="yr">1996</div><div><h3>The audits begin</h3><p>First standards adopted June 3, 1996. The Professional Team starts its on-site reviews, and the first model is found acceptable.</p></div></article>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>How it all began: Andrew made landfall in south Miami-Dade on August 24, 1992. Insured losses were about $15.5 billion; at least eleven insurers became insolvent. Nobody had a trusted way to price the risk.</p>
+    <p>[build 1] 1993: the Cat Fund, a state reinsurance fund.</p>
+    <p>[build 2] 1995: the Florida Legislature writes s. 627.0628, creating the Commission. The links open the statutes on the Legislature's site.</p>
+    <p>[build 3] The statute ties rate filings to the Commission's findings.</p>
+    <p>[build 4] 1996: the first standards, and our on-site audits begin. Thirty years of them.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 · why -->
+<section class="slide s-why">
+  <div class="page">
+    <header class="hd"><h2>Why Florida Built This</h2><div class="kicker">From a hurricane, to a statute, to a process</div></header>
+    <p class="quote">“Reliable projections of hurricane losses are necessary to assure that rates for residential insurance are <b>neither excessive nor inadequate</b>.”<cite>— FLORIDA LEGISLATURE, S. 627.0628(1), F.S. (1995)</cite></p>
+    <svg id="why" viewBox="0 0 849 400" aria-label="Timeline from 1992 to 2025"></svg>
+    <p class="src">Source: Hurricane Standards Report of Activities as of November 1, 2025 (Introduction; Overview).</p>
+  </div>
+  <aside class="notes">
+    <p>The Florida Legislature wrote the statute, s. 627.0628, that created the Commission in 1995: a panel of experts to decide which hurricane models are accurate and reliable enough to use in setting residential insurance rates.</p>
+    <p>[builds] Andrew, the Cat Fund, the statute, the first standards and the first accepted model, the move to a two-year cycle, flood, and today's 2025 standards.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 · cast -->
+<section class="slide s-cast">
+  <div class="page">
+    <header class="hd"><h2>Who Does What</h2><div class="kicker">The parties in the process · hover a role</div></header>
+    <svg id="cast" class="dg" viewBox="0 0 849 520" aria-label="Who does what"></svg>
+  </div>
+  <aside class="notes">
+    <p>The Legislature created the Commission; the State Board of Administration houses it and runs the reviews.</p>
+    <p>[build 1] Modeling organizations build the models; the Professional Team audits them and reports to the Commission. Eleven experts in five disciplines; I am one of the two Computer/Information members.</p>
+    <p>[build 2] Insurers must use an accepted model in a rate filing; the Office of Insurance Regulation reviews the filing.</p>
+    <p>[build 3] The Florida Hurricane Catastrophe Fund uses accepted models to set its reimbursement premiums; homeowners pay for all of it through their premiums.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 · ROA -->
+<section class="slide s-roa">
+  <div class="page">
+    <header class="hd"><h2>The Rulebook: Report of Activities</h2><div class="kicker">Rewritten every odd-numbered year · click a group of standards</div></header>
+    <div class="book">
+      <div class="k">FLORIDA COMMISSION ON HURRICANE LOSS PROJECTION METHODOLOGY</div>
+      <h3>Hurricane Standards Report of Activities</h3>
+      <div class="asof">as of November 1, 2025</div>
+      <div class="pages"><span id="roa-n">386</span><span>pages</span></div>
+      <ol><li>Introduction · Principles</li><li>Commission Structure</li><li>Findings of the Commission</li><li>Acceptability Process</li><li>On-Site Review</li><li class="std">Standards, Disclosures, Audit Items, Forms</li><li>Definitions · References</li><li>Inquiries · Appendices</li></ol>
+    </div>
+    <div class="groups" id="roa-groups"></div>
+    <article class="tile list" id="roa-list"></article>
+  </div>
+  <aside class="notes">
+    <p>The ROA is the rulebook. The Commission rewrites it every odd-numbered year; this is the 2025 edition, adopted October 28, 2025.</p>
+    <p>38 standards in six groups. Solid squares are standards, outlined ones are forms: the tables and maps a modeling organization must fill in.</p>
+    <p>Click a group to list its standards. CI-1 and CI-2 are new in 2025: traceability and AI-based software engineering.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 5 · anatomy -->
+<section class="slide s-std">
+  <div class="page">
+    <header class="hd"><h2>Anatomy of a Standard</h2><div class="kicker">G-1 · Scope of the Hurricane Model and Its Implementation</div></header>
+    <div class="tile layer std"><div><h4>Standard</h4><div class="who">Commission · what must be true</div></div>
+      <p>A. The hurricane model shall project accurate and reliable loss costs and probable maximum loss levels for damage to insured residential property from hurricane events.<br>B. A documented process shall be maintained to ensure continual agreement and correct correspondence of databases, data files, and computer source code to presentation materials…</p></div>
+    <div class="tile layer pur" data-b="1"><div><h4>Purpose</h4><div class="who">why it exists</div></div>
+      <p>A high-level view of the model that projects loss costs and probable maximum loss levels for insured residential property.</p></div>
+    <div class="tile layer frm" data-b="2"><div><h4>Relevant forms</h4><div class="who">the numbers to supply</div></div>
+      <p class="forms"><span>G-1</span><span>M-1</span><span>M-3</span><span>M-4</span><span>S-2</span><span>A-1</span><span>A-2</span><span>A-3</span><span>A-4</span><span>A-5</span><span>A-6</span><span>A-8</span></p></div>
+    <div class="tile layer dis" data-b="3"><div><h4>Disclosures</h4><div class="who">modeling organization · in the Submission</div></div>
+      <p>6 disclosures, e.g. <i>“Provide a <span class="hl">fully labeled flowchart, concept map, or semantic network</span> that illustrates interactions among, and the network organization of, major hurricane model components.”</i></p></div>
+    <div class="tile layer aud" data-b="4"><div><h4>Audit</h4><div class="who">Professional Team · on-site</div></div>
+      <p>5 audit items, e.g. <i>“Compliance with the requirements in Standard G-1.B will be reviewed.” “Maps, databases, and data files relevant to the Submission will be reviewed as encountered.”</i></p></div>
+  </div>
+  <aside class="notes">
+    <p>Every one of the 38 standards has the same layers. The Commission writes the standard; the modeling organization answers the disclosures in its Submission; the Professional Team works through the audit items on-site.</p>
+    <p>[build 3] Note the disclosure: a concept map or semantic network of the model — the knowledge models from the first talk.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 6 · cycle -->
+<section class="slide s-cyc">
+  <div class="page">
+    <header class="hd"><h2>One Cycle, Two Years</h2><div class="kicker">The 2025 hurricane standards, month by month</div></header>
+    <svg id="cyc" viewBox="0 0 470 520" aria-label="Two-year review cycle"></svg>
+    <ol class="phases" id="cyc-list"></ol>
+    <p class="exp">An acceptance under the 2025 standards expires November 1, 2029. By then two more cycles have begun.</p>
+  </div>
+  <aside class="notes">
+    <p>The dot runs around the two-year cycle from the ROA's schedule. The phases on the right light up as it passes.</p>
+    <p>Most of the first year is the modeling organizations' time to build and document. The Professional Team's on-site reviews are January to April of the second year.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7 · pipeline -->
+<section class="slide s-flow">
+  <div class="page">
+    <header class="hd"><h2>From Submission to Acceptance</h2><div class="kicker">One model through the Acceptability Process · run it</div></header>
+    <div class="row ctl" id="flow-ctl"><span class="lbl">Run</span><button class="btn" data-run="clean">A clean review</button><button class="btn" data-run="issues">Issues found on-site</button></div>
+    <svg id="flow" class="dg" viewBox="0 0 849 420" aria-label="Acceptability process pipeline"></svg>
+    <p class="cap" id="flow-cap">Choose a run.</p>
+  </div>
+  <aside class="notes">
+    <p>Clean review: Submission, deficiencies corrected, pre-visit letter, on-site review, the Professional Team report, the Commission meeting, acceptance, then rate filings.</p>
+    <p>Issues found: the model goes round the additional verification loop before the report: request within 7 days, revised documents within 60 days, then the team returns.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 8 · on-site -->
+<section class="slide s-site">
+  <div class="page">
+    <header class="hd"><h2>Inside the On-Site Review</h2><div class="kicker">General first, then each discipline leads its own standards</div></header>
+    <div class="ends"><span id="site-open">Opening briefing</span><div class="rail"></div><span id="site-exit">Exit briefing · draft report</span></div>
+    <div class="cols" id="site-cols"></div>
+    <div class="foot2"><button class="btn go" id="site-play">▶ Run the review</button><p id="site-cap">Each standard: the disclosures are discussed, every audit item is checked, trade-secret material is shown, and the model is run live.</p></div>
+  </div>
+  <aside class="notes">
+    <p>The review runs by standards group. General first (team leader), then meteorology, statistics, vulnerability (structural engineering), actuarial, and computer/information.</p>
+    <p>The specialist for each area leads, the rest of the team joins in. Pre-visit letter requests are answered within the standard they belong to.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 9 · what is checked -->
+<section class="slide s-chk">
+  <div class="page">
+    <header class="hd"><h2>What the Team Does On-Site</h2><div class="kicker">The six parts of an on-site review · from the ROA</div></header>
+    <div class="grid">
+      <article class="tile" data-b="1"><div class="n">1</div><h3>Due diligence</h3><p>Review what was submitted, focusing on changes since the last accepted model.</p></article>
+      <article class="tile" data-b="1"><div class="n">2</div><h3>Live runs</h3><p>Run the model under the team’s control and supervision, in real time.</p></article>
+      <article class="tile" data-b="1"><div class="n">3</div><h3>Data and code</h3><p>Inspect data and source code on request, in an agreeable time frame.</p></article>
+      <article class="tile" data-b="2"><div class="n">4</div><h3>Verify the description</h3><p>Are the disclosures and forms valid, accurate and fairly complete?</p></article>
+      <article class="tile" data-b="2"><div class="n">5</div><h3>Check compliance</h3><p>Standard by standard, audit item by audit item.</p></article>
+      <article class="tile" data-b="2"><div class="n">6</div><h3>Trade secrets</h3><p>See proprietary data and methods that never appear in public.</p></article>
+    </div>
+    <p class="quote" data-b="3">“The objective is to observe the hurricane model in operation and the results it produces during a ‘real time’ run. This is necessary in order to <b>avoid the possibility that the modeling organization could recalibrate the hurricane model solely for producing desirable results</b>.”</p>
+    <p class="quote b" data-b="4">At the end, every team member attests that all trade secret material and digital notes on their computers have been deleted, “and that the recycle bin or its equivalent has been emptied.”</p>
+  </div>
+  <aside class="notes">
+    <p>The six activities listed in the ROA's On-Site Review chapter.</p>
+    <p>[build 3] Why live runs matter.</p>
+    <p>[build 4] How seriously trade secrets are taken.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 10 · pass or revisit -->
+<section class="slide s-out">
+  <div class="page">
+    <header class="hd"><h2>Pass, or Revisit</h2><div class="kicker">The two outcomes of an on-site review</div></header>
+    <svg id="out" class="dg" viewBox="0 0 560 520" aria-label="Outcomes of the on-site review"></svg>
+    <div class="side">
+      <article class="tile" data-b="3"><div class="tag">The rule</div><p>“The Professional Team may react to possible corrections proposed by the modeling organization but <b>shall not tell the modeling organization how to correct</b> the non-compliance.”</p></article>
+      <article class="tile" data-b="4"><div class="tag">If they disagree</div><h3>Two options</h3><p>Go to the Commission meeting and argue the case there, or withdraw and wait for the next standards.</p></article>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>[build 1] Complies: the team reports that to the Commission.</p>
+    <p>[build 2] Does not comply: fix it while we are there if possible; otherwise request an additional verification review within 7 days, send revised documents within 60 days, and the team (or part of it) comes back.</p>
+    <p>[build 3] We audit; we do not consult.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 11 · vote -->
+<section class="slide s-vote">
+  <div class="page">
+    <header class="hd"><h2>The Commission Decides</h2><div class="kicker">A public meeting · every standard voted on</div></header>
+    <div class="meet">
+      <article class="tile"><div class="tag">1 · Public</div><h3>Overview and changes</h3><p>About 20 minutes; an hour for a new model.</p></article>
+      <article class="tile closed"><div class="tag">2 · Closed meeting</div><h3>Trade secrets</h3><p>Audit slides shown again. Recorded. No voting.</p></article>
+      <article class="tile"><div class="tag">3 · Public</div><h3>Standard by standard</h3><p>Each one stated, demonstrated with evidence, and voted on.</p></article>
+    </div>
+    <div class="row ctl" id="vote-ctl"><span class="lbl">Vote</span><button class="btn" data-v="all">All 38 pass</button><button class="btn" data-v="one">One standard fails</button></div>
+    <div class="board" id="vote-board"></div>
+    <p class="verdict" id="vote-verdict">To be acceptable, a model must be found acceptable on every standard.</p>
+  </div>
+  <aside class="notes">
+    <p>“If the model fails to be found acceptable by a majority vote for any one standard, the model shall not be found acceptable.”</p>
+    <p>Run both: all 38 pass, and the version where a single standard fails. A failed model can be appealed within 30 days.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 12 · unlock -->
+<section class="slide s-unl">
+  <div class="page">
+    <header class="hd"><h2>What Acceptance Unlocks</h2><div class="kicker">The statute ties rate filings to accepted models</div></header>
+    <p class="quote">“An insurer <mark>shall employ and may not modify or adjust</mark> actuarial methods, principles, standards, models, or output ranges found by the commission to be accurate or reliable in determining hurricane loss factors and probable maximum loss levels for use in a rate filing under s. 627.062. An insurer may employ a model in a rate filing until <mark>120 days after the expiration</mark> of the commission’s acceptance of that model…”<cite>— S. 627.0628(3)(D), F.S.</cite></p>
+    <svg id="unl" class="dg" viewBox="0 0 849 300" aria-hidden="true"></svg>
+  </div>
+  <aside class="notes">
+    <p>No accepted model, no hurricane rate filing. That is why modeling organizations go through all of this every two years.</p>
+    <p>The same findings are used by the Cat Fund: the SBA must, “to the extent feasible,” use Commission-accepted methods to set FHCF reimbursement premiums (s. 627.0628(3)(c)).</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 13 · money -->
+<section class="slide s-money">
+  <div class="page">
+    <header class="hd"><h2>Follow the Money</h2><div class="kicker">Premiums, the Florida Hurricane Catastrophe Fund, and its bonds</div></header>
+    <div class="row ctl" id="money-ctl"><span class="lbl">Show</span><button class="btn on" data-y="quiet">A quiet year</button><button class="btn" data-y="big">After a major hurricane</button></div>
+    <svg id="money" class="dg" viewBox="0 0 849 440" aria-label="Money flows between homeowners, insurers and the Cat Fund"></svg>
+    <p class="cap" id="money-cap"></p>
+    <p class="src">Sources: FHCF annual reports and bonding capacity reports (fhcf.sbafla.com); s. 215.555, F.S.</p>
+  </div>
+  <aside class="notes">
+    <p>Quiet year: homeowners pay premiums; part of what the insurer collects goes to the Cat Fund as a mandatory reimbursement premium, priced with accepted models.</p>
+    <p>After a major hurricane: the Fund reimburses insurers for part of their losses. If it needs more than it holds, it issues revenue bonds, repaid by emergency assessments on most Florida property and casualty policies, not only homeowners.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 14 · years -->
+<section class="slide s-yrs">
+  <div class="page">
+    <header class="hd"><h2>Thirty Years of Accepted Models</h2><div class="kicker">Hurricane models found acceptable, by standards year · hover a row</div></header>
+    <svg id="yrs" viewBox="0 0 849 520" aria-label="Accepted models by year"></svg>
+    <p class="src">Source: Hurricane Standards Report of Activities as of November 1, 2025, Overview. Names as listed there; former names omitted.</p>
+  </div>
+  <aside class="notes">
+    <p>Annual standards from 1996 to 2009, then every odd year. Four organizations have been accepted under nearly every set of standards; others came and went.</p>
+    <p>Models under the 2025 standards will be reviewed in 2027.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 15 · computer/information -->
+<section class="slide s-ci">
+  <div class="page">
+    <header class="hd"><h2>Computer/Information: Code Dives</h2><div class="kicker">CI-1 · tracing a requirement into the code</div></header>
+    <svg id="ci" viewBox="0 0 560 460" aria-label="Traceability through the CI standards"></svg>
+    <div class="side">
+      <article class="tile"><div class="tag">CI-1.A · new in 2025</div><p>Meteorology, vulnerability and actuarial requirements “shall be traceable through code segments… through CI-3, CI-4, CI-5, CI-6, and CI-7 in sequence, and shall be demonstrated through <b>Code Dives</b>.”</p></article>
+      <article class="tile" data-b="2"><div class="tag">CI-2 · new in 2025</div><h3>AI-based software engineering</h3><p>A written AI policy: where AI is used, what is prohibited, how its output is checked, and how incidents are reported.</p></article>
+      <article class="tile" data-b="3"><div class="tag">Finding 8</div><h3>Interactive traceability</h3><p>To be considered for the 2027 hurricane standards: tracing requirements, design, code and tests live, during the review.</p></article>
+    </div>
+    <p class="line" data-b="1">One requirement, followed from the science down to the line of code that implements it, and back up through its tests.</p>
+  </div>
+  <aside class="notes">
+    <p>My part of the audit. The ten CI standards follow the software life cycle; CI-1 is the thread that ties them together.</p>
+    <p>[build 1] The amber thread is a Code Dive: pick a requirement, say a change to the windfield, and follow it through documentation, requirements, design, code and verification.</p>
+    <p>[builds 2–3] What is new: AI in software engineering, and interactive traceability coming next cycle. The next two slides are working prototypes.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 16 · flowchart ↔ code -->
+<section class="slide s-fc">
+  <div class="page">
+    <header class="hd"><h2>Flowchart ↔ Code</h2><div class="kicker">Live · an interactive traceability prototype · Paul Fishwick with Claude Code</div></header>
+    <div class="row approw"><span class="s">Click a box in the flowchart to jump to its code, or a code step to find its box</span>
+      <a href="apps/flowcode/" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app"><div class="wait">Loading the explorer…</div><iframe data-src="apps/flowcode/" title="Flowchart and code explorer"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>What Finding 8 asks for, in miniature: a flowchart and the code it describes, linked both ways.</p>
+    <p>The example is a coastal transect wave model: flowchart on one side, source on the other.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 17 · standards graph -->
+<section class="slide s-kg">
+  <div class="page">
+    <header class="hd"><h2>The Rulebook as a Graph</h2><div class="kicker">Live · 38 standards, 29 forms, 145 links from the ROA</div></header>
+    <div class="row approw"><span class="s">Each standard linked to the forms it lists as relevant · click a node or a group</span>
+      <a href="apps/standardsgraph/" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app"><div class="wait">Loading the graph…</div><iframe data-src="apps/standardsgraph/" title="Standards and forms knowledge graph"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>The knowledge models from the first talk, turned on the rulebook itself: every standard and the forms it depends on, extracted from the ROA.</p>
+    <p>Hubs show how intertwined the review is: A-8 and G-1 reach across every discipline; the G forms are the signed expert certifications.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 18 · close -->
+<section class="slide s-end">
+  <div class="page">
+    <header class="hd"><h2>One Loop, Every Two Years</h2><div class="kicker">Thirty years of the same discipline</div></header>
+    <svg id="endloop" class="dg" viewBox="0 0 849 430" aria-label="The loop from statute to premiums"></svg>
+    <div class="grid">
+      <article class="tile"><p><a href="https://fchlpm.sbafla.com/" target="_blank" rel="noopener">fchlpm.sbafla.com</a> · the Commission: standards, meetings, accepted models</p></article>
+      <article class="tile"><p><a href="https://fchlpm.sbafla.com/model-submissions/" target="_blank" rel="noopener">Model Submissions</a> · final Submissions of accepted models</p></article>
+      <article class="tile"><p><a href="https://fhcf.sbafla.com/" target="_blank" rel="noopener">fhcf.sbafla.com</a> · the Florida Hurricane Catastrophe Fund</p></article>
+    </div>
+  </div>
+  <aside class="notes">
+    <p>The whole talk in one loop: statute, standards, Submission, audit, vote, rate filings, premiums, the Cat Fund. Then the standards are revised and it starts again.</p>
+  </aside>
+</section>
+
+</div></div>
+<div id="hint">→ / click to advance · F fullscreen · P presenter view</div>
+<div id="presenter">
+  <div id="pv-notes"></div>
+  <div id="pv-side">
+    <div id="pv-next"><div class="label">Next</div><div id="pv-nextstage"></div></div>
+    <div><div id="pv-count"></div><div id="pv-build"></div></div>
+    <div><div class="label">Elapsed (click to reset)</div><div id="pv-timer">0:00</div><div id="pv-clock"></div></div>
+  </div>
+</div>
+
+<script src="slides.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>

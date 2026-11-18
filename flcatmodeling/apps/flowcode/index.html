@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Flowchart ↔ Code Explorer</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, sans-serif;
+      background: #1b1b1d;
+      color: #f4f4f7;
+      display: flex;
+      height: 100vh;
+    }
+
+    .pane {
+      flex: 1;
+      overflow: auto;
+      padding: 16px 20px;
+      box-sizing: border-box;
+    }
+
+    .pane + .pane {
+      border-left: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+
+    #diagram-container {
+      display: flex;
+      justify-content: center;
+    }
+
+    #diagram-container object {
+      max-width: 100%;
+      height: auto;
+    }
+
+    svg .highlightable {
+      transition: fill 160ms ease, stroke 160ms ease, stroke-width 160ms ease;
+      cursor: pointer;
+    }
+
+    svg text.highlight-text {
+      transition: fill 160ms ease, font-weight 160ms ease;
+      cursor: pointer;
+    }
+
+    svg .highlightable.active {
+      fill: #ffe066 !important;
+      stroke: #c58c00 !important;
+      stroke-width: 2.5 !important;
+    }
+
+    svg text.highlight-text.active {
+      fill: #161616 !important;
+      font-weight: 700;
+    }
+
+    section[data-step] {
+      margin-bottom: 20px;
+      padding: 14px 16px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      border-left: 4px solid transparent;
+      transition: background 160ms ease, border 160ms ease;
+    }
+
+    section[data-step] h2 {
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #ffe066;
+    }
+
+    section[data-step] pre {
+      margin: 0;
+      padding: 0;
+      font-family: "Fira Code", "Source Code Pro", monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      color: #e0e0e5;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    section[data-step].active {
+      background: rgba(255, 224, 102, 0.15);
+      border-left-color: #ffe066;
+    }
+  </style>
+</head>
+<body>
+  <div class="pane">
+    <h1>Process Flow</h1>
+    <div id="diagram-container">
+      <div id="flowchart-wrapper"></div>
+    </div>
+  </div>
+  <div class="pane">
+    <h1>Relevant Code</h1>
+
+    <section data-step="load">
+      <h2>Initialize Map & Imagery</h2>
+      <pre><code>// Create Leaflet map instance
+var map = L.map('map');
+
+// Add Esri World Imagery as base tile layer
+// Provides high-resolution satellite imagery
+var imageryBase = L.tileLayer(
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+  { attribution: 'Tiles © Esri' }
+).addTo(map);
+
+// Add custom control panel with still-water level and fetch sliders
+addWaveSettingsControl(map);</code></pre>
+    </section>
+
+    <section data-step="raster-check">
+      <h2>Load Rasters & Handle Failures</h2>
+      <pre><code>// Load all raster datasets (lidar, bathymetry, landcover) in parallel
+// Each raster is fetched, parsed, and error-handled independently
+Promise.all(
+  rasterConfigs.map(function(config) {
+    return fetch(config.url)
+      .then(function(response) {
+        // Check HTTP response status
+        if (!response.ok) {
+          throw new Error('Failed to load ' + config.url);
+        }
+        return response.arrayBuffer();
+      })
+      .then(parseGeoraster)  // Parse GeoTIFF into georaster object
+      .catch(function(error) {
+        // Log errors but don't fail entire load
+        console.error('Error loading raster', config.url, error);
+        return null;  // Return null for failed rasters
+      });
+  })
+).then(function(georasters) {
+  // All rasters loaded (some may be null if failed)
+  ...
+});</code></pre>
+    </section>
+
+    <section data-step="fit-bounds">
+      <h2>Fit Map to Available Coverage</h2>
+      <pre><code>// Calculate combined bounds of all loaded raster datasets
+if (boundsSource.length) {
+  // Merge all individual bounds into one
+  var totalBounds = boundsSource.reduce(function(accumulated, current) {
+    return accumulated.extend(current);
+  });
+  // Zoom/pan map to show all available data
+  map.fitBounds(totalBounds);
+}</code></pre>
+    </section>
+
+    <section data-step="adjust-sliders">
+      <h2>Slider Input Handlers</h2>
+      <pre><code>// Update wave calculations when user adjusts sliders
+function broadcastUpdate() {
+  updateDisplay();  // Update slider value displays
+  // If transect exists, recompute wave propagation
+  if (currentTransectPoints && currentTransectPoints.length === 2) {
+    plotTransectProfile(currentTransectPoints);
+  }
+}
+
+// Attach event listeners to both sliders
+stillWaterSlider.addEventListener('input', broadcastUpdate);
+fetchSlider.addEventListener('input', broadcastUpdate);</code></pre>
+    </section>
+
+    <section data-step="first-click">
+      <h2>First Map Click (Point A)</h2>
+      <pre><code>// Listen for user clicks on map to define transect endpoints
+map.on('click', function(event) {
+  addTransectPoint(event.latlng);  // Store click location
+});</code></pre>
+    </section>
+
+    <section data-step="reset-transect">
+      <h2>Clear Previous Transect</h2>
+      <pre><code>// Remove all transect markers and data from map
+function resetTransect() {
+  transectLayer.clearLayers();      // Remove visual markers
+  transectPoints = [];               // Clear point array
+  currentTransectPoints = null;      // Clear stored transect
+}</code></pre>
+    </section>
+
+    <section data-step="second-click">
+      <h2>Complete Transect with Second Click</h2>
+      <pre><code>function addTransectPoint(latlng) {
+  // First click: clear any existing transect
+  if (transectPoints.length === 0) {
+    resetTransect();
+  }
+  transectPoints.push(latlng);
+  transectLayer.clearLayers();
+  drawTransectMarkers(transectPoints);
+
+  // Second click: compute and display transect profile
+  if (transectPoints.length === 2) {
+    ...
+    plotTransectProfile(orderedPoints);  // Open profile window
+    transectPoints = [];  // Reset for next transect
+  }
+}</code></pre>
+    </section>
+
+    <section data-step="sample-profile">
+      <h2>Sample Elevation + Land Cover Along Transect</h2>
+      <pre><code>// Sample elevation and landcover at regular intervals (~1.5m spacing)
+var PROFILE_STEP_METERS = 1.5;
+var samples = Math.max(2, Math.floor(lengthMeters / PROFILE_STEP_METERS) + 1);
+
+for (var i = 0; i &lt; samples; i++) {
+  // Interpolate position along transect (t = 0 to 1)
+  var t = i / (samples - 1);
+  var sampleFeet = {
+    x: startFeet.x + deltaXFeet * t,
+    y: startFeet.y + deltaYFeet * t
+  };
+  var sampleLatLng = toLatLngFromFeet(sampleFeet);
+
+  // Query elevation from lidar/bathymetry rasters (priority: lidar → bathymetry)
+  var elevation = sampleElevationAt(sampleLatLng);
+  // Query NLCD 2024 landcover classification
+  var landcoverSample = sampleLandcoverAt(sampleLatLng);
+
+  // Build profile point with distance and sampled data
+  profile.push({
+    distanceMeters: t * lengthMeters,
+    feet: elevation,
+    latlng: sampleLatLng,
+    lulc: landcoverSample,
+    landcoverCategory: categorizeLandcover(landcoverSample)
+  });
+}</code></pre>
+    </section>
+
+    <section data-step="order-profile">
+      <h2>Order Points West to East, Reverse for Seaward→Landward</h2>
+      <pre><code>// Order points by easting (west = landward, east = seaward)
+var orderedPoints = [startPoint, endPoint].sort(function(a, b) {
+  return toFeetFromLatLng(a).x - toFeetFromLatLng(b).x;
+});
+
+// Detect which endpoint is more seaward using depth and land cover
+var startScore = calculateSeawardScore(profile[0]);
+var endScore = calculateSeawardScore(profile[profile.length - 1]);
+
+// If end is more seaward, reverse profile for seaward→landward wave propagation
+if (endScore > startScore) {
+  propagationProfile = profile.slice().reverse();
+  reverseWaveResults = true;
+
+  // Recalculate distanceMeters so it increases from 0 in new direction
+  var totalLength = profile[profile.length - 1].distanceMeters;
+  propagationProfile = propagationProfile.map(function(point, idx) {
+    var newPoint = {};
+    for (var key in point) { newPoint[key] = point[key]; }
+    newPoint.distanceMeters = totalLength - point.distanceMeters;
+    return newPoint;
+  });
+}</code></pre>
+    </section>
+
+    <section data-step="compute-depth">
+      <h2>Compute Depth (S - Z) & Breaker Limits (0.78d)</h2>
+      <pre><code>// Calculate water depth and maximum breaking wave height at each point
+profile.forEach(function(point) {
+  point.stillWaterElevation = waveInputs.stillWater;
+
+  // NAS Equation 2: Depth = Still Water Level - Ground Elevation
+  var depth = waveInputs.stillWater - point.feet;  // d = S - Z
+  var positiveDepth = Number.isFinite(depth) && depth > 0 ? depth : 0;
+  point.depthFeet = positiveDepth;
+
+  // NAS Equation 2: Breaker height limit H_wb = 0.78 × d
+  // Waves cannot exceed this physical breaking criterion
+  point.breakerHeight = 0.78 * positiveDepth;
+});</code></pre>
+    </section>
+
+    <section data-step="find-shoreline">
+      <h2>Find Shoreline & Calculate H₁ = 0.78·F·S₁</h2>
+      <pre><code>// Find shoreline (elevation ≈ 0 ft NAVD88) to calculate initial wave height
+function findShorelineIndex(profile) {
+  for (var i = 0; i &lt; profile.length; i++) {
+    if (profile[i].feet >= -0.5 && profile[i].feet &lt;= 0.5) {
+      return i;
+    }
+  }
+  return -1;  // No shoreline found
+}
+
+var shorelineIdx = findShorelineIndex(propagationProfile);
+if (shorelineIdx >= 0) {
+  // NAS Equation 3: Initial wave height at shoreline
+  // H₁ = 0.78 × F × S₁
+  // F = fetch factor interpolated from seaward fetch length
+  // S₁ = still water elevation at shoreline
+  var fetchFactor = interpolateFetchFactor(waveInputs.seawardFetchFeet);
+  var H1 = 0.78 * fetchFactor * waveInputs.stillWater;
+  console.log('Initial Wave Height (H1):', H1.toFixed(2), 'ft');
+}</code></pre>
+    </section>
+
+    <section data-step="classify-segments">
+      <h2>Classify Segments by NLCD + Depth → Fetch or Obstruction</h2>
+      <pre><code>// Classify each segment as fetch (wave growth) or obstruction (wave attenuation)
+// Classification depends on NLCD code AND water depth
+function classifyFetchOrObstruction(lulc, depth, stillWater, category) {
+  // Water (11, 12) → always FETCH
+  if (lulc === 11 || lulc === 12) return 'fetch';
+
+  // Buildings (22-24), Forest (41-43), Dunes (31) → always obstruction
+  if ((lulc >= 22 && lulc &lt;= 24) || (lulc >= 41 && lulc &lt;= 43) || lulc === 31) {
+    return 'obstruction';
+  }
+
+  // Scrub (51-52): obstruction if depth &lt; 5 ft, fetch if depth ≥ 5 ft
+  if (lulc === 51 || lulc === 52) {
+    return depth >= 5 ? 'fetch' : 'obstruction';
+  }
+
+  // Grassland (71-74, 81-82): fetch if depth ≥ 3 ft, obstruction otherwise
+  if ((lulc >= 71 && lulc &lt;= 74) || lulc === 81 || lulc === 82) {
+    return depth >= 3 ? 'fetch' : 'obstruction';
+  }
+
+  // Wetlands (90, 95): fetch if still water ≥ 4 ft MSL, obstruction otherwise
+  if (lulc === 90 || lulc === 95) {
+    return stillWater >= 4 ? 'fetch' : 'obstruction';
+  }
+
+  return 'unknown';
+}
+
+// Build segments with classification
+var segments = buildProfileSegments(profile, stillWaterLevel);</code></pre>
+    </section>
+
+    <section data-step="fetch-growth">
+      <h2>Apply NAS Eq. 13 Wave Growth: Hf = √[(G·d)² + Hi²]</h2>
+      <pre><code>// For FETCH segments: waves grow using NAS Equation 13
+if (segment.fetchType === 'fetch') {
+  // NAS Equation 13: Inland fetch wave growth
+  // Hf = √[(G×d)² + Hi²]
+  // G = growth factor interpolated from fetch length (0.0-5.0 mi → 0.0-0.5)
+  // d = average depth in segment (feet)
+  // Hi = wave height at segment start
+  // Hf = wave height at segment end
+
+  var fetchLengthMiles = segment.lengthFeet / 5280;
+  var G = interpolateGCurve(fetchLengthMiles);
+  var avgDepth = segment.avgDepth;
+  var Hi = waveHeightAtStart;
+
+  var growthTerm = G * avgDepth;
+  var Hf = Math.sqrt(growthTerm * growthTerm + Hi * Hi);
+
+  hxAfter = Hf;  // Wave can grow larger in fetch areas
+  console.log('→ FETCH: NAS Eq 13, G=' + G.toFixed(3) + ', Hf=' + Hf.toFixed(2));
+}</code></pre>
+    </section>
+
+    <section data-step="dune-transmission">
+      <h2>Apply NAS Eq. 5-7 Dune Transmission</h2>
+      <pre><code>// For DUNE_BARRIER segments: natural barrier transmission (no overtopping)
+if (segment.category === 'dune_barrier') {
+  // NAS Equations 5-7: Natural barrier (dunes, bars, breakwaters)
+  var Z_b = barrierElevationSum / barrierElevationCount;  // Average barrier elevation
+  var S_b = waveInputs.stillWater;                         // Still water level
+  var d_b = S_b - Z_b;                                     // Depth at barrier
+  var H_i = waveHeightAtStart;                             // Incident wave height
+
+  if (Z_b > S_b) {
+    // Equation 7: Barrier above still water → no transmission
+    hxAfter = 0;
+  } else if (d_b > 0) {
+    var breakingHeightAtBarrier = 0.78 * d_b;
+    if (H_i &lt; breakingHeightAtBarrier) {
+      // Equation 5: Full transmission (wave not breaking)
+      hxAfter = H_i;
+    } else {
+      // Equation 6: Limited transmission (wave breaking on barrier)
+      hxAfter = breakingHeightAtBarrier;  // H_t = 0.78 × d_b
+    }
+  }
+  console.log('→ DUNE: NAS Eq 5-7, Z_b=' + Z_b.toFixed(1) + ', Hf=' + hxAfter.toFixed(2));
+}</code></pre>
+    </section>
+
+    <section data-step="seawall-transmission">
+      <h2>Apply NAS Eq. 8-10 Seawall Transmission</h2>
+      <pre><code>// For ELONGATED_BARRIER segments: seawalls/levees (allows partial overtopping)
+if (segment.category === 'elongated_barrier') {
+  // NAS Equations 8-10: Elongated barriers (seawalls, levees, revetments)
+  var Z_b = barrierElevationSum / barrierElevationCount;
+  var S_b = waveInputs.stillWater;
+  var d_b = S_b - Z_b;
+  var H_i = waveHeightAtStart;
+
+  if (Z_b > (S_b + 0.5 * H_i)) {
+    // Equation 10: Barrier above still water + half wave height → no transmission
+    hxAfter = 0;
+  } else if (d_b > 0) {
+    var breakingHeightAtBarrier = 0.78 * d_b;
+    if (H_i &lt; breakingHeightAtBarrier) {
+      // Equation 8: Full transmission
+      hxAfter = H_i;
+    } else {
+      // Equation 9: Partial transmission with overtopping
+      // H_t = 0.78×d_b + 0.5×H_i
+      hxAfter = breakingHeightAtBarrier + 0.5 * H_i;
+    }
+  }
+  console.log('→ SEAWALL: NAS Eq 8-10, Hf=' + hxAfter.toFixed(2));
+}</code></pre>
+    </section>
+
+    <section data-step="vegetation-drag">
+      <h2>Apply NAS Eq. 11 Vegetation Drag</h2>
+      <pre><code>// For VEGETATION obstruction segments: drag force transmission
+if (segment.category && VEGETATION_DAMPING_LOOKUP[segment.category]) {
+  // NAS Equation 11: Vegetation transmission
+  // B = 1 / (1 + (C_D·H_i·h·D·w) / (3π·b²·d²))
+  // C_D = drag coefficient
+  // h = wetted height = min(actual_height, depth)
+  // D = effective stem diameter (ft)
+  // b = horizontal spacing between stems (ft)
+  // w = segment width along transect (ft)
+  // d = average water depth (ft)
+
+  var veg = VEGETATION_DAMPING_LOOKUP[segment.category];
+  var widthFeet = Math.max(veg.minWidth || 0, segment.lengthFeet);
+  var wettedHeight = Math.min(veg.h, avgDepth);  // Proper submergence
+  var denominator = 3 * Math.PI * veg.b * veg.b * avgDepth * avgDepth;
+
+  if (denominator > 0 && waveHeightAtStart > 0) {
+    var reduction = 1 + (veg.C_D * waveHeightAtStart * wettedHeight * veg.D * widthFeet) / denominator;
+    if (reduction > 0) {
+      hxAfter = waveHeightAtStart / reduction;  // H_t = B × H_i
+      var B = 1 / reduction;
+      console.log('→ VEGETATION: NAS Eq 11, B=' + B.toFixed(3) + ', Hf=' + hxAfter.toFixed(2));
+    }
+  }
+}</code></pre>
+    </section>
+
+    <section data-step="building-transmission">
+      <h2>Apply NAS Eq. 12 Building Transmission</h2>
+      <pre><code>// For BUILDING obstruction segments: exponential transmission per row
+if (segment.category && BUILDING_DAMPING_LOOKUP[segment.category]) {
+  // NAS Equation 12: Building transmission
+  // B = r^(n/2)
+  // r = open space ratio between buildings (0.25 high, 0.4 medium, 0.6 low density)
+  // n = number of building rows = segment_width / row_spacing
+
+  var building = BUILDING_DAMPING_LOOKUP[segment.category];
+  var rows = Math.max(1, Math.round(segment.lengthFeet / building.rowSpacing));  // n
+  var transmission = Math.pow(building.r, rows / 2);  // B = r^(n/2)
+  hxAfter = waveHeightAtStart * transmission;          // H_t = B × H_i
+
+  console.log('→ BUILDINGS: NAS Eq 12, n=' + rows + ' rows, r=' + building.r + ', B=' + transmission.toFixed(3) + ', Hf=' + hxAfter.toFixed(2));
+}</code></pre>
+    </section>
+
+    <section data-step="clamp">
+      <h2>Clamp by Breaker Height (NAS Eq. 2)</h2>
+      <pre><code>// NAS Equation 2: Enforce physical constraint - wave height cannot exceed breaking limit
+// H_wb = 0.78 × d (maximum wave height before breaking occurs)
+
+if (breakerLimit > 0) {
+  hxAfter = Math.min(hxAfter, breakerLimit);
+}
+
+// Apply breaker limit at each profile point after transmission calculations
+segments.forEach(function(segment) {
+  var breakerAtPoint = segment.breakerHeight;  // 0.78 × depth
+  var value = depthAtPoint > 0
+    ? Math.min(hxAfter, breakerAtPoint > 0 ? breakerAtPoint : hxAfter)
+    : 0;  // Zero wave height where depth is zero (dry land)
+});</code></pre>
+    </section>
+
+    <section data-step="derive-crest">
+      <h2>Derive Crest Elevation Z_w = S + 0.7H (NAS Eq. 1)</h2>
+      <pre><code>// NAS Equation 1: Wave crest elevation above NAVD88
+// Z_w = S_w + 0.7 × H_w
+// S_w = still water elevation
+// H_w = wave height after all transmission/growth calculations
+// 0.7 = empirical coefficient (wave crest reaches 70% of wave height above SWL)
+
+// Store final wave height at this point
+point.waveHeight = hx;
+
+// Calculate crest elevation using NAS Eq. 1
+point.crestElevation = waveInputs.stillWater + 0.7 * hx;</code></pre>
+    </section>
+
+    <section data-step="open-popup">
+      <h2>Open Popup Window</h2>
+      <pre><code>// Open new browser window to display transect profile chart
+function openTransectWindow(profile, startPoint, endPoint, waveInputs) {
+  var chartWindow = window.open(
+    '',                       // URL (empty = new blank window)
+    'transect_profile',       // Window name (reuse same window)
+    'width=1080,height=640,resizable=yes,scrollbars=yes'
+  );
+
+  if (!chartWindow) {
+    alert('Unable to open transect profile window. Please allow pop-ups for this site.');
+    return;
+  }
+  // Write full HTML document with Chart.js visualization to popup
+  ...
+}</code></pre>
+    </section>
+
+    <section data-step="render-chart">
+      <h2>Render Chart.js Profile</h2>
+      <pre><code>// Create interactive Chart.js line chart with dual y-axes
+var chart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: distances,  // X-axis: distance along transect (meters)
+    datasets: [...]     // Ground elevation, still water, crest, Hx, breaker
+  },
+  options: {
+    interaction: { mode: 'index', intersect: false },  // Hover shows all series
+    plugins: {
+      tooltip: { ... },   // Custom tooltip with landcover info
+      legend: { ... },    // Dataset legend
+      title: { text: titleText }  // Chart title with wave parameters
+    },
+    scales: {
+      x: {...},           // Distance (meters)
+      yFeet: {...},       // Left axis: elevation (feet)
+      yWave: {...}        // Right axis: wave height (feet)
+    }
+  }
+});</code></pre>
+    </section>
+
+    <section data-step="display-controls">
+      <h2>Display Slider Panel & Layer Controls</h2>
+      <pre><code>// Add wave settings control panel to map
+addWaveSettingsControl(map);
+
+// Add layer control for toggling data overlays
+L.control.layers(
+  { 'Esri World Imagery': imageryBase },  // Base layer
+  {
+    // Overlay layers (can toggle on/off)
+    'Lidar Coverage': lidarCoverageGroup,
+    'Bathymetry Coverage': bathymetryCoverageGroup,
+    'Landcover Coverage': landcoverCoverageGroup,
+    'User Transect': transectLayer
+  },
+  { collapsed: false }  // Show expanded by default
+).addTo(map);</code></pre>
+    </section>
+
+    <section data-step="recompute-wave">
+      <h2>Recompute Wave Series on Slider Update</h2>
+      <pre><code>// When slider changes, recompute entire wave profile
+function broadcastUpdate() {
+  updateDisplay();  // Update slider value display
+
+  // If transect exists, recompute with new wave parameters
+  if (currentTransectPoints && currentTransectPoints.length === 2) {
+    plotTransectProfile(currentTransectPoints);  // Regenerates popup chart
+  }
+}</code></pre>
+    </section>
+
+    <section data-step="update-chart">
+      <h2>Update Chart Data</h2>
+      <pre><code>// Chart is fully recreated on each transect computation
+// New popup window opened with updated datasets
+var chart = new Chart(ctx, {
+  type: 'line',
+  data: { labels: distances, datasets: [...] }  // Fresh data
+});
+chart.update();  // Render the chart</code></pre>
+    </section>
+
+    <section data-step="toggle-layers">
+      <h2>Toggle Layers / Reset Transect</h2>
+      <pre><code>// Right-click on map clears current transect
+map.on('contextmenu', function() {
+  resetTransect();  // Remove markers and stored points
+});
+
+// Add scale bar to map
+L.control.scale().addTo(map);</code></pre>
+    </section>
+  </div>
+
+  <script>
+    (function() {
+      var mapping = [
+        { label: 'User loads index.html in browser', step: 'load' },
+        { label: 'Raster loads ok?', step: 'raster-check' },
+        { label: 'Fit map to lidar/bathy extent', step: 'fit-bounds' },
+        { label: 'Show error in console', step: 'raster-check' },
+        { label: 'User adjusts still-water / fetch sliders', step: 'adjust-sliders' },
+        { label: 'User left-clicks map (point A)', step: 'first-click' },
+        { label: 'Tool clears prior transect', step: 'reset-transect' },
+        { label: 'User left-clicks second point (point B)', step: 'second-click' },
+        { label: 'Sample elevation + land cover along transect (~1.5m spacing)', step: 'sample-profile' },
+        { label: 'Order points west to east, reverse if needed for seaward→landward propagation', step: 'order-profile' },
+        { label: 'Compute depth (S - Z) & breaker limits (0.78d)', step: 'compute-depth' },
+        { label: 'Find shoreline (elevation ≈ 0) and calculate H₁ = 0.78·F·S₁', step: 'find-shoreline' },
+        { label: 'Classify segments by NLCD + depth → fetch or obstruction', step: 'classify-segments' },
+        { label: 'Segment type?', step: 'classify-segments' },
+        { label: 'Apply NAS Eq. 13 wave growth: Hf = √[(G·d)² + Hi²]', step: 'fetch-growth' },
+        { label: 'Apply NAS Eq. 5-7 dune transmission', step: 'dune-transmission' },
+        { label: 'Apply NAS Eq. 8-10 seawall transmission', step: 'seawall-transmission' },
+        { label: 'Apply NAS Eq. 11 vegetation drag', step: 'vegetation-drag' },
+        { label: 'Apply NAS Eq. 12 building transmission', step: 'building-transmission' },
+        { label: 'Clamp by breaker height (NAS Eq. 2)', step: 'clamp' },
+        { label: 'Derive crest elevation Z_w = S + 0.7H (NAS Eq. 1)', step: 'derive-crest' },
+        { label: 'Open popup window', step: 'open-popup' },
+        { label: 'Render Chart.js datasets (ground, still water, crest, H_x, breaker)', step: 'render-chart' },
+        { label: 'Display slider panel + layer controls', step: 'display-controls' },
+        { label: 'User updates sliders?', step: 'adjust-sliders' },
+        { label: 'Recompute wave series using stored transect', step: 'recompute-wave' },
+        { label: 'Update Chart.js data', step: 'update-chart' },
+        { label: 'User may toggle layers or right-click to reset', step: 'toggle-layers' }
+      ];
+
+      var diagramElements = {};
+
+      function setActive(step, isActive) {
+        var codeEl = document.querySelector('section[data-step="' + step + '"]');
+        if (codeEl) {
+          codeEl.classList.toggle('active', isActive);
+          if (isActive) {
+            // Auto-scroll the code section into view
+            codeEl.scrollIntoView({
+              behavior: 'smooth',
+              block: 'center'
+            });
+          }
+        }
+        // Support multiple elements per step
+        var linkedArrays = diagramElements[step];
+        if (linkedArrays) {
+          linkedArrays.forEach(function(elementGroup) {
+            elementGroup.forEach(function(el) {
+              el.classList.toggle('active', isActive);
+            });
+          });
+        }
+      }
+
+      function bindCodeHover() {
+        document.querySelectorAll('section[data-step]').forEach(function(section) {
+          var step = section.getAttribute('data-step');
+          section.addEventListener('mouseenter', function() {
+            setActive(step, true);
+          });
+          section.addEventListener('mouseleave', function() {
+            setActive(step, false);
+          });
+        });
+      }
+
+      function decodeEntities(text) {
+        var textarea = document.createElement('textarea');
+        textarea.innerHTML = text;
+        return textarea.value;
+      }
+
+      function initDiagramInteractions(svgDoc) {
+        var texts = svgDoc.querySelectorAll('text');
+        console.log('Total text elements found:', texts.length);
+
+        mapping.forEach(function(mapItem) {
+          var match = Array.prototype.find.call(texts, function(textEl) {
+            var svgText = decodeEntities(textEl.textContent.trim());
+            var labelText = mapItem.label.trim();
+            return svgText === labelText;
+          });
+          if (!match) {
+            console.warn('No SVG text match found for:', mapItem.label);
+            return;
+          }
+
+          var related = [match];
+          match.classList.add('highlight-text');
+
+          // Look for shape sibling - check previous sibling first, then next
+          var shape = match.previousElementSibling;
+          if (!shape || (shape.tagName !== 'rect' && shape.tagName !== 'polygon' && shape.tagName !== 'ellipse' && shape.tagName !== 'path' && shape.tagName !== 'circle')) {
+            shape = match.nextElementSibling;
+          }
+
+          if (shape && (shape.tagName === 'rect' || shape.tagName === 'polygon' || shape.tagName === 'ellipse' || shape.tagName === 'path' || shape.tagName === 'circle')) {
+            shape.classList.add('highlightable');
+            related.push(shape);
+            console.log('Mapped:', mapItem.label, '-> Shape:', shape.tagName);
+          } else {
+            console.warn('No shape found for:', mapItem.label);
+          }
+
+          // Support multiple flowchart elements mapping to the same step
+          if (!diagramElements[mapItem.step]) {
+            diagramElements[mapItem.step] = [];
+          }
+          diagramElements[mapItem.step].push(related);
+
+          related.forEach(function(el) {
+            el.addEventListener('mouseenter', function() {
+              console.log('Mouse enter on:', mapItem.label);
+              setActive(mapItem.step, true);
+            });
+            el.addEventListener('mouseleave', function() {
+              setActive(mapItem.step, false);
+            });
+          });
+        });
+
+        console.log('Total diagram elements mapped:', Object.keys(diagramElements).length);
+        console.log('Diagram elements:', diagramElements);
+      }
+
+      // Load SVG via fetch and embed it directly
+      fetch('public/transect_flowchart.svg')
+        .then(function(response) {
+          return response.text();
+        })
+        .then(function(svgText) {
+          var wrapper = document.getElementById('flowchart-wrapper');
+          wrapper.innerHTML = svgText;
+
+          console.log('SVG loaded successfully');
+
+          // Get the SVG element
+          var svgElement = wrapper.querySelector('svg');
+          if (!svgElement) {
+            console.error('SVG element not found');
+            return;
+          }
+
+          // Inject CSS styles into the SVG
+          var style = document.createElementNS('http://www.w3.org/2000/svg', 'style');
+          style.setAttribute('type', 'text/css');
+          style.textContent = `
+            .highlightable {
+              transition: fill 160ms ease, stroke 160ms ease, stroke-width 160ms ease;
+              cursor: pointer !important;
+            }
+            text.highlight-text {
+              transition: fill 160ms ease, font-weight 160ms ease;
+              cursor: pointer !important;
+            }
+            .highlightable.active {
+              fill: #ffe066 !important;
+              stroke: #c58c00 !important;
+              stroke-width: 3px !important;
+            }
+            text.highlight-text.active {
+              fill: #161616 !important;
+              font-weight: 700 !important;
+            }
+          `;
+
+          if (svgElement.firstChild) {
+            svgElement.insertBefore(style, svgElement.firstChild);
+          } else {
+            svgElement.appendChild(style);
+          }
+
+          console.log('CSS injected into SVG');
+
+          // Now the SVG is part of the main document, not a separate contentDocument
+          initDiagramInteractions(document);
+        })
+        .catch(function(error) {
+          console.error('Error loading SVG:', error);
+        });
+
+      bindCodeHover();
+    })();
+  </script>
+</body>
+</html>

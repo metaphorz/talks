@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Standards and Forms</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;600;700&family=Noto+Sans+Mono:wght@600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/vis-network@9.1.9/standalone/umd/vis-network.min.js"></script>
+<script src="data.js"></script>
+<style>
+  :root{--ink:#20252B;--grey:#5B636B;--paper:#F7F3EA;--teal:#1D6E73}
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;font-family:"Noto Sans",Helvetica,Arial,sans-serif;background:#fff;color:var(--ink)}
+  #app{display:flex;height:100vh}
+  #net{flex:1;min-width:0}
+  aside{width:420px;flex:none;border-left:1px solid #E3D9C6;background:var(--paper);padding:20px 22px;overflow:auto}
+  h1{margin:0;font-size:28px}
+  .sub{margin:6px 0 18px;font-size:17px;color:var(--grey)}
+  .keys{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px}
+  .keys button{font:600 16px "Noto Sans",sans-serif;border:2px solid var(--c);background:#fff;color:var(--c);border-radius:999px;padding:4px 10px;cursor:pointer}
+  .keys button.on{background:var(--c);color:#fff}
+  #info h2{margin:0;font-size:22px}
+  #info .id{font:600 17px "Noto Sans Mono",monospace;color:var(--c,var(--teal))}
+  #info ul{margin:8px 0 0;padding-left:20px;font-size:17px;line-height:1.5}
+  #info p{font-size:17px;line-height:1.45;color:var(--grey)}
+  .note{margin-top:20px;font-size:15px;color:var(--grey);line-height:1.45}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="net"></div>
+  <aside>
+    <h1>Standards ↔ Forms</h1>
+    <div class="sub">2025 Hurricane Standards · each standard linked to the forms it lists as relevant</div>
+    <div class="keys" id="keys"></div>
+    <div id="info"><p>Boxes are standards, circles are forms. Click one to see its links; click a group to light it up.</p></div>
+    <div class="note">Built from the “Relevant Forms” lists in the Hurricane Standards Report of Activities as of November 1, 2025. Forms G-1 to G-7 are the expert certifications, signed for each group of standards.</div>
+  </aside>
+</div>
+<script>
+  var COL={G:'#5B636B',M:'#2F6FA3',S:'#7A5AA6',V:'#B5562F',A:'#2E8A5C',CI:'#1D6E73'};
+  var NAME={G:'General',M:'Meteorology',S:'Statistics',V:'Vulnerability',A:'Actuarial',CI:'Computer/Information'};
+  function grp(id){ return id.split('-')[0]; }
+  var title={}, links=[];
+  ROA.standards.forEach(function(s){ title['s:'+s.id]=s.title; s.forms.forEach(function(f){ links.push(['s:'+s.id,'f:'+f]); }); });
+  ROA.forms.forEach(function(f){ title['f:'+f.id]=f.title; });
+  var nodes=new vis.DataSet(
+    ROA.standards.map(function(s){ var c=COL[grp(s.id)]; return {id:'s:'+s.id,label:s.id,title:s.title,shape:'box',margin:8,
+      color:{background:c,border:c,highlight:{background:'#C9852F',border:'#C9852F'}},font:{color:'#fff',face:'Noto Sans Mono',size:22,bold:true}}; })
+    .concat(ROA.forms.map(function(f){ var c=COL[grp(f.id)]; return {id:'f:'+f.id,label:'Form '+f.id,title:f.title,shape:'dot',size:16,
+      color:{background:'#fff',border:c,highlight:{background:'#F6E6CD',border:'#C9852F'}},borderWidth:3,font:{size:19,color:'#3A4148'}}; })));
+  var edges=new vis.DataSet(links.map(function(l,i){ return {id:i,from:l[0],to:l[1],color:{color:'#C9BFAE',highlight:'#C9852F'},width:1.2}; }));
+  var net=new vis.Network(document.getElementById('net'),{nodes:nodes,edges:edges},{
+    physics:{solver:'forceAtlas2Based',forceAtlas2Based:{gravitationalConstant:-70,springLength:90,avoidOverlap:.4},stabilization:{iterations:400}},
+    interaction:{hover:true,tooltipDelay:150}});
+  var info=document.getElementById('info');
+  function show(id){
+    var isS=id.indexOf('s:')===0, code=id.slice(2), g=grp(code);
+    var other=links.filter(function(l){return l[0]===id||l[1]===id;}).map(function(l){return l[0]===id?l[1]:l[0];});
+    info.style.setProperty('--c',COL[g]);
+    info.innerHTML='<div class="id">'+(isS?'Standard ':'Form ')+code+'</div><h2>'+title[id]+'</h2><p>'+(isS?'Relevant forms':'Listed by these standards')+' ('+other.length+'):</p><ul>'+
+      other.map(function(o){return '<li><b>'+o.slice(2)+'</b> '+title[o]+'</li>';}).join('')+'</ul>';
+  }
+  net.on('click',function(p){ if(p.nodes.length) show(p.nodes[0]); });
+  var keys=document.getElementById('keys');
+  Object.keys(COL).forEach(function(g){
+    var b=document.createElement('button'); b.textContent=NAME[g]; b.style.setProperty('--c',COL[g]);
+    b.onclick=function(){
+      var on=!b.classList.contains('on'); [].forEach.call(keys.children,function(x){x.classList.remove('on');});
+      if(on){ b.classList.add('on'); net.selectNodes(ROA.standards.filter(function(s){return grp(s.id)===g;}).map(function(s){return 's:'+s.id;}),true); }
+      else net.unselectAll();
+    };
+    keys.appendChild(b);
+  });
+</script>
+</body>
+</html>
