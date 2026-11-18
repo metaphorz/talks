@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Florida Hurricane Models</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Noto+Sans+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="deck.css">
+<style>
+
+/* ===== shared pieces ===== */
+:root{--mono:"Noto Sans Mono",ui-monospace,Menlo,monospace;--night:#151B21;--night-2:#1E262E;
+  --g:#5B636B;--m:#2F6FA3;--s:#7A5AA6;--v:#B5562F;--a:#2E8A5C;--ci:#1D6E73;--ok:#2E8A5C;--bad:#B5412F}
+.tile{position:relative;background:var(--card);border-radius:18px;padding:18px 18px;
+  box-shadow:0 1px 0 #ece4d4,0 5px 10px rgba(40,30,10,.28)}
+.tile.wash{background:var(--teal-wash)}
+.tile .tag{font-size:11.5px;font-weight:700;letter-spacing:.02em;text-transform:uppercase;color:var(--amber)}
+.tile h3{margin:9px 0 0;font-size:20px;line-height:1.2;font-weight:700;color:var(--ink)}
+.tile p{margin:10px 0 0;font-size:15.5px;line-height:1.34;color:var(--ink)}
+.grid{position:absolute;left:55px;width:849px;display:grid;gap:21px}
+.line{position:absolute;left:55px;width:849px;margin:0;text-align:center;font-size:16.5px;font-weight:700;color:var(--teal)}
+.btn{font:600 13.5px var(--sans);color:var(--ink);background:#fff;border:1.5px solid var(--rule);border-radius:999px;
+  padding:7px 14px;cursor:pointer;transition:background .2s,border-color .2s,color .2s,box-shadow .2s;white-space:nowrap}
+.btn:hover{border-color:var(--teal)}
+.btn.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.btn.go{background:var(--amber);border-color:var(--amber);color:#fff}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row .lbl{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--grey);margin-right:4px}
+.src{position:absolute;left:57px;top:656px;width:849px;font-size:9.5px;color:var(--grey)}
+.src a{color:inherit}
+.mono{font-family:var(--mono)}
+.quote{position:absolute;left:55px;width:849px;margin:0;font-size:19px;line-height:1.38;font-style:italic;color:var(--ink-2)}
+.quote b{font-style:normal;color:var(--teal)}
+.quote cite{display:block;margin-top:6px;font-size:12px;font-style:normal;font-weight:700;color:var(--grey);letter-spacing:.02em}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes growbar{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes flow{to{stroke-dashoffset:-24}}
+svg text{font-family:var(--sans)}
+.dg .box rect{fill:#fff;stroke:var(--rule);stroke-width:1.6}
+.dg .box .t{font-size:14px;font-weight:700;fill:var(--ink);text-anchor:middle}
+.dg .box .d{font-size:11.5px;fill:var(--grey);text-anchor:middle}
+.dg .lnk{fill:none;stroke:#9FB8B5;stroke-width:2}
+.dg .lab{font-size:11.5px;font-style:italic;font-weight:600;fill:var(--teal);text-anchor:middle;paint-order:stroke;stroke:var(--paper);stroke-width:4px;stroke-linejoin:round}
+
+/* live web apps, drawn at full size and scaled onto the page */
+.app{position:absolute;left:55px;top:150px;width:849px;height:500px;border-radius:12px;overflow:hidden;
+  box-shadow:0 5px 12px rgba(40,30,10,.3);background:#fff}
+.app iframe{position:absolute;left:0;top:0;width:1415px;height:834px;border:0;transform:scale(.6);transform-origin:0 0}
+.app .wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#8a8a99;font-size:14px}
+.approw{position:absolute;left:55px;top:116px;width:849px;justify-content:space-between}
+.approw a{font-size:13px;font-weight:700;color:var(--teal);text-decoration:none}
+.approw a:hover{text-decoration:underline}
+.approw .s{font-size:12.5px;color:var(--grey)}
+
+
+/* ===== 1 · title ===== */
+.s-title .page{background:radial-gradient(ellipse at 72% 45%,#22303A 0%,var(--night) 62%,#0E1216 100%)}
+.s-title canvas{position:absolute;left:0;top:0;width:960px;height:720px}
+.s-title .veil{position:absolute;left:0;top:0;width:560px;height:720px;
+  background:linear-gradient(90deg,rgba(14,18,22,.94) 0%,rgba(14,18,22,.78) 62%,rgba(14,18,22,0) 100%)}
+.s-title .bar{position:absolute;left:65px;top:150px;width:9px;height:250px;background:var(--amber);box-shadow:2px 3px 6px rgba(0,0,0,.5)}
+.s-title .eyebrow{position:absolute;left:99px;top:166px;font-size:12.5px;font-weight:700;color:#7FC4C0;letter-spacing:.08em}
+.s-title h1{position:absolute;left:97px;top:194px;width:470px;margin:0;font-size:54px;line-height:1.06;font-weight:700;letter-spacing:-.01em;color:#F7F3EA}
+.s-title h1 span{color:var(--amber)}
+.s-title .sub{position:absolute;left:99px;top:330px;width:420px;margin:0;font-size:18px;line-height:1.32;color:#B9C2C8}
+.s-title .six{position:absolute;left:99px;top:430px;width:440px;display:flex;flex-wrap:wrap;gap:8px}
+.s-title .six span{padding:5px 12px;border-radius:999px;border:1.5px solid #3C5560;color:#DCEBE8;font-size:13px;font-weight:600;background:rgba(29,110,115,.18)}
+.s-title .six span b{color:var(--amber);margin-right:5px}
+.s-title .by{position:absolute;left:99px;top:540px;font-size:15px;font-weight:700;color:#F7F3EA}
+.s-title .by span{display:block;margin-top:3px;font-size:12.5px;font-weight:400;color:#8C979F}
+.s-title .foot{color:#5E6A73}
+.slide.on.s-title .bar.anim{transform-origin:top;animation:growbar .8s var(--ease) both}
+.slide.on.s-title .eyebrow.anim{animation:rise .6s var(--ease) .2s both}
+.slide.on.s-title h1.anim{animation:rise .8s var(--ease) .35s both}
+.slide.on.s-title .sub.anim{animation:rise .8s var(--ease) .6s both}
+.slide.on.s-title .by.anim{animation:rise .8s var(--ease) .8s both}
+
+
+.s-title canvas{position:absolute;left:0;top:0;width:960px;height:720px}
+
+/* ===== intro slides: text on the left, a live drawing on the right ===== */
+.intro .txt{position:absolute;left:55px;top:124px;width:360px}
+.intro .txt .tag{font-size:11.5px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--amber)}
+.intro .txt h3{margin:6px 0 0;font-size:21px;line-height:1.2}
+.intro .txt p{margin:10px 0 0;font-size:15px;line-height:1.42;color:var(--ink)}
+.intro .txt ul{margin:10px 0 0;padding-left:18px;font-size:14.5px;line-height:1.42}
+.intro .txt li{margin-bottom:6px}
+.intro .txt b{color:var(--teal)}
+.intro .fig{position:absolute;left:432px;top:124px;width:472px;height:430px;padding:0;overflow:hidden}
+.intro .fig svg,.intro .fig canvas{display:block;width:472px;height:430px}
+.intro .facts{position:absolute;left:432px;top:566px;width:472px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.intro .facts div{background:#fff;border-radius:12px;padding:8px 12px;box-shadow:0 2px 5px rgba(40,30,10,.15)}
+.intro .facts b{display:block;font-size:22px;line-height:1.1;color:var(--teal)}
+.intro .facts span{display:block;font-size:11.5px;line-height:1.3;color:var(--grey);margin-top:2px}
+.intro .ctl{position:absolute;left:452px;top:276px;z-index:2}
+.intro .ctl .btn{padding:4px 11px;font-size:12px}
+
+.s-met .fig{background:#0E1419}
+
+/* ===== 2 · chain ===== */
+.s-chain svg{position:absolute;left:55px;top:122px;width:849px;height:470px}
+.s-chain .stage rect{fill:#fff;stroke:var(--rule);stroke-width:1.6}
+.s-chain .stage .t{font-size:17px;font-weight:700;fill:var(--ink);text-anchor:middle}
+.s-chain .stage .d{font-size:12.5px;fill:var(--grey);text-anchor:middle}
+.s-chain .stage .n{font-size:11px;font-weight:700;fill:var(--amber);text-anchor:middle;letter-spacing:.05em}
+.s-chain .bar rect{rx:10}
+.s-chain .bar text{font-size:13.5px;font-weight:700;fill:#fff}
+.s-chain .bar text.s{font-size:11.5px;font-weight:400;fill:#DCEBE8}
+.s-chain .flow{fill:none;stroke:#9FB8B5;stroke-width:3;stroke-dasharray:8 6}
+.s-chain.on .flow{animation:flow 1.1s linear infinite}
+.s-chain .line{top:612px;font-size:16px}
+
+/* ===== live slides ===== */
+.s-live .feed{position:absolute;left:55px;top:116px;width:849px;justify-content:flex-start}
+.s-live .feed .btn{padding:5px 12px;font-size:12.5px}
+.s-live .feed a{margin-left:auto;font-size:13px;font-weight:700;color:var(--teal);text-decoration:none}
+
+/* ===== 9 · close ===== */
+.s-end .grid{top:128px;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.s-end .tile{height:310px;padding:16px}
+.s-end .tile h3{font-size:17.5px}
+.s-end .tile .n{font-size:40px;font-weight:700;color:var(--teal);line-height:1}
+.s-end .tile p{font-size:14px}
+.s-end .tile a{color:var(--teal);font-weight:700;text-decoration:none;font-size:12.5px;overflow-wrap:anywhere}
+.s-end .line{top:470px;font-size:17px}
+</style>
+</head>
+<body data-footer="Florida Hurricane Models · Weather, Tracks, Wind, Loss">
+<div id="viewport"><div id="stage">
+
+<!-- ============================================================ 1 · title -->
+<section class="slide s-title" data-nonum>
+  <div class="page">
+    <canvas id="tracks" width="1920" height="1440" aria-hidden="true"></canvas>
+    <div class="veil"></div>
+    <div class="bar anim"></div>
+    <div class="eyebrow anim">FLORIDA CATASTROPHE MODELING · THE MODELS</div>
+    <h1 class="anim">Florida Hurricane Models<span>.</span></h1>
+    <p class="sub anim">Four web apps we built: today’s weather, where storms go, how their winds spread, and what they cost.</p>
+    <div class="six"><span><b>1</b>meteoearth</span><span><b>2</b>Synthetic Tracks</span><span><b>3</b>Storm Animator</span><span><b>4</b>Pro Team Multimodel</span></div>
+    <div class="by anim">Paul Fishwick<span>with Claude Code · Professional Team, Computer/Information</span></div>
+  </div>
+  <aside class="notes">
+    <p>The tracks behind the title are drawn live: storms form in the tropical Atlantic, drift west, and curve north. Some reach Florida, most do not.</p>
+    <p>The third talk in the series: after what a model is, and how Florida certifies one, here are four apps we built.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 2 · chain -->
+<section class="slide s-chain">
+  <div class="page">
+    <header class="hd"><h2>A Hurricane Model Is a Chain</h2><div class="kicker">Each link is one of the disciplines on the Professional Team</div></header>
+    <svg id="chain" viewBox="0 0 849 470" aria-label="The catastrophe model chain and where each app sits"></svg>
+    <p class="line" data-b="5">Every accepted model in Florida has all four links. Each of our apps opens one or more of them up.</p>
+  </div>
+  <aside class="notes">
+    <p>Tracks (meteorology and statistics): where storms go and how often. Wind (meteorology): how strong the wind is at each place. Damage (vulnerability): what that wind does to a structure. Loss (actuarial): what that damage costs across many policies.</p>
+    <p>[builds 1–4] The four apps, each under the links it covers: meteoearth shows the atmosphere that steers storms; the Multimodel spans the whole chain.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 3 · meteoearth intro -->
+<section class="slide intro s-met">
+  <div class="page">
+    <header class="hd"><h2>1 · meteoearth</h2><div class="kicker">The atmosphere a hurricane lives in, today</div></header>
+    <div class="txt">
+      <div class="tag">What it is</div>
+      <h3>Today’s weather on a globe</h3>
+      <p>An interactive Earth: drag to turn it, scroll to zoom, and watch the wind move as animated particles. Switch the layer underneath to temperature, humidity, pressure, cloud, gusts, rain or storm energy.</p>
+      <div class="tag" style="margin-top:16px">Four global forecast models</div>
+      <ul>
+        <li><b>GFS</b> (NOAA, USA) · <b>IFS</b> (ECMWF, Europe) · <b>GEM</b> (Environment Canada) · <b>ICON</b> (DWD, Germany)</li>
+        <li>Each one’s latest run, from now to two days ahead, every 3 hours.</li>
+        <li>Rebuilt automatically every 12 hours on GitHub, then published as a static site.</li>
+      </ul>
+      <p>For hurricanes: the large-scale winds steer a storm, and warm, moist air feeds it.</p>
+    </div>
+    <article class="tile fig"><canvas id="flow" width="944" height="860" aria-label="Wind particles flowing through trade winds, westerlies and a hurricane"></canvas></article>
+    <div class="facts"><div><b>4</b><span>global forecast models</span></div><div><b>10</b><span>layers, from 10 m wind to the jet stream</span></div><div><b>12 h</b><span>between automatic refreshes</span></div></div>
+  </div>
+  <aside class="notes">
+    <p>The drawing is a cartoon of what the globe shows with real data: trade winds blowing west in the tropics, westerlies to the north, and a hurricane turning in between.</p>
+    <p>Before any catastrophe model: the weather itself. The same four agencies' models are what forecasters use every day.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 · meteoearth live -->
+<section class="slide s-live">
+  <div class="page">
+    <header class="hd"><h2>meteoearth, Live</h2><div class="kicker">Drag the globe · scroll to zoom · pick a model and a layer</div></header>
+    <div class="row feed"><span class="lbl">Try</span><span style="font-size:13px;color:var(--grey)">GFS · ECMWF · GEM · ICON · 250 hPa jet stream · pressure · forecast hours</span>
+      <a href="https://metaphorz.github.io/meteoearth/frontend/index.html" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app" style="background:#000"><div class="wait">Loading meteoearth…</div><iframe data-src="https://metaphorz.github.io/meteoearth/frontend/index.html" title="meteoearth globe"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>Suggested demo: turn to the Atlantic, switch to mean sea-level pressure to find the highs and lows, then to the 250 hPa jet stream that steers storms. Compare GFS and ECMWF.</p>
+    <p>The live site at metaphorz.github.io/meteoearth, refreshed every 12 hours.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 5 · tracks intro -->
+<section class="slide intro s-trk">
+  <div class="page">
+    <header class="hd"><h2>2 · Synthetic Tracks</h2><div class="kicker">Made-up hurricanes that behave like real ones</div></header>
+    <div class="txt">
+      <div class="tag">The problem</div>
+      <h3>History is too short</h3>
+      <p>Florida has had only about <b>80 landfalls since 1960</b>. That is too few to judge a 1-in-100-year storm, so models invent thousands more that behave like the real ones.</p>
+      <div class="tag" style="margin-top:16px">How it works · CLIPER-Analog</div>
+      <ul>
+        <li><b>CLIPER</b> (climatology and persistence): “keep going the way you are, bent by the winds typical for this place and season.”</li>
+        <li><b>Analogs</b>: the eight past storms most like this one add their real wobbles, so the tracks fan out realistically.</li>
+        <li>Ocean warmth caps strength; land weakens it. A rebuilt <b>Hall &amp; Jewson</b> (2007) model gives a second opinion.</li>
+      </ul>
+    </div>
+    <article class="tile fig"><canvas id="fan" width="944" height="860" aria-label="A storm stopped at a cutoff, with possible continuations fanning out"></canvas></article>
+    <div class="facts"><div><b>25,000</b><span>synthetic storms in about 4 seconds</span></div><div><b>0.88–1.09</b><span>track spread vs. real errors (1 is ideal)</span></div><div><b>−11%</b><span>Florida landfalls vs. the record</span></div></div>
+  </div>
+  <aside class="notes">
+    <p>The drawing: a storm is followed up to a cutoff, then the model takes over and draws a spread of possible continuations. Some come ashore in Florida.</p>
+    <p>Every design choice was judged against pass/fail tests written down before the results were seen. It is honest about its misses: 11% too few Florida landfalls, 25% too few hurricane landfalls, and it is not a forecaster.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 4 · tracks live -->
+<section class="slide s-live">
+  <div class="page">
+    <header class="hd"><h2>Synthetic Tracks, Live</h2><div class="kicker">Pick a Florida storm, set a cutoff, and Generate</div></header>
+    <div class="row feed"><span class="lbl">Try</span><span style="font-size:13px;color:var(--grey)">Extend a storm · Synthetic storms · Inside CLIPER · Hall &amp; Jewson · Compare</span>
+      <a href="https://metaphorz.github.io/tracks/" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app"><div class="wait">Loading Synthetic Tracks…</div><iframe data-src="https://metaphorz.github.io/tracks/" title="Synthetic Tracks"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>Suggested demo: choose a major Florida storm, drag the cutoff to a few days before landfall, Generate. Then Synthetic storms with 25,000 storms, and the Compare tab's landfall map.</p>
+    <p>This is the live site at metaphorz.github.io/tracks, so it is always the current version.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 5 · storm animator intro -->
+<section class="slide intro s-wind">
+  <div class="page">
+    <header class="hd"><h2>3 · Storm Animator</h2><div class="kicker">The wind around a moving storm, hour by hour</div></header>
+    <div class="txt">
+      <div class="tag">The question</div>
+      <h3>How strong is the wind, here, now?</h3>
+      <p>A track gives the centre. Damage depends on the wind at each house, which rises to a peak at the <b>radius of maximum wind</b> and falls off outside it.</p>
+      <div class="tag" style="margin-top:16px">Three windfield models</div>
+      <ul>
+        <li><b>Holland</b>: a pressure profile with a shape parameter <i>B</i>, turned into wind by gradient balance.</li>
+        <li><b>Powell</b>: a boundary-layer (slab) PDE solved for the whole field, with surface drag. The physical reference.</li>
+        <li><b>Willoughby</b>: a power law inside the eye wall, exponential decay outside.</li>
+      </ul>
+      <p>The storm’s own motion adds to the wind on its right and subtracts on its left.</p>
+    </div>
+    <article class="tile fig"><svg id="prof" viewBox="0 0 472 430" aria-label="Wind profiles of the Holland and Willoughby models"></svg></article>
+    <div class="row ctl" id="prof-ctl"><span class="lbl">Holland B</span><button class="btn" data-hb="1.0">1.0</button><button class="btn on" data-hb="1.5">1.5</button><button class="btn" data-hb="2.0">2.0</button><button class="btn" data-hb="2.5">2.5</button></div>
+    <div class="facts"><div><b>3</b><span>windfield models, one storm</span></div><div><b>19</b><span>hourly frames of Charley, 2004</span></div><div><b>109</b><span>frames of Michael, 2018</span></div></div>
+  </div>
+  <aside class="notes">
+    <p>The drawing is live: two wind profiles from the centre outward, and a storm moving across the top showing the stronger right side. Change Holland's B: a larger B gives a sharper peak and faster fall-off.</p>
+    <p>These are the same three models used in the Multimodel, coming next.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 6 · storm animator live -->
+<section class="slide s-live">
+  <div class="page">
+    <header class="hd"><h2>Storm Animator, Live</h2><div class="kicker">Hurricane Charley, 2004 · three models · and Michael, 2018</div></header>
+    <div class="row feed" id="sa-feed"><span class="lbl">Show</span>
+      <button class="btn on" data-src="apps/stormanim/charley-powell.html">Charley · Powell</button><button class="btn" data-src="apps/stormanim/charley-holland.html">Charley · Holland</button><button class="btn" data-src="apps/stormanim/charley-willoughby.html">Charley · Willoughby</button><button class="btn" data-src="apps/stormanim/michael-powell.html">Michael · Powell</button>
+      <a id="sa-open" href="apps/stormanim/charley-powell.html" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app"><div class="wait">Loading the animation…</div><iframe id="sa-frame" data-src="apps/stormanim/charley-powell.html" title="Storm windfield animation"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>Press Play/Pause in the animation. Charley made landfall at Punta Gorda on August 13, 2004; watch the strongest winds sit on the right side of the track.</p>
+    <p>Switch models with the buttons: same storm, same track, three different windfields. Michael (2018) is a longer run at 20-minute steps.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 7 · multimodel intro -->
+<section class="slide intro s-mm">
+  <div class="page">
+    <header class="hd"><h2>4 · Pro Team Multimodel</h2><div class="kicker">The whole chain, on the Commission’s own test grid</div></header>
+    <div class="txt">
+      <div class="tag">The experiment · Form S-6</div>
+      <h3>One grid, 840 points, a storm going west</h3>
+      <p>The Commission’s Form S-6 sets a <b>21 × 40 grid</b> over South Florida, about 3 miles apart, and a storm that starts 9 miles offshore and moves <b>due west</b>.</p>
+      <ul>
+        <li><b>Wind</b>: Powell, Holland or Willoughby, with land roughness and inland decay.</li>
+        <li><b>Damage and loss</b>: a damage curve and an exposure book turn peak wind into dollars at every point.</li>
+        <li><b>Statistics</b>: 200 storms, then sensitivity and uncertainty: which inputs drive the loss?</li>
+      </ul>
+      <p>Finding: sampled realistically, <b>central pressure</b> is the dominant driver of loss.</p>
+    </div>
+    <article class="tile fig"><svg id="grid" viewBox="0 0 472 430" aria-label="The Form S-6 grid with a storm crossing it"></svg></article>
+    <div class="facts"><div><b>840</b><span>grid vertices, 682 on land</span></div><div><b>200</b><span>storms, with realistic links between inputs</span></div><div><b>5</b><span>disciplines, each swappable</span></div></div>
+  </div>
+  <aside class="notes">
+    <p>The drawing: the actual Form S-6 grid shape (40 columns, 21 rows) with the track along the row through landfall. As the storm passes, each point keeps its peak wind; colours run from calm to severe.</p>
+    <p>The tool is built for the Professional Team: every discipline's choice can be swapped and its effect seen.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 8 · multimodel live -->
+<section class="slide s-live">
+  <div class="page">
+    <header class="hd"><h2>Pro Team Multimodel, Live</h2><div class="kicker">Choose a windfield, a land model and a damage model, then play the storm</div></header>
+    <div class="row feed"><span class="lbl">Try</span><span style="font-size:13px;color:var(--grey)">Windfield model · Surface roughness · Damage model · ▶ storm animation · Points of interest</span>
+      <a href="https://metaphorz.github.io/Multimodel/web/index.html" target="_blank" rel="noopener">Open full size ↗</a></div>
+    <div class="app"><div class="wait">Loading the Multimodel…</div><iframe data-src="https://metaphorz.github.io/Multimodel/web/index.html" title="Pro Team Multimodel"></iframe></div>
+  </div>
+  <aside class="notes">
+    <p>Suggested demo: play the storm across the grid; switch Powell to Holland and watch the footprint change; then open the sensitivity and loss panels.</p>
+    <p>This is the live site at metaphorz.github.io/Multimodel.</p>
+  </aside>
+</section>
+
+<!-- ============================================================ 9 · close -->
+<section class="slide s-end">
+  <div class="page">
+    <header class="hd"><h2>Four Apps, One Chain</h2><div class="kicker">Try them yourself</div></header>
+    <div class="grid">
+      <article class="tile"><div class="n">1</div><h3>meteoearth</h3><p>Today’s weather on a globe, from four global forecast models, refreshed every 12 hours.</p><p><a href="https://metaphorz.github.io/meteoearth/" target="_blank" rel="noopener">Open meteoearth ↗</a></p></article>
+      <article class="tile"><div class="n">2</div><h3>Synthetic Tracks</h3><p>Where storms go, and how often they reach Florida. CLIPER-Analog and Hall &amp; Jewson.</p><p><a href="https://metaphorz.github.io/tracks/" target="_blank" rel="noopener">Open Synthetic Tracks ↗</a></p></article>
+      <article class="tile"><div class="n">3</div><h3>Storm Animator</h3><p>The wind around a moving storm, in three models, for Charley and Michael.</p><p><a href="apps/stormanim/charley-powell.html" target="_blank" rel="noopener">Charley · Powell</a> · <a href="apps/stormanim/michael-powell.html" target="_blank" rel="noopener">Michael · Powell</a></p></article>
+      <article class="tile"><div class="n">4</div><h3>Pro Team Multimodel</h3><p>Wind, damage, loss and sensitivity on the Commission’s Form S-6 grid.</p><p><a href="https://metaphorz.github.io/Multimodel/web/index.html" target="_blank" rel="noopener">Open the Multimodel ↗</a></p></article>
+    </div>
+    <p class="line" data-b="1">Every one of them is a model in the sense of the first talk: smaller, simpler, made of parts, and changeable.</p>
+  </div>
+  <aside class="notes"><p>Close the loop with the first talk: each app is a model you can change and test against the real thing.</p></aside>
+</section>
+
+</div></div>
+<div id="hint">→ / click to advance · F fullscreen · P presenter view</div>
+<div id="presenter">
+  <div id="pv-notes"></div>
+  <div id="pv-side">
+    <div id="pv-next"><div class="label">Next</div><div id="pv-nextstage"></div></div>
+    <div><div id="pv-count"></div><div id="pv-build"></div></div>
+    <div><div class="label">Elapsed (click to reset)</div><div id="pv-timer">0:00</div><div id="pv-clock"></div></div>
+  </div>
+</div>
+
+<script src="slides.js"></script>
+<script src="deck.js"></script>
+</body>
+</html>
